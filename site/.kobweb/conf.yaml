@@ -1,0 +1,14 @@
+site:
+  title: "YogaVedaLife"
+
+server:
+  files:
+    dev:
+      contentRoot: "build/processedResources/js/main/public"
+      script: "build/dist/js/developmentExecutable/yogaveda.js"
+      api: "build/libs/yogaveda.jar"
+    prod:
+      script: "build/dist/js/productionExecutable/yogaveda.js"
+      siteRoot: ".kobweb/site"
+
+  port: 8080
