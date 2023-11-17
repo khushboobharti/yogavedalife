@@ -5,33 +5,39 @@ import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.varabyte.kobweb.api.data.add
+import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
 import com.yogaveda.models.User
+import com.yogaveda.util.getHash
 import kotlinx.coroutines.flow.firstOrNull
 
+@InitApi
 fun initMongoDB(context: InitApiContext) {
 
+    /*System.setProperty(
+
+    )*/
     context.data.add(MongoDB(context))
 }
 
-class MongoDB(val context: InitApiContext) : MongoRepository {
+class MongoDB(private val context: InitApiContext) : MongoRepository {
 
     // Replace the placeholder with your MongoDB deployment's connection string
-    private val uri = "CONNECTION_STRING_URI_PLACEHOLDER"
+    private val uri = "mongodb://localhost:27017"
     private val mongoClient = MongoClient.create(uri)
-    private val db = mongoClient.getDatabase("")
+    private val db = mongoClient.getDatabase("yogaveda_db")
 
-    val userCollection = db.getCollection<User>("users")
+    private val userCollection = db.getCollection<User>("users")
     override suspend fun checkUserExistence(user: User): User? {
         return try {
             userCollection.find(
                 and(
-                    eq(User::username.toString(), user.username),
-                    eq(User::password.toString(), user.password)
+                    eq(User::username.name, user.username),
+                    eq(User::password.name, user.password)
                 )
             ).firstOrNull()
         } catch (e: Exception) {
-            context.logger.error(e.message.toString())
+            context.logger.error("Database Exception: " + e.message.toString())
             return null
         }
     }

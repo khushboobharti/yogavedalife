@@ -2,22 +2,23 @@ package com.yogaveda.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.bson.codecs.ObjectIdGenerator
 import org.bson.codecs.pojo.annotations.BsonId
-import org.bson.types.ObjectId
 
 @Serializable
-data class User(
+actual data class User(
 
     @BsonId
     @SerialName("_id")
-    val id: String,
-    val username: String = "",
-    val password: String = ""
+    actual val id: String = ObjectIdGenerator().generate().toString(),
+    actual val username: String = "",
+    actual val password: String = ""
 )
 
-data class UserWithoutPassword(
+@Serializable
+actual data class UserWithoutPassword(
     @BsonId
     @SerialName("_id")
-    val id: String,
-    val username: String = ""
+    actual val id: String = ObjectIdGenerator().generate().toString(),
+    actual val username: String = ""
 )

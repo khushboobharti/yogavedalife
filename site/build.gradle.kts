@@ -20,12 +20,14 @@ kobweb {
 }
 
 kotlin {
+
     configAsKobwebApplication("yogaveda", includeServer = true)
 
     sourceSets {
         val commonMain by getting {
             dependencies {
                 implementation(compose.runtime)
+                implementation(libs.kotlinx.serialization)
             }
         }
 

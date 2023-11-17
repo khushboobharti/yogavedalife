@@ -12,5 +12,5 @@ fun String.getHash(): String {
         hexString.append(String.format("%02x", byte))
     }
 
-    return hexString.toString()
+    return hexString.toString().uppercase()
 }
