@@ -1,6 +1,6 @@
 package com.yogaveda.data
 
-import com.mongodb.client.model.Filters
+import com.mongodb.client.model.CountOptions
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.kotlin.client.coroutine.MongoClient
@@ -8,7 +8,6 @@ import com.varabyte.kobweb.api.data.add
 import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
 import com.yogaveda.models.User
-import com.yogaveda.util.getHash
 import kotlinx.coroutines.flow.firstOrNull
 
 @InitApi
@@ -39,6 +38,16 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
         } catch (e: Exception) {
             context.logger.error("Database Exception: " + e.message.toString())
             return null
+        }
+    }
+
+    override suspend fun checkUserId(id: String): Boolean {
+        return try {
+            val documentCount = userCollection.countDocuments(eq("_id", id), CountOptions().limit(1))
+            documentCount > 0
+        } catch (e: Exception) {
+            context.logger.error("Database Exception: " + e.message.toString())
+            false
         }
     }
 }
