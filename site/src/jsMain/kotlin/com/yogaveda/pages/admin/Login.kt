@@ -39,6 +39,7 @@ import com.varabyte.kobweb.silk.components.style.toModifier
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.yogaveda.models.User
 import com.yogaveda.models.UserWithoutPassword
+import com.yogaveda.navigation.Screen
 import com.yogaveda.network.checkUserExistence
 import com.yogaveda.styles.LoginStyle
 import com.yogaveda.ui.Theme
@@ -47,7 +48,6 @@ import com.yogaveda.util.Id
 import com.yogaveda.util.Res
 import kotlinx.browser.document
 import kotlinx.browser.localStorage
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.attributes.InputType
@@ -56,7 +56,6 @@ import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Input
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.get
 import org.w3c.dom.set
 
 @Page
@@ -147,7 +146,7 @@ fun LoginScreen() {
                                 )
                                 if(user != null) {
                                     rememberLoggedIn(remember = true, user = user)
-                                    context.router.navigateTo("/admin")
+                                    context.router.navigateTo(Screen.AdminHome.route)
                                 } else {
                                     errorText = "User does not exist."
                                     delay(3000)
