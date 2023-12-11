@@ -27,4 +27,6 @@ object Id {
     const val svgParent = "svgParent"
     const val vectorIcon = "vectorIcon"
     const val navigationText = "navigationText"
+    const val titleInput = "title_input"
+    const val subtitleInput = "sub_title_input"
 }

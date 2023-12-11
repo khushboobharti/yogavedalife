@@ -12,10 +12,6 @@ import kotlinx.coroutines.flow.firstOrNull
 
 @InitApi
 fun initMongoDB(context: InitApiContext) {
-
-    /*System.setProperty(
-
-    )*/
     context.data.add(MongoDB(context))
 }
 
