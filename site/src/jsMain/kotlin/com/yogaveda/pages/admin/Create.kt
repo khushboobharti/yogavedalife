@@ -75,7 +75,6 @@ import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Input
 import org.jetbrains.compose.web.dom.Li
-import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.dom.TextArea
 import org.jetbrains.compose.web.dom.Ul
@@ -305,8 +304,8 @@ fun CreateScreen() {
 
 @Composable
 fun CategoryDropdown(
-    selectedCategory: com.yogaveda.models.Category,
-    onCategorySelect: (com.yogaveda.models.Category) -> Unit
+    selectedCategory: Category,
+    onCategorySelect: (Category) -> Unit
 ) {
     Box(
         modifier = Modifier
