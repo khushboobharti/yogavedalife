@@ -1,0 +1,18 @@
+package com.yogaveda.models
+
+
+import com.yogaveda.util.Res
+
+enum class EditorKey(
+    val icon: String
+) {
+    Bold(icon = Res.Icon.bold),
+    Italic(icon = Res.Icon.italic),
+    Link(icon = Res.Icon.link),
+    Title(icon = Res.Icon.title),
+    Subtitle(icon = Res.Icon.subtitle),
+    Quote(icon = Res.Icon.quote),
+    Code(icon = Res.Icon.code),
+    Image(icon = Res.Icon.image),
+}
+
