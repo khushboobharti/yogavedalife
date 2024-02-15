@@ -7,6 +7,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
+import com.varabyte.kobweb.compose.css.Overflow
+import com.varabyte.kobweb.compose.css.Resize
+import com.varabyte.kobweb.compose.css.ScrollBehavior
+import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.file.loadDataUrlFromDisk
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Box
@@ -32,10 +36,15 @@ import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
 import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.id
 import com.varabyte.kobweb.compose.ui.modifiers.margin
+import com.varabyte.kobweb.compose.ui.modifiers.maxHeight
 import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.outline
+import com.varabyte.kobweb.compose.ui.modifiers.overflow
 import com.varabyte.kobweb.compose.ui.modifiers.padding
+import com.varabyte.kobweb.compose.ui.modifiers.resize
+import com.varabyte.kobweb.compose.ui.modifiers.scrollBehavior
+import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
@@ -63,9 +72,12 @@ import org.jetbrains.compose.web.css.LineStyle
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.A
 import org.jetbrains.compose.web.dom.Button
+import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Input
 import org.jetbrains.compose.web.dom.Li
+import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.dom.TextArea
 import org.jetbrains.compose.web.dom.Ul
 
 @Page
@@ -83,7 +95,9 @@ fun CreateScreen() {
     var popularSwitched by remember { mutableStateOf(false) }
     var mainSwitched by remember { mutableStateOf(false) }
     var sponsoredSwitch by remember { mutableStateOf(false)}
-    var thumbnailInputDisabled by remember { mutableStateOf(false) }
+    var thumbnailInputDisabled by remember { mutableStateOf(true) }
+    var editorVisibility by remember { mutableStateOf(true) }
+    var fileName by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf(Category.Programming) }
 
     AdminPageLayout {
@@ -248,14 +262,42 @@ fun CreateScreen() {
                     )
                 }
                 ThumbnailUploader(
-                    thumbnail = "",
+                    thumbnail = fileName,
                     thumbnailInputDisabled = thumbnailInputDisabled,
                     onThumbnailSelect = { filename, file ->
+                        fileName = filename
                         println(filename)
                         println(file)
                     }
                 )
-                EditorControls(breakpoint = breakpoint)
+                EditorControls(
+                    breakpoint = breakpoint,
+                    editorVisibility = editorVisibility,
+                    onEditorVisibilityChanged = { editorVisibility = !editorVisibility }
+                )
+                Editor(editorVisibility = editorVisibility)
+                Button (
+                    attrs = Modifier
+                        .fillMaxWidth()
+                        .height(54.px)
+                        .margin(topBottom = 24.px)
+                        .backgroundColor(Theme.Primary.rgb)
+                        .color(Colors.White)
+                        .borderRadius(r = 4.px)
+                        .border(
+                            width = 0.px,
+                            style= LineStyle.None,
+                            color = Colors.Transparent
+                        )
+                        .outline(
+                            width = 0.px,
+                            style= LineStyle.None,
+                            color = Colors.Transparent
+                        )
+                        .toAttrs()
+                ) {
+                    SpanText (text = "Create")
+                }
             }
         }
     }
@@ -407,7 +449,11 @@ fun ThumbnailUploader(
 }
 
 @Composable
-fun EditorControls(breakpoint: Breakpoint) {
+fun EditorControls(
+    breakpoint: Breakpoint,
+    editorVisibility: Boolean,
+    onEditorVisibilityChanged: () -> Unit
+) {
     Box(modifier = Modifier.fillMaxWidth()) {
         SimpleGrid(
             modifier = Modifier.fillMaxWidth(),
@@ -437,8 +483,14 @@ fun EditorControls(breakpoint: Breakpoint) {
                         .margin(top = if(breakpoint < Breakpoint.SM) 12.px else 0.px)
                         .padding(leftRight = 24.px)
                         .borderRadius(r = 4.px)
-                        .backgroundColor(Theme.LightGray.rgb)
-                        .color(Theme.DarkGray.rgb)
+                        .backgroundColor(
+                            if(editorVisibility) Theme.LightGray.rgb
+                            else Theme.Primary.rgb
+                        )
+                        .color(
+                            if(editorVisibility) Theme.DarkGray.rgb
+                            else Colors.White
+                        )
                         .border(
                             width = 0.px,
                             style= LineStyle.None,
@@ -449,7 +501,7 @@ fun EditorControls(breakpoint: Breakpoint) {
                             style= LineStyle.None,
                             color = Colors.Transparent
                         )
-                        .onClick { println("Preview button Clicked") }
+                        .onClick { onEditorVisibilityChanged() }
                         .toAttrs()
                 ) {
                     SpanText(
@@ -478,6 +530,71 @@ fun EditorKeyView(key: EditorKey) {
         Image(
             src = key.icon,
             alt = "${key.name} Icon"
+        )
+    }
+}
+
+@Composable
+fun Editor(editorVisibility: Boolean) {
+    Box(modifier = Modifier.fillMaxWidth()) {
+        TextArea(
+            attrs = Modifier
+                .id(Id.editor)
+                .fillMaxWidth()
+                .height(400.px)
+                .maxHeight(400.px)
+                .resize(Resize.None)
+                .margin(top = 8.px)
+                .padding(all = 20.px)
+                .backgroundColor(Theme.LightGray.rgb)
+                .borderRadius(r = 4.px)
+                .border(
+                    width = 0.px,
+                    style= LineStyle.None,
+                    color = Colors.Transparent
+                )
+                .outline(
+                    width = 0.px,
+                    style= LineStyle.None,
+                    color = Colors.Transparent
+                )
+                .visibility(
+                    if(editorVisibility) Visibility.Visible
+                    else Visibility.Hidden
+                )
+                .fontFamily(FONT_FAMILY)
+                .toAttrs {
+                    attr("placeholder", "Write your post here...")
+                    attr("value", "")
+                }
+        )
+        Div(
+            attrs = Modifier
+                .id(Id.editorPreview)
+                .fillMaxWidth()
+                .height(400.px)
+                .maxHeight(400.px)
+                .margin(top = 8.px)
+                .padding(all = 20.px)
+                .backgroundColor(Theme.LightGray.rgb)
+                .borderRadius(r = 4.px)
+                .visibility(
+                    if(editorVisibility) Visibility.Hidden
+                    else Visibility.Visible
+                )
+                .overflow(Overflow.Auto)
+                .scrollBehavior(ScrollBehavior.Smooth)
+                .border(
+                    width = 0.px,
+                    style= LineStyle.None,
+                    color = Colors.Transparent
+                )
+                .outline(
+                    width = 0.px,
+                    style= LineStyle.None,
+                    color = Colors.Transparent
+                )
+                .toAttrs()
         )
     }
 }
