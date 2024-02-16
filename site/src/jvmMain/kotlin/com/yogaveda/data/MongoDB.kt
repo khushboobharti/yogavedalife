@@ -7,6 +7,7 @@ import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.varabyte.kobweb.api.data.add
 import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
+import com.yogaveda.models.Post
 import com.yogaveda.models.User
 import kotlinx.coroutines.flow.firstOrNull
 
@@ -23,6 +24,12 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
     private val db = mongoClient.getDatabase("yogaveda_db")
 
     private val userCollection = db.getCollection<User>("users")
+    private val postCollection = db.getCollection<Post>("posts")
+
+    override suspend fun addPost(post: Post): Boolean {
+        return postCollection.insertOne(post).wasAcknowledged()
+    }
+
     override suspend fun checkUserExistence(user: User): User? {
         return try {
             userCollection.find(

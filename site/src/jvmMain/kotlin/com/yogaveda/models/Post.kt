@@ -9,7 +9,7 @@ import org.bson.codecs.ObjectIdGenerator
 @Serializable
 actual data class Post(
     @SerialName("_id")
-    actual val id: String = ObjectIdGenerator().generate().toString(),
+    actual val id: String,
     actual val author: String,
     actual val date: Long,
     actual val title: String,
