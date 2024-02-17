@@ -47,6 +47,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
+import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.forms.Switch
 import com.varabyte.kobweb.silk.components.forms.SwitchSize
 import com.varabyte.kobweb.silk.components.graphics.Image
@@ -61,6 +62,7 @@ import com.yogaveda.components.MessagePopup
 import com.yogaveda.models.Category
 import com.yogaveda.models.EditorKey
 import com.yogaveda.models.Post
+import com.yogaveda.navigation.Screen
 import com.yogaveda.network.addPost
 import com.yogaveda.styles.EditorKeyStyle
 import com.yogaveda.ui.Theme
@@ -114,6 +116,7 @@ fun CreatePage() {
 @Composable
 fun CreateScreen() {
     val scope = rememberCoroutineScope()
+    val context = rememberPageContext()
     val breakpoint = rememberBreakpoint()
     var uiState by remember { mutableStateOf(CreatePageUiState()) }
 
@@ -307,7 +310,7 @@ fun CreateScreen() {
                                 )
                             )
                             if (result) {
-                                println("Successful")
+                                context.router.navigateTo(Screen.AdminSuccess.route)
                             }
                         }
                     } else {
