@@ -58,8 +58,10 @@ import com.varabyte.kobweb.silk.components.style.toModifier
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import com.yogaveda.components.AdminPageLayout
+import com.yogaveda.components.LinkPopup
 import com.yogaveda.components.MessagePopup
 import com.yogaveda.models.Category
+import com.yogaveda.models.ControlStyle
 import com.yogaveda.models.EditorControl
 import com.yogaveda.models.Post
 import com.yogaveda.navigation.Screen
@@ -70,6 +72,8 @@ import com.yogaveda.util.Constants.FONT_FAMILY
 import com.yogaveda.util.Constants.SIDE_PANEL_WIDTH
 import com.yogaveda.util.Id
 import com.yogaveda.util.applyControlStyle
+import com.yogaveda.util.applyStyle
+import com.yogaveda.util.getSelectedText
 import com.yogaveda.util.isUserLoggedIn
 import com.yogaveda.util.noBorder
 import kotlinx.browser.document
@@ -102,7 +106,8 @@ data class CreatePageUiState(
     var main: Boolean = false,
     var sponsored: Boolean = false,
     var editorVisibility: Boolean = true,
-    var messagePopup: Boolean = false
+    var messagePopup: Boolean = false,
+    var linkPopup: Boolean = false
 )
 
 @Page
@@ -268,7 +273,8 @@ fun CreateScreen() {
                     thumbnail = uiState.thumbnail,
                     thumbnailInputDisabled = uiState.thumbnailInputDisabled,
                     onThumbnailSelect = { filename, file ->
-                        (document.getElementById(Id.thumbnailInput) as HTMLInputElement).value = filename
+                        (document.getElementById(Id.thumbnailInput) as HTMLInputElement).value =
+                            filename
                         uiState = uiState.copy(thumbnail = file)
                         println(filename)
                     }
@@ -278,16 +284,21 @@ fun CreateScreen() {
                     editorVisibility = uiState.editorVisibility,
                     onEditorVisibilityChanged = {
                         uiState = uiState.copy(editorVisibility = !uiState.editorVisibility)
-                    }
+                    },
+                    onLinkClick = { uiState = uiState.copy(linkPopup = true) }
                 )
                 Editor(editorVisibility = uiState.editorVisibility)
                 CreateButton(onClick = {
-                    uiState = uiState.copy(title = (document.getElementById(Id.titleInput) as HTMLInputElement).value)
-                    uiState = uiState.copy(subtitle = (document.getElementById(Id.subtitleInput) as HTMLInputElement).value)
-                    uiState = uiState.copy(content = (document.getElementById(Id.editor) as HTMLTextAreaElement).value)
+                    uiState =
+                        uiState.copy(title = (document.getElementById(Id.titleInput) as HTMLInputElement).value)
+                    uiState =
+                        uiState.copy(subtitle = (document.getElementById(Id.subtitleInput) as HTMLInputElement).value)
+                    uiState =
+                        uiState.copy(content = (document.getElementById(Id.editor) as HTMLTextAreaElement).value)
 
-                    if(!uiState.thumbnailInputDisabled) {
-                        uiState = uiState.copy(thumbnail = (document.getElementById(Id.thumbnailInput) as HTMLInputElement).value)
+                    if (!uiState.thumbnailInputDisabled) {
+                        uiState =
+                            uiState.copy(thumbnail = (document.getElementById(Id.thumbnailInput) as HTMLInputElement).value)
                     }
                     if (
                         uiState.title.isNotEmpty() &&
@@ -325,10 +336,26 @@ fun CreateScreen() {
             }
         }
     }
-    if(uiState.messagePopup) {
+    if (uiState.messagePopup) {
         MessagePopup(
             message = "Please fill out all fields",
             onDialogDismiss = { uiState = uiState.copy(messagePopup = false) }
+        )
+    }
+    if (uiState.linkPopup) {
+        LinkPopup(
+            editorControl = EditorControl.Link,
+            onDialogDismiss = { },
+            onAddClick = { href, title ->
+                applyStyle(
+                    ControlStyle.Link(
+                        selectedText = getSelectedText(),
+                        href = href,
+                        desc = title
+                    )
+                )
+                uiState = uiState.copy(linkPopup = false)
+            }
         )
     }
 }
@@ -465,6 +492,7 @@ fun ThumbnailUploader(
 fun EditorControls(
     breakpoint: Breakpoint,
     editorVisibility: Boolean,
+    onLinkClick: () -> Unit,
     onEditorVisibilityChanged: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -481,7 +509,7 @@ fun EditorControls(
                 EditorControl.entries.forEach {
                     EditorControlView(
                         control = it,
-                        onClick = { applyControlStyle(it) }
+                        onClick = { applyControlStyle(it, onLinkClick) }
                     )
                 }
             }
