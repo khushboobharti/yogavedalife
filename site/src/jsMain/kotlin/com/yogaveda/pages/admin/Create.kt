@@ -60,7 +60,7 @@ import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import com.yogaveda.components.AdminPageLayout
 import com.yogaveda.components.MessagePopup
 import com.yogaveda.models.Category
-import com.yogaveda.models.EditorKey
+import com.yogaveda.models.EditorControl
 import com.yogaveda.models.Post
 import com.yogaveda.navigation.Screen
 import com.yogaveda.network.addPost
@@ -477,8 +477,8 @@ fun EditorControls(
                     .borderRadius(r = 4.px)
                     .height(54.px)
             ) {
-                EditorKey.entries.forEach {
-                    EditorKeyView(key = it)
+                EditorControl.entries.forEach {
+                    EditorControlView(control = it)
                 }
             }
             Box(
@@ -521,19 +521,19 @@ fun EditorControls(
 }
 
 @Composable
-fun EditorKeyView(key: EditorKey) {
+fun EditorControlView(control: EditorControl) {
     Box(
         modifier = EditorKeyStyle.toModifier()
             .fillMaxHeight()
             .padding(leftRight = 12.px)
             .borderRadius(r = 4.px)
             .cursor(Cursor.Pointer)
-            .onClick { println(key.name + " clicked") },
+            .onClick { println(control.name + " clicked") },
         contentAlignment = Alignment.Center
     ) {
         Image(
-            src = key.icon,
-            alt = "${key.name} Icon"
+            src = control.icon,
+            alt = "${control.name} Icon"
         )
     }
 }

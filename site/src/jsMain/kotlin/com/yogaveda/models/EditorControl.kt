@@ -3,7 +3,7 @@ package com.yogaveda.models
 
 import com.yogaveda.util.Res
 
-enum class EditorKey(
+enum class EditorControl(
     val icon: String
 ) {
     Bold(icon = Res.Icon.bold),
