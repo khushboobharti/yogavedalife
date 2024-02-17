@@ -97,7 +97,8 @@ fun applyStyle(controlStyle: ControlStyle) {
 
 fun applyControlStyle(
     editorControl: EditorControl,
-    onLinkClick: () -> Unit
+    onLinkClick: () -> Unit,
+    onImageClick: () -> Unit
 ) {
     when(editorControl) {
         EditorControl.Bold -> {
@@ -116,7 +117,7 @@ fun applyControlStyle(
             applyStyle(ControlStyle.Quote(selectedText = getSelectedText()))
         }
         EditorControl.Code -> {}
-        EditorControl.Image -> {}
+        EditorControl.Image -> { onImageClick() }
         EditorControl.Link -> { onLinkClick() }
     }
 }

@@ -107,7 +107,8 @@ data class CreatePageUiState(
     var sponsored: Boolean = false,
     var editorVisibility: Boolean = true,
     var messagePopup: Boolean = false,
-    var linkPopup: Boolean = false
+    var linkPopup: Boolean = false,
+    var imagePopup: Boolean = false
 )
 
 @Page
@@ -285,7 +286,8 @@ fun CreateScreen() {
                     onEditorVisibilityChanged = {
                         uiState = uiState.copy(editorVisibility = !uiState.editorVisibility)
                     },
-                    onLinkClick = { uiState = uiState.copy(linkPopup = true) }
+                    onLinkClick = { uiState = uiState.copy(linkPopup = true) },
+                    onImageClick = { uiState = uiState.copy(imagePopup = true) }
                 )
                 Editor(editorVisibility = uiState.editorVisibility)
                 CreateButton(onClick = {
@@ -352,6 +354,22 @@ fun CreateScreen() {
                         selectedText = getSelectedText(),
                         href = href,
                         desc = title
+                    )
+                )
+                uiState = uiState.copy(linkPopup = false)
+            }
+        )
+    }
+    if (uiState.imagePopup) {
+        LinkPopup(
+            editorControl = EditorControl.Image,
+            onDialogDismiss = { uiState = uiState.copy(imagePopup = false) },
+            onAddClick = { imageUrl, description ->
+                applyStyle(
+                    ControlStyle.Image(
+                        selectedText = getSelectedText(),
+                        src = imageUrl,
+                        desc = description
                     )
                 )
                 uiState = uiState.copy(linkPopup = false)
@@ -493,6 +511,7 @@ fun EditorControls(
     breakpoint: Breakpoint,
     editorVisibility: Boolean,
     onLinkClick: () -> Unit,
+    onImageClick: () -> Unit,
     onEditorVisibilityChanged: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -509,7 +528,11 @@ fun EditorControls(
                 EditorControl.entries.forEach {
                     EditorControlView(
                         control = it,
-                        onClick = { applyControlStyle(it, onLinkClick) }
+                        onClick = { applyControlStyle(
+                            editorControl = it,
+                            onLinkClick = onLinkClick,
+                            onImageClick = onImageClick
+                        ) }
                     )
                 }
             }
