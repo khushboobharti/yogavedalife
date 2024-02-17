@@ -57,6 +57,7 @@ import com.varabyte.kobweb.silk.components.style.toModifier
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import com.yogaveda.components.AdminPageLayout
+import com.yogaveda.components.MessagePopup
 import com.yogaveda.models.Category
 import com.yogaveda.models.EditorKey
 import com.yogaveda.models.Post
@@ -70,6 +71,7 @@ import com.yogaveda.util.isUserLoggedIn
 import com.yogaveda.util.noBorder
 import kotlinx.browser.document
 import kotlinx.browser.localStorage
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.px
@@ -97,6 +99,7 @@ data class CreatePageUiState(
     var main: Boolean = false,
     var sponsored: Boolean = false,
     var editorVisibility: Boolean = true,
+    var messagePopup: Boolean = false
 )
 
 @Page
@@ -308,11 +311,21 @@ fun CreateScreen() {
                             }
                         }
                     } else {
-                        println("Please fill out all fields")
+                        scope.launch {
+                            uiState = uiState.copy(messagePopup = true)
+                            delay(2000)
+                            uiState = uiState.copy(messagePopup = false)
+                        }
                     }
                 })
             }
         }
+    }
+    if(uiState.messagePopup) {
+        MessagePopup(
+            message = "Please fill out all fields",
+            onDialogDismiss = { uiState = uiState.copy(messagePopup = false) }
+        )
     }
 }
 
