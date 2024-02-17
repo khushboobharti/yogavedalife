@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
@@ -58,6 +59,8 @@ import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import com.yogaveda.components.AdminPageLayout
 import com.yogaveda.models.Category
 import com.yogaveda.models.EditorKey
+import com.yogaveda.models.Post
+import com.yogaveda.network.addPost
 import com.yogaveda.styles.EditorKeyStyle
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
@@ -66,6 +69,8 @@ import com.yogaveda.util.Id
 import com.yogaveda.util.isUserLoggedIn
 import com.yogaveda.util.noBorder
 import kotlinx.browser.document
+import kotlinx.browser.localStorage
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.A
@@ -76,8 +81,11 @@ import org.jetbrains.compose.web.dom.Li
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.dom.TextArea
 import org.jetbrains.compose.web.dom.Ul
+import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.HTMLTextAreaElement
+import kotlin.js.Date
 
-data class CreatePageUiEvent(
+data class CreatePageUiState(
     var id: String = "",
     var title: String = "",
     var subtitle: String = "",
@@ -102,8 +110,9 @@ fun CreatePage() {
 
 @Composable
 fun CreateScreen() {
+    val scope = rememberCoroutineScope()
     val breakpoint = rememberBreakpoint()
-    var uiEvent by remember { mutableStateOf(CreatePageUiEvent()) }
+    var uiState by remember { mutableStateOf(CreatePageUiState()) }
 
     AdminPageLayout {
         Box(
@@ -131,8 +140,8 @@ fun CreateScreen() {
                     ) {
                         Switch(
                             modifier = Modifier.margin(right = 8.px),
-                            checked = uiEvent.popular,
-                            onCheckedChange = { uiEvent = uiEvent.copy(popular = it) },
+                            checked = uiState.popular,
+                            onCheckedChange = { uiState = uiState.copy(popular = it) },
                             size = SwitchSize.LG
                         )
                         SpanText(
@@ -153,8 +162,8 @@ fun CreateScreen() {
                     ) {
                         Switch(
                             modifier = Modifier.margin(right = 8.px),
-                            checked = uiEvent.main,
-                            onCheckedChange = { uiEvent = uiEvent.copy(main = it)},
+                            checked = uiState.main,
+                            onCheckedChange = { uiState = uiState.copy(main = it) },
                             size = SwitchSize.LG
                         )
                         SpanText(
@@ -175,8 +184,8 @@ fun CreateScreen() {
                     ) {
                         Switch(
                             modifier = Modifier.margin(right = 8.px),
-                            checked = uiEvent.sponsored,
-                            onCheckedChange = { uiEvent = uiEvent.copy(sponsored = it) },
+                            checked = uiState.sponsored,
+                            onCheckedChange = { uiState = uiState.copy(sponsored = it) },
                             size = SwitchSize.LG
                         )
                         SpanText(
@@ -225,8 +234,8 @@ fun CreateScreen() {
                         }
                 )
                 CategoryDropdown(
-                    selectedCategory = uiEvent.category,
-                    onCategorySelect = { uiEvent = uiEvent.copy(category = it) }
+                    selectedCategory = uiState.category,
+                    onCategorySelect = { uiState = uiState.copy(category = it) }
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth()
@@ -236,8 +245,8 @@ fun CreateScreen() {
                 ) {
                     Switch(
                         modifier = Modifier.margin(right = 8.px),
-                        checked = !uiEvent.thumbnailInputDisabled,
-                        onCheckedChange = { uiEvent = uiEvent.copy(thumbnailInputDisabled = !it) },
+                        checked = !uiState.thumbnailInputDisabled,
+                        onCheckedChange = { uiState = uiState.copy(thumbnailInputDisabled = !it) },
                         size = SwitchSize.MD
                     )
                     SpanText(
@@ -249,21 +258,59 @@ fun CreateScreen() {
                     )
                 }
                 ThumbnailUploader(
-                    thumbnail = uiEvent.thumbnail,
-                    thumbnailInputDisabled = uiEvent.thumbnailInputDisabled,
+                    thumbnail = uiState.thumbnail,
+                    thumbnailInputDisabled = uiState.thumbnailInputDisabled,
                     onThumbnailSelect = { filename, file ->
-                        uiEvent = uiEvent.copy(thumbnail = filename)
+                        (document.getElementById(Id.thumbnailInput) as HTMLInputElement).value = filename
+                        uiState = uiState.copy(thumbnail = file)
                         println(filename)
-                        println(file)
                     }
                 )
                 EditorControls(
                     breakpoint = breakpoint,
-                    editorVisibility = uiEvent.editorVisibility,
-                    onEditorVisibilityChanged = { uiEvent = uiEvent.copy(editorVisibility = !uiEvent.editorVisibility) }
+                    editorVisibility = uiState.editorVisibility,
+                    onEditorVisibilityChanged = {
+                        uiState = uiState.copy(editorVisibility = !uiState.editorVisibility)
+                    }
                 )
-                Editor(editorVisibility = uiEvent.editorVisibility)
-                CreateButton(onClick = { println("Create Button Clicked") })
+                Editor(editorVisibility = uiState.editorVisibility)
+                CreateButton(onClick = {
+                    uiState = uiState.copy(title = (document.getElementById(Id.titleInput) as HTMLInputElement).value)
+                    uiState = uiState.copy(subtitle = (document.getElementById(Id.subtitleInput) as HTMLInputElement).value)
+                    uiState = uiState.copy(content = (document.getElementById(Id.editor) as HTMLTextAreaElement).value)
+
+                    if(!uiState.thumbnailInputDisabled) {
+                        uiState = uiState.copy(thumbnail = (document.getElementById(Id.thumbnailInput) as HTMLInputElement).value)
+                    }
+                    if (
+                        uiState.title.isNotEmpty() &&
+                        uiState.subtitle.isNotEmpty() &&
+                        uiState.thumbnail.isNotEmpty() &&
+                        uiState.content.isNotEmpty()
+                    ) {
+                        scope.launch {
+                            val result = addPost(
+                                Post(
+                                    author = localStorage.getItem("username").toString(),
+                                    title = uiState.title,
+                                    subtitle = uiState.subtitle,
+                                    date = Date.now().toLong(),
+                                    thumbnail = uiState.thumbnail,
+                                    content = uiState.content,
+                                    category = uiState.category,
+                                    popular = uiState.popular,
+                                    main = uiState.main,
+                                    sponsored = uiState.sponsored
+                                )
+                            )
+                            if (result) {
+                                println("Successful")
+                            }
+                        }
+                    } else {
+                        println("Please fill out all fields")
+                    }
+                })
             }
         }
     }
@@ -342,6 +389,7 @@ fun ThumbnailUploader(
         Input(
             type = InputType.Text,
             attrs = Modifier.fillMaxSize()
+                .id(Id.thumbnailInput)
                 .margin(right = 12.px)
                 .padding(leftRight = 20.px)
                 .backgroundColor(Theme.LightGray.rgb)
@@ -354,7 +402,7 @@ fun ThumbnailUploader(
                     condition = !thumbnailInputDisabled,
                     other = Modifier.disabled()
                 )
-                .toAttrs{
+                .toAttrs {
                     attr("placeholder", "Thumbnail")
                     attr("value", thumbnail)
                 }
@@ -371,7 +419,7 @@ fun ThumbnailUploader(
                 }
                 .fillMaxHeight()
                 .padding(leftRight = 24.px)
-                .backgroundColor(if(!thumbnailInputDisabled) Theme.LightGray.rgb else Theme.Primary.rgb)
+                .backgroundColor(if (!thumbnailInputDisabled) Theme.LightGray.rgb else Theme.Primary.rgb)
                 .color(if (!thumbnailInputDisabled) Theme.DarkGray.rgb else Colors.White)
                 .borderRadius(r = 4.px)
                 .noBorder()
@@ -407,7 +455,7 @@ fun EditorControls(
             modifier = Modifier.fillMaxWidth(),
             numColumns = numColumns(base = 1, sm = 2)
         ) {
-            Row (
+            Row(
                 modifier = Modifier
                     .backgroundColor(Theme.LightGray.rgb)
                     .borderRadius(r = 4.px)
@@ -417,10 +465,11 @@ fun EditorControls(
                     EditorKeyView(key = it)
                 }
             }
-            Box (
+            Box(
                 modifier = Modifier
                     .fillMaxWidth(),
-                contentAlignment = Alignment.CenterEnd) {
+                contentAlignment = Alignment.CenterEnd
+            ) {
                 Button(
                     attrs = Modifier
                         .height(54.px)
@@ -428,15 +477,15 @@ fun EditorControls(
                             condition = breakpoint < Breakpoint.SM,
                             other = Modifier.fillMaxWidth()
                         )
-                        .margin(top = if(breakpoint < Breakpoint.SM) 12.px else 0.px)
+                        .margin(top = if (breakpoint < Breakpoint.SM) 12.px else 0.px)
                         .padding(leftRight = 24.px)
                         .borderRadius(r = 4.px)
                         .backgroundColor(
-                            if(editorVisibility) Theme.LightGray.rgb
+                            if (editorVisibility) Theme.LightGray.rgb
                             else Theme.Primary.rgb
                         )
                         .color(
-                            if(editorVisibility) Theme.DarkGray.rgb
+                            if (editorVisibility) Theme.DarkGray.rgb
                             else Colors.White
                         )
                         .noBorder()
@@ -457,7 +506,7 @@ fun EditorControls(
 
 @Composable
 fun EditorKeyView(key: EditorKey) {
-    Box (
+    Box(
         modifier = EditorKeyStyle.toModifier()
             .fillMaxHeight()
             .padding(leftRight = 12.px)
@@ -489,7 +538,7 @@ fun Editor(editorVisibility: Boolean) {
                 .borderRadius(r = 4.px)
                 .noBorder()
                 .visibility(
-                    if(editorVisibility) Visibility.Visible
+                    if (editorVisibility) Visibility.Visible
                     else Visibility.Hidden
                 )
                 .fontFamily(FONT_FAMILY)
@@ -509,7 +558,7 @@ fun Editor(editorVisibility: Boolean) {
                 .backgroundColor(Theme.LightGray.rgb)
                 .borderRadius(r = 4.px)
                 .visibility(
-                    if(editorVisibility) Visibility.Hidden
+                    if (editorVisibility) Visibility.Hidden
                     else Visibility.Visible
                 )
                 .overflow(Overflow.Auto)
@@ -524,7 +573,7 @@ fun Editor(editorVisibility: Boolean) {
 fun CreateButton(
     onClick: () -> Unit
 ) {
-    Button (
+    Button(
         attrs = Modifier
             .onClick { onClick() }
             .fillMaxWidth()
@@ -536,6 +585,6 @@ fun CreateButton(
             .noBorder()
             .toAttrs()
     ) {
-        SpanText (text = "Create")
+        SpanText(text = "Create")
     }
 }

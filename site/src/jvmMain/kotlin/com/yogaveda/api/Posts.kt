@@ -1,5 +1,6 @@
 package com.yogaveda.api
 
+import com.varabyte.kobweb.api.Api
 import com.varabyte.kobweb.api.ApiContext
 import com.varabyte.kobweb.api.data.getValue
 import com.varabyte.kobweb.api.http.setBodyText
@@ -9,6 +10,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.bson.codecs.ObjectIdGenerator
 
+@Api(routeOverride = "addPost")
 suspend  fun addPost(context: ApiContext) {
     try {
         val post = context.req.body?.decodeToString()?.let { Json.decodeFromString<Post>(it) }
@@ -19,6 +21,7 @@ suspend  fun addPost(context: ApiContext) {
             } ?: false.toString()
         )
     } catch (e: Exception) {
+        e.message?.let { context.logger.error(it) }
         context.res.setBodyText(Json.encodeToString(value = e.message))
     }
 }

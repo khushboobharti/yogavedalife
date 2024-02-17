@@ -32,13 +32,14 @@ object Res {
 }
 
 object Id {
-    const val usernameInput = "username_input"
-    const val passwordInput = "password_input"
+    const val usernameInput = "usernameInput"
+    const val passwordInput = "passwordInput"
     const val svgParent = "svgParent"
     const val vectorIcon = "vectorIcon"
     const val navigationText = "navigationText"
-    const val titleInput = "title_input"
-    const val subtitleInput = "sub_title_input"
     const val editor = "editor"
     const val editorPreview = "editorPreview"
+    const val titleInput = "titleInput"
+    const val subtitleInput = "subtitleInput"
+    const val thumbnailInput = "thumbnailInput"
 }

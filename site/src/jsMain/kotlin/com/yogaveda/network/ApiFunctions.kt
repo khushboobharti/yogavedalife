@@ -2,6 +2,7 @@ package com.yogaveda.network
 
 import com.varabyte.kobweb.browser.api
 import com.varabyte.kobweb.compose.http.http
+import com.yogaveda.models.Post
 import com.yogaveda.models.RandomJoke
 import com.yogaveda.models.User
 import com.yogaveda.models.UserWithoutPassword
@@ -76,5 +77,17 @@ suspend fun fetchRandomJokes(onComplete: (RandomJoke) -> Unit) {
             onComplete(RandomJoke(id = -1, joke = e.message.toString()))
             println(e.message)
         }
+    }
+}
+
+suspend fun addPost(post: Post): Boolean {
+    return try {
+        window.api.tryPost(
+            apiPath = "addPost",
+            body = Json.encodeToString(post).encodeToByteArray()
+        )?.decodeToString().toBoolean()
+    } catch (e: Exception) {
+        println(e.message.toString())
+        false
     }
 }
