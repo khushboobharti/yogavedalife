@@ -69,6 +69,7 @@ import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
 import com.yogaveda.util.Constants.SIDE_PANEL_WIDTH
 import com.yogaveda.util.Id
+import com.yogaveda.util.applyControlStyle
 import com.yogaveda.util.isUserLoggedIn
 import com.yogaveda.util.noBorder
 import kotlinx.browser.document
@@ -478,7 +479,10 @@ fun EditorControls(
                     .height(54.px)
             ) {
                 EditorControl.entries.forEach {
-                    EditorControlView(control = it)
+                    EditorControlView(
+                        control = it,
+                        onClick = { applyControlStyle(it) }
+                    )
                 }
             }
             Box(
@@ -521,14 +525,17 @@ fun EditorControls(
 }
 
 @Composable
-fun EditorControlView(control: EditorControl) {
+fun EditorControlView(
+    control: EditorControl,
+    onClick: () -> Unit
+) {
     Box(
         modifier = EditorKeyStyle.toModifier()
             .fillMaxHeight()
             .padding(leftRight = 12.px)
             .borderRadius(r = 4.px)
             .cursor(Cursor.Pointer)
-            .onClick { println(control.name + " clicked") },
+            .onClick { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Image(
