@@ -39,6 +39,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.maxHeight
 import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
+import com.varabyte.kobweb.compose.ui.modifiers.onKeyDown
 import com.varabyte.kobweb.compose.ui.modifiers.overflow
 import com.varabyte.kobweb.compose.ui.modifiers.padding
 import com.varabyte.kobweb.compose.ui.modifiers.resize
@@ -73,6 +74,7 @@ import com.yogaveda.util.Constants.SIDE_PANEL_WIDTH
 import com.yogaveda.util.Id
 import com.yogaveda.util.applyControlStyle
 import com.yogaveda.util.applyStyle
+import com.yogaveda.util.getEditor
 import com.yogaveda.util.getSelectedText
 import com.yogaveda.util.isUserLoggedIn
 import com.yogaveda.util.noBorder
@@ -560,7 +562,11 @@ fun EditorControls(
                             else Colors.White
                         )
                         .noBorder()
-                        .onClick { onEditorVisibilityChanged() }
+                        .onClick {
+                            onEditorVisibilityChanged()
+                            document.getElementById(Id.editorPreview)?.innerHTML = getEditor().value
+                            js("hljs.highlightAll()") as Unit
+                        }
                         .toAttrs()
                 ) {
                     SpanText(
@@ -615,6 +621,11 @@ fun Editor(editorVisibility: Boolean) {
                     if (editorVisibility) Visibility.Visible
                     else Visibility.Hidden
                 )
+                .onKeyDown {
+                    if(it.code == "Enter" && it.shiftKey) {
+                        applyStyle(ControlStyle.Break(selectedText = getSelectedText()))
+                    }
+                }
                 .fontFamily(FONT_FAMILY)
                 .toAttrs {
                     attr("placeholder", "Write your post here...")

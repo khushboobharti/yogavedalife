@@ -116,7 +116,9 @@ fun applyControlStyle(
         EditorControl.Quote -> {
             applyStyle(ControlStyle.Quote(selectedText = getSelectedText()))
         }
-        EditorControl.Code -> {}
+        EditorControl.Code -> {
+            applyStyle(ControlStyle.Code(selectedText = getSelectedText()))
+        }
         EditorControl.Image -> { onImageClick() }
         EditorControl.Link -> { onLinkClick() }
     }
