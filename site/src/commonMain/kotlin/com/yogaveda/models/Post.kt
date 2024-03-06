@@ -2,6 +2,8 @@
 
 package com.yogaveda.models
 
+import kotlinx.serialization.Serializable
+
 expect class Post {
 
     val id: String
@@ -15,4 +17,16 @@ expect class Post {
     val popular: Boolean
     val main: Boolean
     val sponsored: Boolean
+}
+
+@Serializable
+expect class PostWithoutDetails {
+
+    val id: String
+    val author: String
+    val date: Long
+    val title: String
+    val subtitle: String
+    val thumbnail: String
+    val category: Category
 }

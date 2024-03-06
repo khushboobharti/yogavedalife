@@ -2,6 +2,7 @@ package com.yogaveda.network
 
 import com.varabyte.kobweb.browser.api
 import com.varabyte.kobweb.compose.http.http
+import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.Post
 import com.yogaveda.models.RandomJoke
 import com.yogaveda.models.User
@@ -89,5 +90,20 @@ suspend fun addPost(post: Post): Boolean {
     } catch (e: Exception) {
         println(e.message.toString())
         false
+    }
+}
+
+suspend fun fetchMyPosts(
+    skip: Int,
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result = window.api.tryGet(
+            apiPath = "readmyposts?skip=$skip&author=${localStorage["username"]}",
+        )
+        result?.decodeToString()?.let { Json.decodeFromString<ApiListResponse>(it) }?.let { onSuccess(it) }
+    } catch (e: Exception) {
+        onError(e)
     }
 }
