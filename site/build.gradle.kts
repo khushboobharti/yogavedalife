@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.kobweb.application)
     alias(libs.plugins.serialization.plugin)
-    // alias(libs.plugins.kobwebx.markdown)
 }
 
 group = "com.yogaveda"
@@ -44,6 +43,8 @@ kotlin {
 
     configAsKobwebApplication("yogaveda", includeServer = true)
 
+    this.kotlinDaemonJvmArgs = listOf("-Xexpect-actual-classes")
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -70,9 +71,4 @@ kotlin {
             }
         }
     }
-
-    // kotlin/js IR compiler
-    /*js(IR) {
-        binaries.executable()
-    }*/
 }

@@ -1,6 +1,7 @@
 package com.yogaveda.pages.admin
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -8,7 +9,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.varabyte.kobweb.compose.css.FontWeight
-import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Box
 import com.varabyte.kobweb.compose.foundation.layout.Column
@@ -28,7 +28,6 @@ import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.padding
-import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.silk.components.forms.Switch
@@ -37,7 +36,11 @@ import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import com.yogaveda.components.AdminPageLayout
+import com.yogaveda.components.Posts
 import com.yogaveda.components.SearchBar
+import com.yogaveda.models.ApiListResponse
+import com.yogaveda.models.PostWithoutDetails
+import com.yogaveda.network.fetchMyPosts
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
 import com.yogaveda.util.Constants.SIDE_PANEL_WIDTH
@@ -65,6 +68,23 @@ fun MyPostsScreen() {
 
     var selectableMode by remember { mutableStateOf(false) }
     var switchText by remember { mutableStateOf("Select") }
+
+    var myPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+
+    LaunchedEffect(Unit) {
+        fetchMyPosts(
+            skip = 0,
+            onSuccess = {
+                if (it is ApiListResponse.Success) {
+                    //myPosts.clear()
+                    myPosts.addAll(it.data)
+                }
+            },
+            onError = {
+                println(it)
+            }
+        )
+    }
 
     AdminPageLayout {
         Column(
@@ -154,8 +174,11 @@ fun MyPostsScreen() {
                 ) {
                     SpanText(text = "Delete")
                 }
-
             }
+            Posts(
+                breakpoint = breakpoint,
+                posts = myPosts
+            )
         }
     }
 }

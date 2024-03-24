@@ -11,11 +11,11 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.bson.codecs.ObjectIdGenerator
 
-@Api(routeOverride = "addpost")
+@Api(routeOverride = "addPost")
 suspend  fun addPost(context: ApiContext) {
     try {
         val post = context.req.body?.decodeToString()?.let { Json.decodeFromString<Post>(it) }
-        val newPost = post?.copy(id = ObjectIdGenerator().generate().toString())
+        val newPost = post?.copy(_id = ObjectIdGenerator().generate().toString())
         context.res.setBodyText(
             newPost?.let{
                 context.data.getValue<MongoDB>().addPost(it).toString()

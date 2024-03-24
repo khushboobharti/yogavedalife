@@ -28,6 +28,8 @@ suspend fun userCheck(context: ApiContext) {
             )
         }
 
+        context.logger.debug("User: $user")
+
         // Return response based on the result from DB
         if(user != null) {
             context.logger.debug("User is not null")

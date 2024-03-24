@@ -24,7 +24,8 @@ fun initMongoDB(context: InitApiContext) {
 class MongoDB(private val context: InitApiContext) : MongoRepository {
 
     // Replace the placeholder with your MongoDB deployment's connection string
-    private val uri = "mongodb://localhost:27017"
+    private val host = System.getenv("KOBWEB_MONGO_SERVER") ?: "localhost"
+    private val uri = "mongodb://$host:27017"
     private val mongoClient = MongoClient.create(uri)
     private val db = mongoClient.getDatabase(DATABASE_NAME)
 

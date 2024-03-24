@@ -2,11 +2,12 @@
 
 package com.yogaveda.models
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 expect class Post {
-
-    val id: String
+    @SerialName("_id")
+    val _id: String
     val author: String
     val date: Long
     val title: String
@@ -21,8 +22,8 @@ expect class Post {
 
 @Serializable
 expect class PostWithoutDetails {
-
-    val id: String
+    @SerialName("_id")
+    val _id: String
     val author: String
     val date: Long
     val title: String

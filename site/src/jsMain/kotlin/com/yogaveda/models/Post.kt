@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 actual data class Post(
     @SerialName("_id")
-    actual val id: String = "",
+    actual val _id: String = "",
     actual val author: String,
     actual val date: Long,
     actual val title: String,
@@ -24,7 +24,7 @@ actual data class Post(
 @Serializable
 actual data class PostWithoutDetails(
     @SerialName("_id")
-    actual val id: String = "",
+    actual val _id: String = "",
     actual val author: String,
     actual val date: Long,
     actual val title: String,
