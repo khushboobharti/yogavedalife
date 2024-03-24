@@ -43,6 +43,7 @@ import com.yogaveda.models.PostWithoutDetails
 import com.yogaveda.network.fetchMyPosts
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
+import com.yogaveda.util.Constants.POSTS_PER_PAGE
 import com.yogaveda.util.Constants.SIDE_PANEL_WIDTH
 import com.yogaveda.util.isUserLoggedIn
 import com.yogaveda.util.noBorder
@@ -64,20 +65,26 @@ fun MyPostsScreen() {
 
     val scope = rememberCoroutineScope()
     val breakpoint = rememberBreakpoint()
+    var myPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+
+    var postsToSkip by remember { mutableStateOf(0) }
+    var showMoreVisibility by remember { mutableStateOf(false) }
     val selectedPosts = remember { mutableStateListOf<String>() }
 
     var selectableMode by remember { mutableStateOf(false) }
     var switchText by remember { mutableStateOf("Select") }
 
-    var myPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+
 
     LaunchedEffect(Unit) {
         fetchMyPosts(
-            skip = 0,
+            skip = postsToSkip,
             onSuccess = {
                 if (it is ApiListResponse.Success) {
-                    //myPosts.clear()
+                    myPosts.clear()
                     myPosts.addAll(it.data)
+                    postsToSkip += POSTS_PER_PAGE
+                    showMoreVisibility = it.data.size >= POSTS_PER_PAGE
                 }
             },
             onError = {
@@ -177,6 +184,31 @@ fun MyPostsScreen() {
             }
             Posts(
                 breakpoint = breakpoint,
+                showMoreVisibility = showMoreVisibility,
+                onShowMore = {
+                    scope.launch {
+                        fetchMyPosts(
+                            skip = postsToSkip,
+                            onSuccess = {
+                                if (it is ApiListResponse.Success) {
+                                    if (it.data.isNotEmpty()) {
+                                        //myPosts.clear()
+                                        myPosts.addAll(it.data)
+                                        postsToSkip += POSTS_PER_PAGE
+                                        if(it.data.size < POSTS_PER_PAGE)
+                                            showMoreVisibility = false
+                                        //showMoreVisibility = it.data.size >= POSTS_PER_PAGE
+                                    } else {
+                                        showMoreVisibility = false
+                                    }
+                                }
+                            },
+                            onError = {
+                                println(it)
+                            }
+                        )
+                    }
+                },
                 posts = myPosts
             )
         }
