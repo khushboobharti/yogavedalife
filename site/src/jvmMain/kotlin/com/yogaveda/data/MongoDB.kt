@@ -3,6 +3,7 @@ package com.yogaveda.data
 import com.mongodb.client.model.CountOptions
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Sorts.ascending
 import com.mongodb.client.model.Sorts.descending
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.varabyte.kobweb.api.data.add
@@ -41,7 +42,7 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
             .withDocumentClass<PostWithoutDetails>()
             .find(eq(PostWithoutDetails::author.name, author))
             .skip(skip)
-            .sort(descending(PostWithoutDetails::date.name))
+            .sort(ascending(PostWithoutDetails::_id.name))
             .limit(POSTS_PER_PAGE)
             .toList()
     }
