@@ -47,6 +47,7 @@ import com.yogaveda.util.Constants.POSTS_PER_PAGE
 import com.yogaveda.util.Constants.SIDE_PANEL_WIDTH
 import com.yogaveda.util.isUserLoggedIn
 import com.yogaveda.util.noBorder
+import com.yogaveda.util.parseSwitchText
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
@@ -71,7 +72,7 @@ fun MyPostsScreen() {
     var showMoreVisibility by remember { mutableStateOf(false) }
     val selectedPosts = remember { mutableStateListOf<String>() }
 
-    var selectableMode by remember { mutableStateOf(false) }
+    var selectable by remember { mutableStateOf(false) }
     var switchText by remember { mutableStateOf("Select") }
 
 
@@ -132,10 +133,10 @@ fun MyPostsScreen() {
                     Switch(
                         modifier = Modifier.margin(right = 8.px),
                         size = SwitchSize.LG,
-                        checked = selectableMode,
+                        checked = selectable,
                         onCheckedChange = {
-                            selectableMode = it
-                            if (!selectableMode) {
+                            selectable = it
+                            if (!selectable) {
                                 switchText = "Select"
                                 selectedPosts.clear()
                             } else {
@@ -144,7 +145,7 @@ fun MyPostsScreen() {
                         }
                     )
                     SpanText(
-                        modifier = Modifier.color(if (selectableMode) Colors.Black else Theme.HalfBlack.rgb),
+                        modifier = Modifier.color(if (selectable) Colors.Black else Theme.HalfBlack.rgb),
                         text = switchText
                     )
                 }
@@ -165,7 +166,7 @@ fun MyPostsScreen() {
                             scope.launch {
                                 val result = deleteSelectedPosts(ids = selectedPosts)
                                 if (result) {
-                                    selectableMode = false
+                                    selectable = false
                                     switchText = "Select"
                                     /*postsToSkip -= selectedPosts.size
                                     selectedPosts.forEach { deletedPostId ->
@@ -184,6 +185,16 @@ fun MyPostsScreen() {
             }
             Posts(
                 breakpoint = breakpoint,
+                posts = myPosts,
+                selectable = selectable,
+                onSelect = {
+                    selectedPosts.add(it)
+                    switchText = parseSwitchText(selectedPosts.toList())
+                },
+                onDeselect = {
+                    selectedPosts.remove(it)
+                    switchText = parseSwitchText(selectedPosts.toList())
+                },
                 showMoreVisibility = showMoreVisibility,
                 onShowMore = {
                     scope.launch {
@@ -195,7 +206,7 @@ fun MyPostsScreen() {
                                         //myPosts.clear()
                                         myPosts.addAll(it.data)
                                         postsToSkip += POSTS_PER_PAGE
-                                        if(it.data.size < POSTS_PER_PAGE)
+                                        if (it.data.size < POSTS_PER_PAGE)
                                             showMoreVisibility = false
                                         //showMoreVisibility = it.data.size >= POSTS_PER_PAGE
                                     } else {
@@ -208,8 +219,7 @@ fun MyPostsScreen() {
                             }
                         )
                     }
-                },
-                posts = myPosts
+                }
             )
         }
     }
