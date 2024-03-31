@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.varabyte.kobweb.compose.css.FontWeight
+import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Box
 import com.varabyte.kobweb.compose.foundation.layout.Column
@@ -28,6 +29,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.padding
+import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.silk.components.forms.Switch
@@ -40,6 +42,7 @@ import com.yogaveda.components.Posts
 import com.yogaveda.components.SearchBar
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.PostWithoutDetails
+import com.yogaveda.network.deleteSelectedPosts
 import com.yogaveda.network.fetchMyPosts
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
@@ -161,19 +164,20 @@ fun MyPostsScreen() {
                         .fontFamily(FONT_FAMILY)
                         .fontSize(14.px)
                         .fontWeight(FontWeight.Medium)
-                        //.visibility(if (selectedPosts.isNotEmpty()) Visibility.Visible else Visibility.Hidden)
+                        .visibility(if (selectedPosts.isNotEmpty()) Visibility.Visible else Visibility.Hidden)
                         .onClick {
+                            println("Clicked: Delete button")
                             scope.launch {
                                 val result = deleteSelectedPosts(ids = selectedPosts)
                                 if (result) {
                                     selectable = false
                                     switchText = "Select"
-                                    /*postsToSkip -= selectedPosts.size
+                                    postsToSkip -= selectedPosts.size
                                     selectedPosts.forEach { deletedPostId ->
                                         myPosts.removeAll {
                                             it._id == deletedPostId
                                         }
-                                    }*/
+                                    }
                                     selectedPosts.clear()
                                 }
                             }
@@ -223,9 +227,4 @@ fun MyPostsScreen() {
             )
         }
     }
-}
-
-fun deleteSelectedPosts(ids: List<String>): Boolean {
-    val result = false
-    return result
 }

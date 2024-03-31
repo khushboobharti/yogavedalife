@@ -1,10 +1,13 @@
 package com.yogaveda.data
 
 import com.mongodb.client.model.CountOptions
+import com.mongodb.client.model.Filters
 import com.mongodb.client.model.Filters.and
 import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Filters.`in`
 import com.mongodb.client.model.Sorts.ascending
 import com.mongodb.client.model.Sorts.descending
+import com.mongodb.client.result.DeleteResult
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.varabyte.kobweb.api.data.add
 import com.varabyte.kobweb.api.init.InitApi
@@ -45,6 +48,19 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
             .sort(ascending(PostWithoutDetails::_id.name))
             .limit(POSTS_PER_PAGE)
             .toList()
+    }
+
+    override suspend fun deleteSelectedPosts(ids: List<String>): Boolean {
+        return try {
+            val result: DeleteResult = postCollection
+                //.deleteMany(Post::_id `in`(posts)).wasAcknowledged()
+                .deleteMany(filter = Filters.`in`(Post::_id.name, ids))
+            context.logger.debug("Deleted Posts (${Post::_id.name}, filter: ${eq(Post::_id.name, ids).toBsonDocument().toJson()}): ${result.deletedCount}")
+            result.wasAcknowledged()
+        } catch (e: Exception) {
+            context.logger.error("Database Exception: " + e.message.toString())
+            false
+        }
     }
 
     override suspend fun checkUserExistence(user: User): User? {

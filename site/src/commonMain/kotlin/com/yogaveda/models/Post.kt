@@ -5,6 +5,7 @@ package com.yogaveda.models
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Serializable
 expect class Post {
     @SerialName("_id")
     val _id: String
