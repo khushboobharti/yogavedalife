@@ -59,6 +59,7 @@ import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.components.style.toModifier
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
+import com.yogaveda.Constants.POST_ID_PARAM
 import com.yogaveda.components.AdminPageLayout
 import com.yogaveda.components.LinkPopup
 import com.yogaveda.components.MessagePopup
@@ -73,7 +74,6 @@ import com.yogaveda.network.fetchSelectedPost
 import com.yogaveda.styles.EditorKeyStyle
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
-import com.yogaveda.util.Constants.POST_ID_PARAM
 import com.yogaveda.util.Constants.SIDE_PANEL_WIDTH
 import com.yogaveda.util.Id
 import com.yogaveda.util.applyControlStyle
@@ -139,7 +139,7 @@ fun CreateScreen() {
 
     LaunchedEffect(hasPostIdParam) {
         if(hasPostIdParam) {
-            val postIO = context.route.params.getValue(POST_ID_PARAM)
+            val postIO = context.route.params[POST_ID_PARAM] ?: ""
             val response = fetchSelectedPost(id = postIO)
             if(response is ApiResponse.Success) {
                 println(response.data)

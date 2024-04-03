@@ -52,8 +52,8 @@ import com.yogaveda.network.fetchMyPosts
 import com.yogaveda.network.searchPostsByTitle
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
-import com.yogaveda.util.Constants.POSTS_PER_PAGE
-import com.yogaveda.util.Constants.QUERY_PARAM
+import com.yogaveda.Constants.POSTS_PER_PAGE
+import com.yogaveda.Constants.QUERY_PARAM
 import com.yogaveda.util.Constants.SIDE_PANEL_WIDTH
 import com.yogaveda.util.Id
 import com.yogaveda.util.isUserLoggedIn
@@ -91,13 +91,7 @@ fun MyPostsScreen() {
     var switchText by remember { mutableStateOf("Select") }
 
     val hasParams = remember(key1 = context.route) { context.route.params.containsKey(QUERY_PARAM) }
-    val query = remember(key1 = context.route) {
-        try {
-            context.route.params.getValue(QUERY_PARAM)
-        } catch (e: Exception) {
-            ""
-        }
-    }
+    val query = remember(key1 = context.route) {context.route.params[QUERY_PARAM] ?: ""}
 
     LaunchedEffect(context.route) {
         postsToSkip = 0

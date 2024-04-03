@@ -2,6 +2,10 @@ package com.yogaveda.network
 
 import com.varabyte.kobweb.browser.api
 import com.varabyte.kobweb.compose.http.http
+import com.yogaveda.Constants.AUTHOR_PARAM
+import com.yogaveda.Constants.POST_ID_PARAM
+import com.yogaveda.Constants.QUERY_PARAM
+import com.yogaveda.Constants.SKIP_PARAM
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.ApiResponse
 import com.yogaveda.models.Post
@@ -9,9 +13,6 @@ import com.yogaveda.models.RandomJoke
 import com.yogaveda.models.User
 import com.yogaveda.models.UserWithoutPassword
 import com.yogaveda.util.Constants
-import com.yogaveda.util.Constants.POST_ID_PARAM
-import com.yogaveda.util.Constants.QUERY_PARAM
-import com.yogaveda.util.Constants.SKIP_PARAM
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.serialization.encodeToString
@@ -35,11 +36,10 @@ suspend fun checkUserExistence(user: User): UserWithoutPassword? {
 
 suspend fun checkUserId(id: String): Boolean {
     return try {
-        val result = window.api.tryPost(
+        window.api.tryPost(
             apiPath = "checkuserid",
             body = Json.encodeToString(id).encodeToByteArray()
-        )
-        result?.decodeToString()?.let { Json.decodeFromString<Boolean>(it) } ?: false
+        )?.decodeToString()?.parseData<Boolean>() ?: false
     } catch (e: Exception) {
         println(e.message.toString())
         false
@@ -55,7 +55,7 @@ suspend fun fetchRandomJokes(onComplete: (RandomJoke) -> Unit) {
             try {
                 val result = window.http.get(Constants.HUMOR_API_URL).decodeToString()
                 println(result)
-                onComplete(Json.decodeFromString(result))
+                onComplete(result.parseData())
                 localStorage["date"] = Date.now().toString()
                 localStorage["joke"] = result
             } catch (e: Exception) {
@@ -65,7 +65,7 @@ suspend fun fetchRandomJokes(onComplete: (RandomJoke) -> Unit) {
 
         } else {
             try {
-                localStorage["joke"]?.let { Json.decodeFromString<RandomJoke>(it) }?.let { onComplete(it) }
+                localStorage["joke"]?.parseData<RandomJoke>()?.let { onComplete(it) }
             } catch (e: Exception) {
                 onComplete(RandomJoke(id = -1, joke = e.message.toString()))
                 println(e.message)
@@ -75,7 +75,7 @@ suspend fun fetchRandomJokes(onComplete: (RandomJoke) -> Unit) {
         try {
             val result = window.http.get(Constants.HUMOR_API_URL).decodeToString()
             println(result)
-            onComplete(Json.decodeFromString(result))
+            onComplete(result.parseData())
             localStorage["date"] = Date.now().toString()
             localStorage["joke"] = result
         } catch (e: Exception) {
@@ -104,9 +104,9 @@ suspend fun fetchMyPosts(
 ) {
     try {
         val result = window.api.tryGet(
-            apiPath = "readmyposts?skip=$skip&author=${localStorage["username"]}",
+            apiPath = "readmyposts?$SKIP_PARAM=$skip&$AUTHOR_PARAM=${localStorage["username"]}",
         )
-        result?.decodeToString()?.let { Json.decodeFromString<ApiListResponse>(it) }?.let { onSuccess(it) }
+        result?.decodeToString()?.parseData<ApiListResponse>()?.let { onSuccess(it) }
     } catch (e: Exception) {
         onError(e)
     }
@@ -135,7 +135,7 @@ suspend fun searchPostsByTitle(
         val result = window.api.tryGet(
             apiPath = "searchposts?${QUERY_PARAM}=$query&${SKIP_PARAM}=$skip"
         )?.decodeToString()
-        onSuccess(Json.decodeFromString(result.toString()))
+        onSuccess(result.parseData())
     } catch (e: Exception) {
         println(e.message)
         onError(e)
@@ -147,12 +147,13 @@ suspend fun fetchSelectedPost(id: String): ApiResponse {
         val result = window.api.tryGet(
             apiPath = "readselectedpost?${POST_ID_PARAM}=$id"
         )?.decodeToString()
-        if(result != null)
-            Json.decodeFromString<ApiResponse>(result)
-        else
-            ApiResponse.Error(message = "Result is null")
+        result?.parseData<ApiResponse>() ?: ApiResponse.Error(message = "Result is null")
     } catch (e: Exception) {
         println(e)
         ApiResponse.Error(message = e.message.toString())
     }
+}
+
+inline fun <reified T> String?.parseData(): T {
+    return Json.decodeFromString(this.toString())
 }

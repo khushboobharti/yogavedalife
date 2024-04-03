@@ -1,7 +1,7 @@
 package com.yogaveda.navigation
 
-import com.yogaveda.util.Constants.POST_ID_PARAM
-import com.yogaveda.util.Constants.QUERY_PARAM
+import com.yogaveda.Constants.POST_ID_PARAM
+import com.yogaveda.Constants.QUERY_PARAM
 
 sealed class Screen(val route: String) {
     object AdminHome : Screen(route = "/admin/")

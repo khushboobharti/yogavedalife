@@ -1,15 +1,56 @@
-@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-
 package com.yogaveda.models
 
-expect sealed class ApiListResponse {
-    object Idle
-    class Success
-    class Error
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonContentPolymorphicSerializer
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonObject
+
+@Serializable(with = ApiListResponseSerializer::class)
+sealed class ApiListResponse {
+    @Serializable
+    @SerialName("idle")
+    object Idle : ApiListResponse()
+
+    @Serializable
+    @SerialName("success")
+    data class Success(val data: List<PostWithoutDetails>) : ApiListResponse()
+
+    @Serializable
+    @SerialName("error")
+    data class Error(val message: String) : ApiListResponse()
 }
 
-expect sealed class ApiResponse {
-    object Idle
-    class Success
-    class Error
+@Serializable(with = ApiResponseSerializer::class)
+sealed class ApiResponse {
+    @Serializable
+    @SerialName("idle")
+    object Idle : ApiResponse()
+
+    @Serializable
+    @SerialName("success")
+    data class Success(val data: Post) : ApiResponse()
+
+    @Serializable
+    @SerialName("error")
+    data class Error(val message: String) : ApiResponse()
+}
+
+object ApiListResponseSerializer: JsonContentPolymorphicSerializer<ApiListResponse>(ApiListResponse::class) {
+    override fun selectDeserializer(element: JsonElement): DeserializationStrategy<ApiListResponse> = when{
+
+        "data" in element.jsonObject -> ApiListResponse.Success.serializer()
+        "message" in element.jsonObject -> ApiListResponse.Error.serializer()
+        else -> ApiListResponse.Idle.serializer()
+    }
+}
+
+object ApiResponseSerializer: JsonContentPolymorphicSerializer<ApiResponse>(ApiResponse::class) {
+    override fun selectDeserializer(element: JsonElement): DeserializationStrategy<ApiResponse> = when{
+
+        "data" in element.jsonObject -> ApiResponse.Success.serializer()
+        "message" in element.jsonObject -> ApiResponse.Error.serializer()
+        else -> ApiResponse.Idle.serializer()
+    }
 }

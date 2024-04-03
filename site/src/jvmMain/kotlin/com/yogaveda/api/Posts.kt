@@ -3,7 +3,10 @@ package com.yogaveda.api
 import com.varabyte.kobweb.api.Api
 import com.varabyte.kobweb.api.ApiContext
 import com.varabyte.kobweb.api.data.getValue
+import com.varabyte.kobweb.api.http.Request
+import com.varabyte.kobweb.api.http.Response
 import com.varabyte.kobweb.api.http.setBodyText
+import com.yogaveda.Constants.AUTHOR_PARAM
 import com.yogaveda.data.MongoDB
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.ApiResponse
@@ -13,55 +16,45 @@ import com.yogaveda.util.Constants.QUERY_PARAM
 import com.yogaveda.util.Constants.SKIP_PARAM
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonEncoder
 import org.bson.codecs.ObjectIdGenerator
 
 @Api(routeOverride = "addPost")
-suspend  fun addPost(context: ApiContext) {
+suspend fun addPost(context: ApiContext) {
     try {
-        val post = context.req.body?.decodeToString()?.let { Json.decodeFromString<Post>(it) }
+        val post = context.req.getBody<Post?>()
         val newPost = post?.copy(_id = ObjectIdGenerator().generate().toString())
-        context.res.setBodyText(
-            newPost?.let{
-                context.data.getValue<MongoDB>().addPost(it).toString()
-            } ?: false.toString()
-        )
+        context.res.setBody(newPost?.let {
+            context.data.getValue<MongoDB>().addPost(it)
+        })
     } catch (e: Exception) {
         e.message?.let { context.logger.error(it) }
-        context.res.setBodyText(Json.encodeToString(value = e.message))
+        context.res.setBody(e.message)
     }
 }
 
 @Api(routeOverride = "readmyposts")
 suspend fun readMyPosts(context: ApiContext) {
     try {
-        val skip = context.req.params["skip"]?.toInt() ?: 0
-        val author = context.req.params["author"] ?: ""
+        val skip = context.req.params[SKIP_PARAM]?.toInt() ?: 0
+        val author = context.req.params[AUTHOR_PARAM] ?: ""
         val posts = context.data.getValue<MongoDB>().readMyPosts(skip = skip, author = author)
-        context.res.setBodyText(
-            Json.encodeToString(ApiListResponse.Success(posts))
-        )
+        context.res.setBody(ApiListResponse.Success(posts))
     } catch (e: Exception) {
         e.message?.let { context.logger.error(it) }
-        context.res.setBodyText(Json.encodeToString(value = e.message.toString()))
+        context.res.setBody(e.message.toString())
     }
 }
 
 @Api(routeOverride = "deleteselectedposts")
 suspend fun deleteSelectedPosts(context: ApiContext) {
     try {
-        val ids = context.req.body?.decodeToString()?.let { Json.decodeFromString<List<String>>(it) }
-        context.res.setBodyText(
-            ids?.let {
-                it.forEach { id ->
-                    context.logger.debug("ID received: $id")
-                }
-                context.data.getValue<MongoDB>().deleteSelectedPosts(ids = it).toString()
-            } ?: false.toString()
-        )
+        val ids = context.req.getBody<List<String>?>()
+        context.res.setBody(ids?.let {
+            context.data.getValue<MongoDB>().deleteSelectedPosts(ids = it)
+        })
     } catch (e: Exception) {
         e.message?.let { context.logger.error(it) }
-        context.res.setBodyText(Json.encodeToString(value = e.message))
+        context.res.setBody(e.message)
     }
 }
 
@@ -74,9 +67,9 @@ suspend fun searchPostsByTitle(context: ApiContext) {
             query = query,
             skip = skip
         )
-        context.res.setBodyText(Json.encodeToString(ApiListResponse.Success(data = posts)))
+        context.res.setBody(ApiListResponse.Success(data = posts))
     } catch (e: Exception) {
-        context.res.setBodyText(Json.encodeToString(ApiListResponse.Error(message = e.message.toString())))
+        context.res.setBody(ApiListResponse.Error(message = e.message.toString()))
     }
 }
 
@@ -86,11 +79,19 @@ suspend fun readSelectedPost(context: ApiContext) {
     if (!postId.isNullOrEmpty()) {
         try {
             val selectedPost = context.data.getValue<MongoDB>().readSelectedPost(id = postId)
-            context.res.setBodyText(Json.encodeToString(ApiResponse.Success(data = selectedPost)))
+            context.res.setBody(ApiResponse.Success(data = selectedPost))
         } catch (e: Exception) {
-            context.res.setBodyText(Json.encodeToString(ApiResponse.Error(message = e.message.toString())))
+            context.res.setBody(ApiResponse.Error(message = e.message.toString()))
         }
     } else {
-        context.res.setBodyText(Json.encodeToString(ApiResponse.Error(message = "Selected Post does not exist.")))
+        context.res.setBody(ApiResponse.Error(message = "Selected Post does not exist."))
     }
+}
+
+inline fun <reified T> Response.setBody(data: T) {
+    setBodyText(Json.encodeToString(data))
+}
+
+inline fun <reified T> Request.getBody(): T? {
+    return body?.decodeToString()?.let { Json.decodeFromString(it) }
 }

@@ -14,8 +14,8 @@ import com.varabyte.kobweb.api.init.InitApiContext
 import com.yogaveda.models.Post
 import com.yogaveda.models.PostWithoutDetails
 import com.yogaveda.models.User
+import com.yogaveda.Constants.POSTS_PER_PAGE
 import com.yogaveda.util.Constants.DATABASE_NAME
-import com.yogaveda.util.Constants.POSTS_PER_PAGE
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 
@@ -96,6 +96,6 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
     }
 
     override suspend fun readSelectedPost(id: String): Post {
-        return postCollection.find(Filters.eq(Post::_id.name, id)).toList().first()
+        return postCollection.find(eq(Post::_id.name, id)).toList().first()
     }
 }
