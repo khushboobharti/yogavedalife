@@ -8,6 +8,8 @@ import com.yogaveda.models.RandomJoke
 import com.yogaveda.models.User
 import com.yogaveda.models.UserWithoutPassword
 import com.yogaveda.util.Constants
+import com.yogaveda.util.Constants.QUERY_PARAM
+import com.yogaveda.util.Constants.SKIP_PARAM
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.serialization.encodeToString
@@ -118,5 +120,22 @@ suspend fun deleteSelectedPosts(ids: List<String>): Boolean {
     } catch (e: Exception) {
         println(e.message)
         false
+    }
+}
+
+suspend fun searchPostsByTitle(
+    query: String,
+    skip: Int,
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result = window.api.tryGet(
+            apiPath = "searchposts?${QUERY_PARAM}=$query&${SKIP_PARAM}=$skip"
+        )?.decodeToString()
+        onSuccess(Json.decodeFromString(result.toString()))
+    } catch (e: Exception) {
+        println(e.message)
+        onError(e)
     }
 }

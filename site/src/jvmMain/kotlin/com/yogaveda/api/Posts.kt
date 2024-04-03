@@ -7,6 +7,8 @@ import com.varabyte.kobweb.api.http.setBodyText
 import com.yogaveda.data.MongoDB
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.Post
+import com.yogaveda.util.Constants.QUERY_PARAM
+import com.yogaveda.util.Constants.SKIP_PARAM
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.bson.codecs.ObjectIdGenerator
@@ -57,5 +59,20 @@ suspend fun deleteSelectedPosts(context: ApiContext) {
     } catch (e: Exception) {
         e.message?.let { context.logger.error(it) }
         context.res.setBodyText(Json.encodeToString(value = e.message))
+    }
+}
+
+@Api(routeOverride = "searchposts")
+suspend fun searchPostsByTitle(context: ApiContext) {
+    try {
+        val query = context.req.params[QUERY_PARAM] ?: ""
+        val skip = context.req.params[SKIP_PARAM]?.toInt() ?: 0
+        val posts = context.data.getValue<MongoDB>().searchPostsByTittle(
+            query = query,
+            skip = skip
+        )
+        context.res.setBodyText(Json.encodeToString(ApiListResponse.Success(data = posts)))
+    } catch (e: Exception) {
+        context.res.setBodyText(Json.encodeToString(ApiListResponse.Error(message = e.message.toString())))
     }
 }

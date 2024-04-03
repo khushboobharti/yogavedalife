@@ -7,7 +7,6 @@ import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.Filters.`in`
 import com.mongodb.client.model.Sorts.ascending
 import com.mongodb.client.model.Sorts.descending
-import com.mongodb.client.result.DeleteResult
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.varabyte.kobweb.api.data.add
 import com.varabyte.kobweb.api.init.InitApi
@@ -52,15 +51,24 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
 
     override suspend fun deleteSelectedPosts(ids: List<String>): Boolean {
         return try {
-            val result: DeleteResult = postCollection
-                //.deleteMany(Post::_id `in`(posts)).wasAcknowledged()
-                .deleteMany(filter = Filters.`in`(Post::_id.name, ids))
-            context.logger.debug("Deleted Posts (${Post::_id.name}, filter: ${eq(Post::_id.name, ids).toBsonDocument().toJson()}): ${result.deletedCount}")
-            result.wasAcknowledged()
+            postCollection
+                .deleteMany(filter = `in`(Post::_id.name, ids))
+                .wasAcknowledged()
         } catch (e: Exception) {
             context.logger.error("Database Exception: " + e.message.toString())
             false
         }
+    }
+
+    override suspend fun searchPostsByTittle(query: String, skip: Int): List<PostWithoutDetails> {
+        val regexQuery = query.toRegex(RegexOption.IGNORE_CASE)
+        return postCollection
+            .withDocumentClass(PostWithoutDetails::class.java)
+            .find(Filters.regex(PostWithoutDetails::title.name, regexQuery.pattern))
+            .sort(descending(PostWithoutDetails::date.name))
+            .skip(skip)
+            .limit(POSTS_PER_PAGE)
+            .toList()
     }
 
     override suspend fun checkUserExistence(user: User): User? {
