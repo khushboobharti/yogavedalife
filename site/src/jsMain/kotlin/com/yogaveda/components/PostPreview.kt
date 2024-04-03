@@ -40,12 +40,14 @@ import com.varabyte.kobweb.compose.ui.modifiers.transition
 import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.compose.ui.toAttrs
+import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.layout.SimpleGrid
 import com.varabyte.kobweb.silk.components.layout.numColumns
 import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.yogaveda.models.PostWithoutDetails
+import com.yogaveda.navigation.Screen
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
 import com.yogaveda.util.parseDateString
@@ -63,6 +65,7 @@ fun PostPreview(
     onSelect: (String) -> Unit,
     onDeselect: (String) -> Unit
 ) {
+    val context = rememberPageContext()
     var checked by remember(selectable) { mutableStateOf(false)}
     Column (
         modifier = Modifier
@@ -84,7 +87,7 @@ fun PostPreview(
                         onDeselect(post._id)
                     }
                 } else {
-                    //onClick(post._id)
+                    context.router.navigateTo(Screen.AdminCreate.passPostId(id = post._id))
                 }
             }
             .transition(CSSTransition(property = TransitionProperty.All, duration = 200.ms))
@@ -163,7 +166,7 @@ fun PostPreview(
 fun Posts(
     breakpoint: Breakpoint,
     posts: List<PostWithoutDetails>,
-    selectable: Boolean = false,
+    selectableMode: Boolean = false,
     onSelect: (String) -> Unit,
     onDeselect: (String) -> Unit,
     showMoreVisibility: Boolean,
@@ -180,7 +183,7 @@ fun Posts(
             posts.forEach {
                 PostPreview(
                     post = it,
-                    selectable = selectable,
+                    selectable = selectableMode,
                     onSelect = onSelect,
                     onDeselect = onDeselect
                 )

@@ -87,7 +87,7 @@ fun MyPostsScreen() {
     var showMoreVisibility by remember { mutableStateOf(false) }
     val selectedPosts = remember { mutableStateListOf<String>() }
 
-    var selectable by remember { mutableStateOf(false) }
+    var selectableMode by remember { mutableStateOf(false) }
     var switchText by remember { mutableStateOf("Select") }
 
     val hasParams = remember(key1 = context.route) { context.route.params.containsKey(QUERY_PARAM) }
@@ -157,7 +157,7 @@ fun MyPostsScreen() {
                 SearchBar(
                     breakpoint = breakpoint,
                     modifier = Modifier
-                        .visibility(if(selectable) Visibility.Hidden else Visibility.Visible)
+                        .visibility(if(selectableMode) Visibility.Hidden else Visibility.Visible)
                         .transition(CSSTransition(property = TransitionProperty.All, duration = 200.ms)),
                     onEnterClick = {
                         val myPostQuery = (document.getElementById(Id.adminSearchBar) as HTMLInputElement).value
@@ -184,10 +184,10 @@ fun MyPostsScreen() {
                     Switch(
                         modifier = Modifier.margin(right = 8.px),
                         size = SwitchSize.LG,
-                        checked = selectable,
+                        checked = selectableMode,
                         onCheckedChange = {
-                            selectable = it
-                            if (!selectable) {
+                            selectableMode = it
+                            if (!selectableMode) {
                                 switchText = "Select"
                                 selectedPosts.clear()
                             } else {
@@ -196,7 +196,7 @@ fun MyPostsScreen() {
                         }
                     )
                     SpanText(
-                        modifier = Modifier.color(if (selectable) Colors.Black else Theme.HalfBlack.rgb),
+                        modifier = Modifier.color(if (selectableMode) Colors.Black else Theme.HalfBlack.rgb),
                         text = switchText
                     )
                 }
@@ -218,7 +218,7 @@ fun MyPostsScreen() {
                             scope.launch {
                                 val result = deleteSelectedPosts(ids = selectedPosts)
                                 if (result) {
-                                    selectable = false
+                                    selectableMode = false
                                     switchText = "Select"
                                     postsToSkip -= selectedPosts.size
                                     selectedPosts.forEach { deletedPostId ->
@@ -238,7 +238,7 @@ fun MyPostsScreen() {
             Posts(
                 breakpoint = breakpoint,
                 posts = myPosts,
-                selectable = selectable,
+                selectableMode = selectableMode,
                 onSelect = {
                     selectedPosts.add(it)
                     switchText = parseSwitchText(selectedPosts.toList())

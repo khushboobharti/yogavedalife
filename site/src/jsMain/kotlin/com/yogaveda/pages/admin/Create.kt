@@ -1,6 +1,7 @@
 package com.yogaveda.pages.admin
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,15 +62,18 @@ import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import com.yogaveda.components.AdminPageLayout
 import com.yogaveda.components.LinkPopup
 import com.yogaveda.components.MessagePopup
+import com.yogaveda.models.ApiResponse
 import com.yogaveda.models.Category
 import com.yogaveda.models.ControlStyle
 import com.yogaveda.models.EditorControl
 import com.yogaveda.models.Post
 import com.yogaveda.navigation.Screen
 import com.yogaveda.network.addPost
+import com.yogaveda.network.fetchSelectedPost
 import com.yogaveda.styles.EditorKeyStyle
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
+import com.yogaveda.util.Constants.POST_ID_PARAM
 import com.yogaveda.util.Constants.SIDE_PANEL_WIDTH
 import com.yogaveda.util.Id
 import com.yogaveda.util.applyControlStyle
@@ -128,6 +132,20 @@ fun CreateScreen() {
     val context = rememberPageContext()
     val breakpoint = rememberBreakpoint()
     var uiState by remember { mutableStateOf(CreatePageUiState()) }
+
+    val hasPostIdParam = remember(key1 = context.route) {
+        context.route.params.containsKey(POST_ID_PARAM)
+    }
+
+    LaunchedEffect(hasPostIdParam) {
+        if(hasPostIdParam) {
+            val postIO = context.route.params.getValue(POST_ID_PARAM)
+            val response = fetchSelectedPost(id = postIO)
+            if(response is ApiResponse.Success) {
+                println(response.data)
+            }
+        }
+    }
 
     AdminPageLayout {
         Box(

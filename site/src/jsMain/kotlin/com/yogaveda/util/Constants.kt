@@ -8,6 +8,7 @@ object Constants {
     const val HUMOR_API_URL = "https://api.humorapi.com/jokes/random?api-key=c339acea11cc4848b821b776aa34aaa0&max-length=180"
     const val POSTS_PER_PAGE = 8
     const val QUERY_PARAM = "query"
+    const val POST_ID_PARAM = "postId"
     const val SKIP_PARAM = "skip"
 }
 

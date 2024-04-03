@@ -3,11 +3,13 @@ package com.yogaveda.network
 import com.varabyte.kobweb.browser.api
 import com.varabyte.kobweb.compose.http.http
 import com.yogaveda.models.ApiListResponse
+import com.yogaveda.models.ApiResponse
 import com.yogaveda.models.Post
 import com.yogaveda.models.RandomJoke
 import com.yogaveda.models.User
 import com.yogaveda.models.UserWithoutPassword
 import com.yogaveda.util.Constants
+import com.yogaveda.util.Constants.POST_ID_PARAM
 import com.yogaveda.util.Constants.QUERY_PARAM
 import com.yogaveda.util.Constants.SKIP_PARAM
 import kotlinx.browser.localStorage
@@ -137,5 +139,20 @@ suspend fun searchPostsByTitle(
     } catch (e: Exception) {
         println(e.message)
         onError(e)
+    }
+}
+
+suspend fun fetchSelectedPost(id: String): ApiResponse {
+    return try {
+        val result = window.api.tryGet(
+            apiPath = "readselectedpost?${POST_ID_PARAM}=$id"
+        )?.decodeToString()
+        if(result != null)
+            Json.decodeFromString<ApiResponse>(result)
+        else
+            ApiResponse.Error(message = "Result is null")
+    } catch (e: Exception) {
+        println(e)
+        ApiResponse.Error(message = e.message.toString())
     }
 }

@@ -94,4 +94,8 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
             false
         }
     }
+
+    override suspend fun readSelectedPost(id: String): Post {
+        return postCollection.find(Filters.eq(Post::_id.name, id)).toList().first()
+    }
 }
