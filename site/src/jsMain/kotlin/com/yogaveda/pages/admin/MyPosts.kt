@@ -8,7 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import com.varabyte.kobweb.compose.css.CSSTransition
 import com.varabyte.kobweb.compose.css.FontWeight
+import com.varabyte.kobweb.compose.css.TransitionProperty
 import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Box
@@ -29,6 +31,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.padding
+import com.varabyte.kobweb.compose.ui.modifiers.transition
 import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
@@ -58,6 +61,7 @@ import com.yogaveda.util.noBorder
 import com.yogaveda.util.parseSwitchText
 import kotlinx.browser.document
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.web.css.ms
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Button
@@ -98,6 +102,7 @@ fun MyPostsScreen() {
     LaunchedEffect(context.route) {
         postsToSkip = 0
         if(hasParams) {
+            (document.getElementById(Id.adminSearchBar) as HTMLInputElement).value = query.replace("%20", " ")
             searchPostsByTitle(
                 query = query,
                 skip = postsToSkip,
@@ -151,7 +156,9 @@ fun MyPostsScreen() {
             ) {
                 SearchBar(
                     breakpoint = breakpoint,
-                    modifier = Modifier,
+                    modifier = Modifier
+                        .visibility(if(selectable) Visibility.Hidden else Visibility.Visible)
+                        .transition(CSSTransition(property = TransitionProperty.All, duration = 200.ms)),
                     onEnterClick = {
                         val myPostQuery = (document.getElementById(Id.adminSearchBar) as HTMLInputElement).value
                         if(myPostQuery.isNotEmpty()) {

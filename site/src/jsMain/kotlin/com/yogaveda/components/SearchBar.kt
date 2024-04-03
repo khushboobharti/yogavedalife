@@ -20,7 +20,6 @@ import com.varabyte.kobweb.compose.ui.modifiers.borderRadius
 import com.varabyte.kobweb.compose.ui.modifiers.color
 import com.varabyte.kobweb.compose.ui.modifiers.cursor
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
-import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.id
 import com.varabyte.kobweb.compose.ui.modifiers.margin
@@ -63,7 +62,7 @@ fun SearchBar(
             modifier = modifier
                 .thenIf(
                     condition = fullWidth,
-                    other = Modifier.fillMaxWidth()
+                    other = Modifier.fillMaxSize()
                 )
                 .padding(left = 20.px)
                 .height(54.px)
