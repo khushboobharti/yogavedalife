@@ -112,6 +112,18 @@ suspend fun fetchMyPosts(
     }
 }
 
+suspend fun updatePost(post: Post): Boolean {
+    return try {
+        window.api.tryPost(
+            apiPath = "updatepost",
+            body = Json.encodeToString(post).encodeToByteArray()
+        )?.decodeToString().toBoolean()
+    } catch (e: Exception) {
+        println(e.message)
+        false
+    }
+}
+
 suspend fun deleteSelectedPosts(ids: List<String>): Boolean {
     return try {
         val result = window.api.tryPost(
@@ -147,7 +159,7 @@ suspend fun fetchSelectedPost(id: String): ApiResponse {
         val result = window.api.tryGet(
             apiPath = "readselectedpost?${POST_ID_PARAM}=$id"
         )?.decodeToString()
-        result?.parseData<ApiResponse>() ?: ApiResponse.Error(message = "Result is null")
+        result?.parseData() ?: ApiResponse.Error(message = "Result is null")
     } catch (e: Exception) {
         println(e)
         ApiResponse.Error(message = e.message.toString())

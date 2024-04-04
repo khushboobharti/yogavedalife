@@ -15,6 +15,7 @@ import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.text.SpanText
+import com.yogaveda.Constants.UPDATED_PARAM
 import com.yogaveda.navigation.Screen
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
@@ -26,6 +27,7 @@ import org.jetbrains.compose.web.css.px
 @Composable
 fun SuccessPage() {
     val context = rememberPageContext()
+    val postUpdated = context.route.params.containsKey(UPDATED_PARAM)
     LaunchedEffect(Unit) {
         delay(5000)
         context.router.navigateTo(Screen.AdminCreate.route)
@@ -45,7 +47,7 @@ fun SuccessPage() {
             modifier = Modifier
                 .fontFamily(FONT_FAMILY)
                 .fontSize(24.px),
-            text = "Post Successfully Created!"
+            text = if(postUpdated) "Post Successfully Updated!" else "Post Successfully Created!"
         )
         SpanText(
             modifier = Modifier

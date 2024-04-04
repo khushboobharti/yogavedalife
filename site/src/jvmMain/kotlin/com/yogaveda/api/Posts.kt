@@ -45,6 +45,20 @@ suspend fun readMyPosts(context: ApiContext) {
     }
 }
 
+@Api(routeOverride = "updatepost")
+suspend fun updatePost(context: ApiContext) {
+    try {
+        val updatedPost = context.req.getBody<Post>()
+        context.res.setBody(
+            updatedPost?.let {
+                context.data.getValue<MongoDB>().updatePost(it)
+            }
+        )
+    } catch (e: Exception) {
+        context.res.setBody(e.message)
+    }
+}
+
 @Api(routeOverride = "deleteselectedposts")
 suspend fun deleteSelectedPosts(context: ApiContext) {
     try {
@@ -79,6 +93,7 @@ suspend fun readSelectedPost(context: ApiContext) {
     if (!postId.isNullOrEmpty()) {
         try {
             val selectedPost = context.data.getValue<MongoDB>().readSelectedPost(id = postId)
+            context.logger.info("Selected Post: $selectedPost")
             context.res.setBody(ApiResponse.Success(data = selectedPost))
         } catch (e: Exception) {
             context.res.setBody(ApiResponse.Error(message = e.message.toString()))

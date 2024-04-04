@@ -2,6 +2,7 @@ package com.yogaveda.navigation
 
 import com.yogaveda.Constants.POST_ID_PARAM
 import com.yogaveda.Constants.QUERY_PARAM
+import com.yogaveda.Constants.UPDATED_PARAM
 
 sealed class Screen(val route: String) {
     object AdminHome : Screen(route = "/admin/")
@@ -15,5 +16,7 @@ sealed class Screen(val route: String) {
         }
 
     }
-    object AdminSuccess: Screen(route = "/admin/success")
+    object AdminSuccess: Screen(route = "/admin/success") {
+        fun postUpdate() = "$route?$UPDATED_PARAM=true"
+    }
 }
