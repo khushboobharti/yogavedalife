@@ -11,15 +11,21 @@ import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.foundation.layout.Spacer
 import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
+import com.varabyte.kobweb.compose.ui.graphics.Colors
 import com.varabyte.kobweb.compose.ui.modifiers.backgroundColor
+import com.varabyte.kobweb.compose.ui.modifiers.color
 import com.varabyte.kobweb.compose.ui.modifiers.cursor
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
 import com.varabyte.kobweb.compose.ui.modifiers.height
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
+import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.width
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
+import com.varabyte.kobweb.silk.components.icons.fa.FaBars
+import com.varabyte.kobweb.silk.components.icons.fa.FaXmark
+import com.varabyte.kobweb.silk.components.icons.fa.IconSize
 import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import com.yogaveda.components.CategoryNavigationItems
 import com.yogaveda.components.SearchBar
@@ -81,24 +87,24 @@ fun Header(
     ) {
         if (breakpoint <= Breakpoint.MD) {
             if (fullSearchBarOpened) {
-                /*FaXmark(
+                FaXmark(
                     modifier = Modifier
                         .margin(right = 24.px)
                         .color(Colors.White)
                         .cursor(Cursor.Pointer)
                         .onClick { fullSearchBarOpened = false },
                     size = IconSize.XL
-                )*/
+                )
             }
             if (!fullSearchBarOpened) {
-                /*FaBars(
+                FaBars(
                     modifier = Modifier
                         .margin(right = 24.px)
                         .color(Colors.White)
                         .cursor(Cursor.Pointer)
                         .onClick { onMenuOpen() },
                     size = IconSize.XL
-                )*/
+                )
             }
         }
         if (!fullSearchBarOpened) {
