@@ -112,6 +112,21 @@ suspend fun fetchMyPosts(
     }
 }
 
+suspend fun fetchMainPosts(
+    skip: Int,
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result = window.api.tryGet(
+            apiPath = "readmainposts?$SKIP_PARAM=$skip",
+        )
+        result?.decodeToString()?.parseData<ApiListResponse>()?.let { onSuccess(it) }
+    } catch (e: Exception) {
+        onError(e)
+    }
+}
+
 suspend fun updatePost(post: Post): Boolean {
     return try {
         window.api.tryPost(

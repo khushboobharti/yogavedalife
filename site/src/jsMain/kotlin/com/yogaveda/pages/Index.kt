@@ -11,19 +11,35 @@ import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import com.yogaveda.components.CategoryNavigationItems
 import com.yogaveda.components.NavigationItems
 import com.yogaveda.components.OverflowSidePanel
+import com.yogaveda.models.ApiListResponse
+import com.yogaveda.network.fetchMainPosts
 import com.yogaveda.sections.HeaderSection
 
 @Page
 @Composable
 fun HomePage() {
+    val scope = rememberCoroutineScope()
     val breakpoint = rememberBreakpoint()
     var overflowMenuOpened by remember { mutableStateOf(false) }
-    Column (
+    var mainPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
+
+    LaunchedEffect(Unit) {
+        fetchMainPosts(
+            skip = 0,
+            onSuccess = {
+                mainPosts = it
+                println(mainPosts)
+            },
+            onError = {}
+        )
+    }
+
+    Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if(overflowMenuOpened) {
+        if (overflowMenuOpened) {
             OverflowSidePanel(
                 onMenuClose = { overflowMenuOpened = false },
                 content = { CategoryNavigationItems(vertical = true) }

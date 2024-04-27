@@ -45,6 +45,18 @@ suspend fun readMyPosts(context: ApiContext) {
     }
 }
 
+@Api(routeOverride = "readmainposts")
+suspend fun readMainPosts(context: ApiContext) {
+    try {
+        val skip = context.req.params[SKIP_PARAM]?.toInt() ?: 0
+        val posts = context.data.getValue<MongoDB>().readMainPosts(skip = skip)
+        context.res.setBody(ApiListResponse.Success(posts))
+    } catch (e: Exception) {
+        e.message?.let { context.logger.error(it) }
+        context.res.setBody(ApiListResponse.Error(message = e.message.toString()))
+    }
+}
+
 @Api(routeOverride = "updatepost")
 suspend fun updatePost(context: ApiContext) {
     try {

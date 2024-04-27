@@ -17,6 +17,7 @@ import com.yogaveda.models.PostWithoutDetails
 import com.yogaveda.models.User
 import com.yogaveda.Constants.POSTS_PER_PAGE
 import com.yogaveda.util.Constants.DATABASE_NAME
+import com.yogaveda.util.Constants.MAIN_POSTS_LIMIT
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.toList
 
@@ -55,6 +56,15 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
                     Updates.set(Post::sponsored.name, post.sponsored)
                 )
             ).wasAcknowledged()
+    }
+
+    override suspend fun readMainPosts(skip: Int): List<PostWithoutDetails> {
+        return postCollection
+            .withDocumentClass<PostWithoutDetails>()
+            .find(eq(PostWithoutDetails::main.name, true))
+            .sort(descending(PostWithoutDetails::date.name))
+            .limit(MAIN_POSTS_LIMIT)
+            .toList()
     }
 
     override suspend fun readMyPosts(skip: Int, author: String): List<PostWithoutDetails> {
