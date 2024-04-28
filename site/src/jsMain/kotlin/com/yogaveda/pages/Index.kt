@@ -9,11 +9,11 @@ import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
 import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import com.yogaveda.components.CategoryNavigationItems
-import com.yogaveda.components.NavigationItems
 import com.yogaveda.components.OverflowSidePanel
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.network.fetchMainPosts
 import com.yogaveda.sections.HeaderSection
+import com.yogaveda.sections.MainSection
 
 @Page
 @Composable
@@ -50,5 +50,6 @@ fun HomePage() {
             selectedCategory = null,
             onMenuOpen = { overflowMenuOpened = true }
         )
+        MainSection(breakpoint = breakpoint, posts = mainPosts, onClick = {})
     }
 }
