@@ -11,6 +11,7 @@ import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import com.yogaveda.components.CategoryNavigationItems
 import com.yogaveda.components.OverflowSidePanel
 import com.yogaveda.models.ApiListResponse
+import com.yogaveda.network.fetchLatestPosts
 import com.yogaveda.network.fetchMainPosts
 import com.yogaveda.sections.HeaderSection
 import com.yogaveda.sections.MainSection
@@ -22,6 +23,8 @@ fun HomePage() {
     val breakpoint = rememberBreakpoint()
     var overflowMenuOpened by remember { mutableStateOf(false) }
     var mainPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
+    var latestPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
+    var latestPostsToSkip by remember { mutableStateOf(0) }
 
     LaunchedEffect(Unit) {
         fetchMainPosts(
@@ -29,6 +32,14 @@ fun HomePage() {
             onSuccess = {
                 mainPosts = it
                 println(mainPosts)
+            },
+            onError = {}
+        )
+        fetchLatestPosts(
+            skip = latestPostsToSkip,
+            onSuccess = {
+                latestPosts = it
+                println(it)
             },
             onError = {}
         )
