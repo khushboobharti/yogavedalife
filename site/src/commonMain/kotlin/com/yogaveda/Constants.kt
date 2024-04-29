@@ -1,7 +1,7 @@
 package com.yogaveda
 
 object Constants {
-    const val POSTS_PER_PAGE = 8
+    const val POSTS_PER_PAGE = 4
 
     const val QUERY_PARAM = "query"
     const val POST_ID_PARAM = "postId"

@@ -8,13 +8,17 @@ import com.varabyte.kobweb.compose.ui.Modifier
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
 import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
+import com.yogaveda.Constants.POSTS_PER_PAGE
 import com.yogaveda.components.CategoryNavigationItems
 import com.yogaveda.components.OverflowSidePanel
 import com.yogaveda.models.ApiListResponse
+import com.yogaveda.models.PostWithoutDetails
 import com.yogaveda.network.fetchLatestPosts
 import com.yogaveda.network.fetchMainPosts
 import com.yogaveda.sections.HeaderSection
 import com.yogaveda.sections.MainSection
+import com.yogaveda.sections.PostsSection
+import kotlinx.coroutines.launch
 
 @Page
 @Composable
@@ -23,23 +27,26 @@ fun HomePage() {
     val breakpoint = rememberBreakpoint()
     var overflowMenuOpened by remember { mutableStateOf(false) }
     var mainPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
-    var latestPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
+    val latestPosts = remember { mutableStateListOf<PostWithoutDetails>() }
     var latestPostsToSkip by remember { mutableStateOf(0) }
+    var showMoreLatestPosts by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         fetchMainPosts(
             skip = 0,
             onSuccess = {
                 mainPosts = it
-                println(mainPosts)
             },
             onError = {}
         )
         fetchLatestPosts(
             skip = latestPostsToSkip,
             onSuccess = {
-                latestPosts = it
-                println(it)
+                if(it is ApiListResponse.Success) {
+                    latestPosts.addAll(it.data)
+                    latestPostsToSkip += POSTS_PER_PAGE
+                    if(it.data.size >= POSTS_PER_PAGE) showMoreLatestPosts = true
+                }
             },
             onError = {}
         )
@@ -62,5 +69,32 @@ fun HomePage() {
             onMenuOpen = { overflowMenuOpened = true }
         )
         MainSection(breakpoint = breakpoint, posts = mainPosts, onClick = {})
+        PostsSection(
+            breakpoint = breakpoint,
+            posts = latestPosts,
+            title = "Latest Posts",
+            showMoreVisibility = true,
+            onShowMore = {
+                scope.launch {
+                    fetchLatestPosts(
+                        skip = latestPostsToSkip,
+                        onSuccess = { response ->
+                                    if(response is ApiListResponse.Success) {
+                                        if(response.data.isNotEmpty()) {
+                                            if(response.data.size < POSTS_PER_PAGE) showMoreLatestPosts = false
+
+                                            latestPosts.addAll(response.data)
+                                            latestPostsToSkip += POSTS_PER_PAGE
+                                        } else {
+                                            showMoreLatestPosts = false
+                                        }
+                                    }
+                        },
+                        onError = {}
+                    )
+                }
+            },
+            onClick = {}
+        )
     }
 }

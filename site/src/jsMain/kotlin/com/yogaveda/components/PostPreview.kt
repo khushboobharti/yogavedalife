@@ -10,10 +10,8 @@ import com.varabyte.kobweb.compose.css.Cursor
 import com.varabyte.kobweb.compose.css.FontWeight
 import com.varabyte.kobweb.compose.css.ObjectFit
 import com.varabyte.kobweb.compose.css.Overflow
-import com.varabyte.kobweb.compose.css.TextAlign
 import com.varabyte.kobweb.compose.css.TextOverflow
 import com.varabyte.kobweb.compose.css.TransitionProperty
-import com.varabyte.kobweb.compose.css.Visibility
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.foundation.layout.Row
@@ -35,21 +33,15 @@ import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.overflow
 import com.varabyte.kobweb.compose.ui.modifiers.padding
 import com.varabyte.kobweb.compose.ui.modifiers.size
-import com.varabyte.kobweb.compose.ui.modifiers.textAlign
 import com.varabyte.kobweb.compose.ui.modifiers.textOverflow
 import com.varabyte.kobweb.compose.ui.modifiers.transition
-import com.varabyte.kobweb.compose.ui.modifiers.visibility
 import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
-import com.varabyte.kobweb.silk.components.layout.SimpleGrid
-import com.varabyte.kobweb.silk.components.layout.numColumns
-import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.yogaveda.models.PostWithoutDetails
-import com.yogaveda.navigation.Screen
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
 import com.yogaveda.util.parseDateString
@@ -100,7 +92,7 @@ fun PostPreview(
                             onDeselect(post._id)
                         }
                     } else {
-                        context.router.navigateTo(Screen.AdminCreate.passPostId(id = post._id))
+                        onClick(post._id)
                     }
                 }
                 .transition(CSSTransition(property = TransitionProperty.All, duration = 200.ms))
@@ -130,50 +122,6 @@ fun PostPreview(
                 checked = checked
             )
         }
-    }
-}
-
-@Composable
-fun Posts(
-    breakpoint: Breakpoint,
-    posts: List<PostWithoutDetails>,
-    selectableMode: Boolean = false,
-    onSelect: (String) -> Unit,
-    onDeselect: (String) -> Unit,
-    showMoreVisibility: Boolean,
-    onShowMore: () -> Unit
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(if (breakpoint > Breakpoint.MD) 80.percent else 90.percent),
-        verticalArrangement = Arrangement.Center
-    ) {
-        SimpleGrid(
-            modifier = Modifier.fillMaxWidth(),
-            numColumns = numColumns(base = 1, sm = 2, md = 3, lg = 4)
-        ) {
-            posts.forEach {
-                PostPreview(
-                    post = it,
-                    selectable = selectableMode,
-                    onSelect = onSelect,
-                    onDeselect = onDeselect,
-                    onClick = {}
-                )
-            }
-        }
-        SpanText(
-            modifier = Modifier
-                .fillMaxWidth()
-                .margin(topBottom = 50.px)
-                .textAlign(TextAlign.Center)
-                .fontFamily(FONT_FAMILY)
-                .fontSize(16.px)
-                .fontWeight(FontWeight.Medium)
-                .cursor(Cursor.Pointer)
-                .visibility(if (showMoreVisibility) Visibility.Visible else Visibility.Hidden)
-                .onClick { onShowMore() },
-            text = "Show more"
-        )
     }
 }
 

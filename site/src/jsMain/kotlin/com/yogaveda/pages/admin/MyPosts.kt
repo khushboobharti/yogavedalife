@@ -42,7 +42,6 @@ import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import com.yogaveda.components.AdminPageLayout
-import com.yogaveda.components.Posts
 import com.yogaveda.components.SearchBar
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.PostWithoutDetails
@@ -54,6 +53,7 @@ import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
 import com.yogaveda.Constants.POSTS_PER_PAGE
 import com.yogaveda.Constants.QUERY_PARAM
+import com.yogaveda.components.PostsView
 import com.yogaveda.util.Constants.SIDE_PANEL_WIDTH
 import com.yogaveda.util.Id
 import com.yogaveda.util.isUserLoggedIn
@@ -229,7 +229,7 @@ fun MyPostsScreen() {
                     SpanText(text = "Delete")
                 }
             }
-            Posts(
+            PostsView(
                 breakpoint = breakpoint,
                 posts = myPosts,
                 selectableMode = selectableMode,
@@ -289,6 +289,9 @@ fun MyPostsScreen() {
                             )
                         }
                     }
+                },
+                onClick = {
+                    context.router.navigateTo(Screen.AdminCreate.passPostId(id = it))
                 }
             )
         }

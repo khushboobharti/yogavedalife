@@ -16,7 +16,6 @@ suspend fun userCheck(context: ApiContext) {
     try {
         // Get user to be queried from request
         val userRequest = context.req.body?.decodeToString()?.let {
-            //println(it)
             context.logger.debug(it)
             Json.decodeFromString<User>(it)
         }
