@@ -105,8 +105,8 @@ suspend fun fetchMyPosts(
     try {
         val result = window.api.tryGet(
             apiPath = "readmyposts?$SKIP_PARAM=$skip&$AUTHOR_PARAM=${localStorage["username"]}",
-        )
-        result?.decodeToString()?.parseData<ApiListResponse>()?.let { onSuccess(it) }
+        )?.decodeToString()
+        onSuccess(result.parseData())
     } catch (e: Exception) {
         onError(e)
     }
@@ -120,8 +120,8 @@ suspend fun fetchMainPosts(
     try {
         val result = window.api.tryGet(
             apiPath = "readmainposts?$SKIP_PARAM=$skip",
-        )
-        result?.decodeToString()?.parseData<ApiListResponse>()?.let { onSuccess(it) }
+        )?.decodeToString()
+        onSuccess(result.parseData())
     } catch (e: Exception) {
         onError(e)
     }
@@ -135,8 +135,22 @@ suspend fun fetchLatestPosts(
     try {
         val result = window.api.tryGet(
             apiPath = "readlatestposts?$SKIP_PARAM=$skip",
-        )
-        result?.decodeToString()?.parseData<ApiListResponse>()?.let { onSuccess(it) }
+        )?.decodeToString()
+        onSuccess(result.parseData())
+    } catch (e: Exception) {
+        onError(e)
+    }
+}
+
+suspend fun fetchSponsoredPosts(
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result = window.api.tryGet(
+            apiPath = "readsponsoredposts",
+        )?.decodeToString()
+        onSuccess(result.parseData())
     } catch (e: Exception) {
         onError(e)
     }
@@ -183,6 +197,7 @@ suspend fun searchPostsByTitle(
         onError(e)
     }
 }
+
 
 suspend fun fetchSelectedPost(id: String): ApiResponse {
     return try {

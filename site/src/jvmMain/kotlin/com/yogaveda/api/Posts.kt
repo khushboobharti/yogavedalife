@@ -69,6 +69,17 @@ suspend fun readLatestPosts(context: ApiContext) {
     }
 }
 
+@Api(routeOverride = "readsponsoredposts")
+suspend fun readSponsoredPosts(context: ApiContext) {
+    try {
+        val posts = context.data.getValue<MongoDB>().readSponsoredPosts()
+        context.res.setBody(ApiListResponse.Success(posts))
+    } catch (e: Exception) {
+        e.message?.let { context.logger.error(it) }
+        context.res.setBody(ApiListResponse.Error(message = e.message.toString()))
+    }
+}
+
 @Api(routeOverride = "updatepost")
 suspend fun updatePost(context: ApiContext) {
     try {

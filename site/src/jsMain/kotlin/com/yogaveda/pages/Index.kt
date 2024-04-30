@@ -15,6 +15,7 @@ import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.PostWithoutDetails
 import com.yogaveda.network.fetchLatestPosts
 import com.yogaveda.network.fetchMainPosts
+import com.yogaveda.network.fetchSponsoredPosts
 import com.yogaveda.sections.HeaderSection
 import com.yogaveda.sections.MainSection
 import com.yogaveda.sections.PostsSection
@@ -28,6 +29,7 @@ fun HomePage() {
     var overflowMenuOpened by remember { mutableStateOf(false) }
     var mainPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
     val latestPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+    val sponsoredPosts = remember { mutableStateListOf<PostWithoutDetails>() }
     var latestPostsToSkip by remember { mutableStateOf(0) }
     var showMoreLatestPosts by remember { mutableStateOf(false) }
 
@@ -47,6 +49,14 @@ fun HomePage() {
                     latestPostsToSkip += POSTS_PER_PAGE
                     if(it.data.size >= POSTS_PER_PAGE) showMoreLatestPosts = true
                 }
+            },
+            onError = {}
+        )
+        fetchSponsoredPosts(
+            onSuccess = {
+                        if(it is ApiListResponse.Success) {
+                            sponsoredPosts.addAll(it.data)
+                        }
             },
             onError = {}
         )
