@@ -15,6 +15,7 @@ import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.PostWithoutDetails
 import com.yogaveda.network.fetchLatestPosts
 import com.yogaveda.network.fetchMainPosts
+import com.yogaveda.network.fetchPopularPosts
 import com.yogaveda.network.fetchSponsoredPosts
 import com.yogaveda.sections.HeaderSection
 import com.yogaveda.sections.MainSection
@@ -31,8 +32,11 @@ fun HomePage() {
     var mainPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
     val latestPosts = remember { mutableStateListOf<PostWithoutDetails>() }
     val sponsoredPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+    val popularPosts = remember { mutableStateListOf<PostWithoutDetails>() }
     var latestPostsToSkip by remember { mutableStateOf(0) }
+    var popularPostsToSkip by remember { mutableStateOf(0) }
     var showMoreLatestPosts by remember { mutableStateOf(false) }
+    var showMorePopularPosts by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         fetchMainPosts(
@@ -59,6 +63,11 @@ fun HomePage() {
                     sponsoredPosts.addAll(it.data)
                 }
             },
+            onError = {}
+        )
+        fetchPopularPosts(
+            skip = popularPostsToSkip,
+            onSuccess = {},
             onError = {}
         )
     }
