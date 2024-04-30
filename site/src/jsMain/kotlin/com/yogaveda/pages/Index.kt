@@ -19,6 +19,7 @@ import com.yogaveda.network.fetchSponsoredPosts
 import com.yogaveda.sections.HeaderSection
 import com.yogaveda.sections.MainSection
 import com.yogaveda.sections.PostsSection
+import com.yogaveda.sections.SponsoredPostsSection
 import kotlinx.coroutines.launch
 
 @Page
@@ -44,19 +45,19 @@ fun HomePage() {
         fetchLatestPosts(
             skip = latestPostsToSkip,
             onSuccess = {
-                if(it is ApiListResponse.Success) {
+                if (it is ApiListResponse.Success) {
                     latestPosts.addAll(it.data)
                     latestPostsToSkip += POSTS_PER_PAGE
-                    if(it.data.size >= POSTS_PER_PAGE) showMoreLatestPosts = true
+                    if (it.data.size >= POSTS_PER_PAGE) showMoreLatestPosts = true
                 }
             },
             onError = {}
         )
         fetchSponsoredPosts(
             onSuccess = {
-                        if(it is ApiListResponse.Success) {
-                            sponsoredPosts.addAll(it.data)
-                        }
+                if (it is ApiListResponse.Success) {
+                    sponsoredPosts.addAll(it.data)
+                }
             },
             onError = {}
         )
@@ -89,21 +90,27 @@ fun HomePage() {
                     fetchLatestPosts(
                         skip = latestPostsToSkip,
                         onSuccess = { response ->
-                                    if(response is ApiListResponse.Success) {
-                                        if(response.data.isNotEmpty()) {
-                                            if(response.data.size < POSTS_PER_PAGE) showMoreLatestPosts = false
+                            if (response is ApiListResponse.Success) {
+                                if (response.data.isNotEmpty()) {
+                                    if (response.data.size < POSTS_PER_PAGE) showMoreLatestPosts =
+                                        false
 
-                                            latestPosts.addAll(response.data)
-                                            latestPostsToSkip += POSTS_PER_PAGE
-                                        } else {
-                                            showMoreLatestPosts = false
-                                        }
-                                    }
+                                    latestPosts.addAll(response.data)
+                                    latestPostsToSkip += POSTS_PER_PAGE
+                                } else {
+                                    showMoreLatestPosts = false
+                                }
+                            }
                         },
                         onError = {}
                     )
                 }
             },
+            onClick = {}
+        )
+        SponsoredPostsSection(
+            breakpoint = breakpoint,
+            posts = sponsoredPosts,
             onClick = {}
         )
     }

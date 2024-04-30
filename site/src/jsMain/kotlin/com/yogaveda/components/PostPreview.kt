@@ -40,8 +40,11 @@ import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
+import com.varabyte.kobweb.silk.components.style.toModifier
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.yogaveda.models.PostWithoutDetails
+import com.yogaveda.styles.MainPostPreviewStyle
+import com.yogaveda.styles.PostPreviewStyle
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
 import com.yogaveda.util.parseDateString
@@ -74,6 +77,20 @@ fun PostPreview(
     if (vertical) {
         Column(
             modifier = Modifier
+                .thenIf(
+                    condition = post.main,
+                    other = MainPostPreviewStyle.toModifier()
+                )
+                .thenIf(
+                    condition = !post.main,
+                    other = PostPreviewStyle.toModifier()
+                )
+                .then(modifier)
+                .fillMaxWidth(
+                    if (darkTheme) 100.percent
+                    else if (titleColor == Theme.Sponsored.rgb) 100.percent
+                    else 95.percent
+                )
                 .fillMaxWidth(95.percent)
                 .margin(bottom = 24.px)
                 .padding(all = if (selectable) 10.px else 0.px)
@@ -110,7 +127,21 @@ fun PostPreview(
             )
         }
     } else {
-        Row {
+        Row (
+            modifier = modifier
+                .thenIf(
+                    condition = post.main,
+                    other = MainPostPreviewStyle.toModifier()
+                )
+                .thenIf(
+                    condition = !post.main,
+                    other = PostPreviewStyle.toModifier()
+                )
+                .then(modifier)
+                .height(thumbnailHeight)
+                .onClick { onClick(post._id) }
+                .cursor(Cursor.Pointer)
+        ) {
             PostContent(
                 post = post,
                 selectableMode = selectable,
