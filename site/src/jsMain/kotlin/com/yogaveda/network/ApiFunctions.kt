@@ -165,7 +165,6 @@ suspend fun fetchSponsoredPosts(
         val result = window.api.tryGet(
             apiPath = "readsponsoredposts",
         )?.decodeToString()
-        println(result)
         onSuccess(result.parseData())
     } catch (e: Exception) {
         println(e.message)
