@@ -30,6 +30,7 @@ import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import com.yogaveda.components.CategoryNavigationItems
 import com.yogaveda.components.SearchBar
 import com.yogaveda.models.Category
+import com.yogaveda.navigation.Screen
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.HEADER_HEIGHT
 import com.yogaveda.util.Constants.PAGE_WIDTH
@@ -112,8 +113,8 @@ fun Header(
                 modifier = Modifier
                     .margin(right = 50.px)
                     .width(if (breakpoint >= Breakpoint.SM) 100.px else 70.px)
-                    .cursor(Cursor.Pointer),
-                    //.onClick { context.router.navigateTo(Screen.HomePage.route) },
+                    .cursor(Cursor.Pointer)
+                    .onClick { context.router.navigateTo(Screen.HomePage.route) },
                 src = logo,
                 alt = "Logo Image"
             )
@@ -128,7 +129,7 @@ fun Header(
             darkTheme = true,
             onEnterClick = {
                 val query = (document.getElementById(Id.adminSearchBar) as HTMLInputElement).value
-                //context.router.navigateTo(Screen.SearchPage.searchByTitle(query = query))
+                context.router.navigateTo(Screen.SearchPage.searchByTitle(query = query))
             },
             onSearchIconClick = { fullSearchBarOpened = it }
         )

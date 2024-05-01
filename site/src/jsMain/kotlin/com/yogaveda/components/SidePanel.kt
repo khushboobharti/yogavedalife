@@ -251,6 +251,7 @@ fun OverflowSidePanel(
     onMenuClose: () -> Unit,
     content: @Composable () -> Unit
 ) {
+    val context = rememberPageContext()
     val scope = rememberCoroutineScope()
     val breakpoint = rememberBreakpoint()
 
@@ -312,7 +313,7 @@ fun OverflowSidePanel(
                 Image(
                     modifier = Modifier
                         .width(80.px)
-                        .onClick {}
+                        .onClick { context.router.navigateTo(Screen.HomePage.route) }
                         .cursor(Cursor.Pointer),
                     src = Res.Image.logo,
                     alt = "Logo Image"
