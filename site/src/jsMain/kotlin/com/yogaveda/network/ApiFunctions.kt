@@ -8,6 +8,7 @@ import com.yogaveda.Constants.QUERY_PARAM
 import com.yogaveda.Constants.SKIP_PARAM
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.ApiResponse
+import com.yogaveda.models.Newsletter
 import com.yogaveda.models.Post
 import com.yogaveda.models.RandomJoke
 import com.yogaveda.models.User
@@ -224,6 +225,20 @@ suspend fun fetchSelectedPost(id: String): ApiResponse {
     } catch (e: Exception) {
         println(e)
         ApiResponse.Error(message = e.message.toString())
+    }
+}
+
+suspend fun subscribeNewsletter(newsletter: Newsletter): String {
+
+    return try {
+        val result = window.api.tryPost(
+            apiPath = "subscribe-newsletter",
+            body = Json.encodeToString(newsletter).encodeToByteArray()
+        )?.decodeToString()
+        result.toString()
+    } catch (e: Exception) {
+        println(e.message)
+        e.message.toString()
     }
 }
 

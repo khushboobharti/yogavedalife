@@ -38,7 +38,6 @@ import com.varabyte.kobweb.compose.ui.modifiers.transition
 import com.varabyte.kobweb.compose.ui.styleModifier
 import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.compose.ui.toAttrs
-import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.style.toModifier
 import com.varabyte.kobweb.silk.components.text.SpanText
@@ -72,7 +71,6 @@ fun PostPreview(
     onDeselect: (String) -> Unit = {},
     onClick: (String) -> Unit
 ) {
-    val context = rememberPageContext()
     var checked by remember(selectable) { mutableStateOf(false) }
     if (vertical) {
         Column(

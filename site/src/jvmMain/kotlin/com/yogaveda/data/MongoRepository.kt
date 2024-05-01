@@ -1,5 +1,6 @@
 package com.yogaveda.data
 
+import com.yogaveda.models.Newsletter
 import com.yogaveda.models.Post
 import com.yogaveda.models.PostWithoutDetails
 import com.yogaveda.models.User
@@ -19,4 +20,5 @@ interface MongoRepository {
     suspend fun deleteSelectedPosts(ids: List<String>): Boolean
     suspend fun searchPostsByTittle(query: String, skip: Int): List<PostWithoutDetails>
     suspend fun readSelectedPost(id: String): Post
+    suspend fun subscribe(newsletter: Newsletter): String
 }

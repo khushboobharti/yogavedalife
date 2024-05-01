@@ -16,6 +16,7 @@ import com.yogaveda.models.Post
 import com.yogaveda.models.PostWithoutDetails
 import com.yogaveda.models.User
 import com.yogaveda.Constants.POSTS_PER_PAGE
+import com.yogaveda.models.Newsletter
 import com.yogaveda.util.Constants.DATABASE_NAME
 import com.yogaveda.util.Constants.MAIN_POSTS_LIMIT
 import kotlinx.coroutines.flow.firstOrNull
@@ -36,6 +37,7 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
 
     private val userCollection = db.getCollection<User>("users")
     private val postCollection = db.getCollection<Post>("posts")
+    private val newsletterCollection = db.getCollection<Newsletter>("newsletter")
 
     override suspend fun addPost(post: Post): Boolean {
         return postCollection.insertOne(post).wasAcknowledged()
@@ -160,5 +162,20 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
 
     override suspend fun readSelectedPost(id: String): Post {
         return postCollection.find(eq(Post::_id.name, id)).toList().first()
+    }
+
+    override suspend fun subscribe(newsletter: Newsletter): String {
+        val result = newsletterCollection
+            .find(eq(Newsletter::email.name, newsletter.email))
+            .toList()
+        return if (result.isNotEmpty()) {
+            "You are already subscribed."
+        } else {
+            val newEmail = newsletterCollection
+                .insertOne(newsletter)
+                .wasAcknowledged()
+            if(newEmail) "Successfully Subscribed!"
+            else "Something went wrong!"
+        }
     }
 }
