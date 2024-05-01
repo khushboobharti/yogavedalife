@@ -30,6 +30,7 @@ import com.yogaveda.Constants.CATEGORY_PARAM
 import com.yogaveda.Constants.POSTS_PER_PAGE
 import com.yogaveda.Constants.QUERY_PARAM
 import com.yogaveda.components.CategoryNavigationItems
+import com.yogaveda.components.LoadingIndicator
 import com.yogaveda.components.OverflowSidePanel
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.Category
@@ -219,7 +220,7 @@ fun SearchPage() {
                 }
             }
         } else {
-            //LoadingIndicator()
+            LoadingIndicator()
         }
         //FooterSection()
     }
