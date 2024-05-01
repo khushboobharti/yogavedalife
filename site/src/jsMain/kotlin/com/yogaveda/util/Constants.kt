@@ -48,4 +48,6 @@ object Id {
     const val linkHrefInput = "linkHrefInput"
     const val linkTitleInput = "linkTitleInput"
     const val adminSearchBar = "adminSearchBar"
+    const val emailInput = "emailInput"
+    const val postContent = "postContent"
 }

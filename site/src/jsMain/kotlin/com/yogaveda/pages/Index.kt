@@ -19,6 +19,7 @@ import com.yogaveda.network.fetchPopularPosts
 import com.yogaveda.network.fetchSponsoredPosts
 import com.yogaveda.sections.HeaderSection
 import com.yogaveda.sections.MainSection
+import com.yogaveda.sections.NewsletterSection
 import com.yogaveda.sections.PostsSection
 import com.yogaveda.sections.SponsoredPostsSection
 import kotlinx.coroutines.launch
@@ -155,5 +156,6 @@ fun HomePage() {
             },
             onClick = {}
         )
+        NewsletterSection(breakpoint = breakpoint)
     }
 }

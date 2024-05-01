@@ -228,14 +228,14 @@ suspend fun fetchSelectedPost(id: String): ApiResponse {
     }
 }
 
-suspend fun subscribeNewsletter(newsletter: Newsletter): String {
+suspend fun subscribeToNewsletter(newsletter: Newsletter): String {
 
     return try {
         val result = window.api.tryPost(
             apiPath = "subscribe-newsletter",
             body = Json.encodeToString(newsletter).encodeToByteArray()
         )?.decodeToString()
-        result.toString()
+        result.toString().replace("\"", "")
     } catch (e: Exception) {
         println(e.message)
         e.message.toString()
