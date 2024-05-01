@@ -2,6 +2,8 @@ package com.yogaveda.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty1
 
 @Serializable
 data class Post(
@@ -33,3 +35,7 @@ data class PostWithoutDetails(
     val main: Boolean = false,
     val sponsored: Boolean = false
 )
+
+operator fun PostWithoutDetails.getValue(value: Nothing?, kProperty1: KProperty<*>): PostWithoutDetails {
+    return this
+}

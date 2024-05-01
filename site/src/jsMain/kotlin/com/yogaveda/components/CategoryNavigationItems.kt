@@ -9,12 +9,14 @@ import com.varabyte.kobweb.compose.ui.modifiers.fontFamily
 import com.varabyte.kobweb.compose.ui.modifiers.fontSize
 import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
 import com.varabyte.kobweb.compose.ui.modifiers.margin
+import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.textDecorationLine
 import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.navigation.Link
 import com.varabyte.kobweb.silk.components.style.toModifier
 import com.yogaveda.models.Category
+import com.yogaveda.navigation.Screen
 import com.yogaveda.styles.CategoryItemStyle
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants
@@ -44,8 +46,8 @@ fun CategoryNavigationItems(
                 .fontFamily(Constants.FONT_FAMILY)
                 .fontSize(16.px)
                 .fontWeight(FontWeight.Medium)
-                .textDecorationLine(TextDecorationLine.None),
-                //.onClick { context.router.navigateTo(Screen.SearchPage.searchByCategory(category)) },
+                .textDecorationLine(TextDecorationLine.None)
+                .onClick { context.router.navigateTo(Screen.SearchPage.searchByCategory(category)) },
             path = "",
             text = category.name
         )

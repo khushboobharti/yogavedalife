@@ -3,11 +3,13 @@ package com.yogaveda.network
 import com.varabyte.kobweb.browser.api
 import com.varabyte.kobweb.compose.http.http
 import com.yogaveda.Constants.AUTHOR_PARAM
+import com.yogaveda.Constants.CATEGORY_PARAM
 import com.yogaveda.Constants.POST_ID_PARAM
 import com.yogaveda.Constants.QUERY_PARAM
 import com.yogaveda.Constants.SKIP_PARAM
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.ApiResponse
+import com.yogaveda.models.Category
 import com.yogaveda.models.Newsletter
 import com.yogaveda.models.Post
 import com.yogaveda.models.RandomJoke
@@ -207,6 +209,23 @@ suspend fun searchPostsByTitle(
     try {
         val result = window.api.tryGet(
             apiPath = "searchposts?${QUERY_PARAM}=$query&${SKIP_PARAM}=$skip"
+        )?.decodeToString()
+        onSuccess(result.parseData())
+    } catch (e: Exception) {
+        println(e.message)
+        onError(e)
+    }
+}
+
+suspend fun searchPostsByCategory(
+    category: Category,
+    skip: Int,
+    onSuccess: (ApiListResponse) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    try {
+        val result = window.api.tryGet(
+            apiPath = "searchpostsbycategory?${CATEGORY_PARAM}=${category.name}&${SKIP_PARAM}=$skip"
         )?.decodeToString()
         onSuccess(result.parseData())
     } catch (e: Exception) {

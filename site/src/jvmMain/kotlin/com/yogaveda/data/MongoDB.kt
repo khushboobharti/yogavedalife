@@ -16,6 +16,7 @@ import com.yogaveda.models.Post
 import com.yogaveda.models.PostWithoutDetails
 import com.yogaveda.models.User
 import com.yogaveda.Constants.POSTS_PER_PAGE
+import com.yogaveda.models.Category
 import com.yogaveda.models.Newsletter
 import com.yogaveda.util.Constants.DATABASE_NAME
 import com.yogaveda.util.Constants.MAIN_POSTS_LIMIT
@@ -130,6 +131,19 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
         return postCollection
             .withDocumentClass(PostWithoutDetails::class.java)
             .find(Filters.regex(PostWithoutDetails::title.name, regexQuery.pattern))
+            .sort(descending(PostWithoutDetails::date.name))
+            .skip(skip)
+            .limit(POSTS_PER_PAGE)
+            .toList()
+    }
+
+    override suspend fun searchPostsByCategory(
+        category: Category,
+        skip: Int
+    ): List<PostWithoutDetails> {
+        return postCollection
+            .withDocumentClass(PostWithoutDetails::class.java)
+            .find(eq(PostWithoutDetails::category.name, category.name))
             .sort(descending(PostWithoutDetails::date.name))
             .skip(skip)
             .limit(POSTS_PER_PAGE)

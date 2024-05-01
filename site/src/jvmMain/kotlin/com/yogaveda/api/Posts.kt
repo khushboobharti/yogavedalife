@@ -7,9 +7,12 @@ import com.varabyte.kobweb.api.http.Request
 import com.varabyte.kobweb.api.http.Response
 import com.varabyte.kobweb.api.http.setBodyText
 import com.yogaveda.Constants.AUTHOR_PARAM
+import com.yogaveda.Constants.CATEGORY_PARAM
+import com.yogaveda.Constants.DEFAULT_CATEGORY
 import com.yogaveda.data.MongoDB
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.ApiResponse
+import com.yogaveda.models.Category
 import com.yogaveda.models.Post
 import com.yogaveda.util.Constants.POST_ID_PARAM
 import com.yogaveda.util.Constants.QUERY_PARAM
@@ -126,6 +129,21 @@ suspend fun searchPostsByTitle(context: ApiContext) {
         val skip = context.req.params[SKIP_PARAM]?.toInt() ?: 0
         val posts = context.data.getValue<MongoDB>().searchPostsByTittle(
             query = query,
+            skip = skip
+        )
+        context.res.setBody(ApiListResponse.Success(data = posts))
+    } catch (e: Exception) {
+        context.res.setBody(ApiListResponse.Error(message = e.message.toString()))
+    }
+}
+
+@Api(routeOverride = "searchpostsbycategory")
+suspend fun searchPostsByCategory(context: ApiContext) {
+    try {
+        val category = Category.valueOf(context.req.params[CATEGORY_PARAM] ?: DEFAULT_CATEGORY)
+        val skip = context.req.params[SKIP_PARAM]?.toInt() ?: 0
+        val posts = context.data.getValue<MongoDB>().searchPostsByCategory(
+            category = category,
             skip = skip
         )
         context.res.setBody(ApiListResponse.Success(data = posts))
