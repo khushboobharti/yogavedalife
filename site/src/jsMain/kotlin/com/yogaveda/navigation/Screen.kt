@@ -29,5 +29,7 @@ sealed class Screen(val route: String) {
 
     object HomePage : Screen(route = "/")
 
-    object PostDetailPage : Screen(route = "/post/{$POST_ID_PARAM}")
+    object PostPage : Screen(route = "/posts/post") {
+        fun getPost(id: String) = "$route?${POST_ID_PARAM}=$id"
+    }
 }
