@@ -40,6 +40,7 @@ import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
 import com.yogaveda.Constants.POST_ID_PARAM
 import com.yogaveda.components.CategoryNavigationItems
+import com.yogaveda.components.ErrorView
 import com.yogaveda.components.LoadingIndicator
 import com.yogaveda.components.OverflowSidePanel
 import com.yogaveda.models.ApiResponse
@@ -109,9 +110,9 @@ fun PostPage() {
                 scope.launch {
                     delay(50)
                     try {
-                        js("hljs.highlightAll()") as Unit
+                        val js = js("hljs.highlightAll()")
                     } catch (e: Exception) {
-                        println(e.message)
+                       println(e.toString())
                     }
                 }
             }
@@ -121,7 +122,7 @@ fun PostPage() {
             }
 
             is ApiResponse.Error -> {
-                //ErrorView(message = (apiResponse as ApiResponse.Error).message)
+                ErrorView(message = (apiResponse as ApiResponse.Error).message)
             }
         }
         if(showSections) {
