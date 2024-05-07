@@ -10,6 +10,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.fontSize
 import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
 import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
+import com.varabyte.kobweb.compose.ui.modifiers.onTouchEnd
 import com.varabyte.kobweb.compose.ui.modifiers.textDecorationLine
 import com.varabyte.kobweb.compose.ui.thenIf
 import com.varabyte.kobweb.core.rememberPageContext
@@ -47,6 +48,7 @@ fun CategoryNavigationItems(
                 .fontSize(16.px)
                 .fontWeight(FontWeight.Medium)
                 .textDecorationLine(TextDecorationLine.None)
+                .onTouchEnd { context.router.navigateTo(Screen.SearchPage.searchByCategory(category)) }
                 .onClick { context.router.navigateTo(Screen.SearchPage.searchByCategory(category)) },
             path = "",
             text = category.name

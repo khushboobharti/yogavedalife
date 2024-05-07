@@ -46,6 +46,7 @@ import com.yogaveda.components.OverflowSidePanel
 import com.yogaveda.models.ApiResponse
 import com.yogaveda.models.Post
 import com.yogaveda.network.fetchSelectedPost
+import com.yogaveda.sections.FooterSection
 import com.yogaveda.sections.HeaderSection
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
@@ -126,7 +127,7 @@ fun PostPage() {
             }
         }
         if(showSections) {
-            //FooterSection()
+            FooterSection()
         }
     }
 }

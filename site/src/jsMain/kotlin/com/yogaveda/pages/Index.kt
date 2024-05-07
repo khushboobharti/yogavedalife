@@ -19,6 +19,7 @@ import com.yogaveda.network.fetchLatestPosts
 import com.yogaveda.network.fetchMainPosts
 import com.yogaveda.network.fetchPopularPosts
 import com.yogaveda.network.fetchSponsoredPosts
+import com.yogaveda.sections.FooterSection
 import com.yogaveda.sections.HeaderSection
 import com.yogaveda.sections.MainSection
 import com.yogaveda.sections.NewsletterSection
@@ -164,5 +165,6 @@ fun HomePage() {
             onClick = { context.router.navigateTo(Screen.PostPage.getPost(id = it))}
         )
         NewsletterSection(breakpoint = breakpoint)
+        FooterSection()
     }
 }

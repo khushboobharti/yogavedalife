@@ -35,8 +35,10 @@ import com.yogaveda.components.OverflowSidePanel
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.Category
 import com.yogaveda.models.PostWithoutDetails
+import com.yogaveda.navigation.Screen
 import com.yogaveda.network.searchPostsByCategory
 import com.yogaveda.network.searchPostsByTitle
+import com.yogaveda.sections.FooterSection
 import com.yogaveda.sections.HeaderSection
 import com.yogaveda.sections.PostsSection
 import com.yogaveda.util.Constants.FONT_FAMILY
@@ -95,7 +97,9 @@ fun SearchPage() {
                         if (response.data.size >= POSTS_PER_PAGE) showMorePosts = true
                     }
                 },
-                onError = {}
+                onError = {
+                    println(it.message)
+                }
             )
         } else if (hasQueryParam) {
             (document.getElementById(Id.adminSearchBar) as HTMLInputElement).value = value
@@ -111,7 +115,9 @@ fun SearchPage() {
                         if (response.data.size >= POSTS_PER_PAGE) showMorePosts = true
                     }
                 },
-                onError = {}
+                onError = {
+                    println(it.message)
+                }
             )
         }
     }
@@ -203,7 +209,7 @@ fun SearchPage() {
                             }
                         }
                     },
-                    onClick = { /*context.router.navigateTo(Screen.PostPage.getPost(id = it))*/ }
+                    onClick = { context.router.navigateTo(Screen.PostPage.getPost(id = it)) }
                 )
             } else {
                 Box(
@@ -222,6 +228,6 @@ fun SearchPage() {
         } else {
             LoadingIndicator()
         }
-        //FooterSection()
+        FooterSection()
     }
 }
