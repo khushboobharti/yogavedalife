@@ -1,14 +1,19 @@
+import com.varabyte.kobweb.gradle.core.ksp.applyKspPlugin
+import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.mongodb.realm)
+    alias(libs.plugins.serialization.plugin)
 }
 
 kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "11"
+                jvmTarget = "17"
             }
         }
     }
@@ -27,6 +32,22 @@ kotlin {
     sourceSets {
         
         androidMain.dependencies {
+            // Added later
+            implementation(libs.core.ktx)
+            //implementation(libs.compose.activity)
+            //implementation(platform(libs.compose.bom))
+            //implementation(libs.compose.ui)
+            //implementation(libs.compose.ui.graphics)
+            //implementation(libs.compose.ui.tooling.preview)
+            //implementation(libs.androidx.material3)
+
+            // Dependencies added in toml
+            implementation(libs.androidx.navigation.compose)
+            implementation(libs.kotlinx.coroutines)
+            implementation(libs.mongodb.sync)
+            implementation(libs.coil.compose)
+            implementation(libs.kotlinx.serialization)
+
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.material3)
@@ -40,8 +61,10 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(projects.shared)
+            implementation(libs.androidx.ui.text.google.fonts)
         }
     }
+
 }
 
 android {
@@ -61,24 +84,33 @@ android {
     }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "DebugProbesKt.bin"
+            excludes += "/META-INF/**"
+            excludes += "**/kotlin/**"
         }
     }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+    buildToolsVersion = "34.0.0"
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
     }
 }
 
 dependencies {
-    implementation(libs.androidx.ui.text.google.fonts)
+    implementation(project(":site"))
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}

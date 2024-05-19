@@ -1,4 +1,5 @@
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
+import com.varabyte.kobweb.gradle.core.kmp.jvmTarget
 import kotlinx.html.link
 import kotlinx.html.script
 
@@ -33,8 +34,6 @@ kobweb {
                     href = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
                 }
             }
-
-
         }
     }
 }

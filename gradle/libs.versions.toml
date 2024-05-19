@@ -3,11 +3,11 @@ android-compileSdk = "34"
 android-minSdk = "24"
 android-targetSdk = "34"
 jetbrains-compose = "1.6.2"
-kobweb = "0.15.0"
+kobweb = "0.16.0"
 kotlin = "1.9.20"
-coroutines = "1.7.3"
+coroutines = "1.8.1"
 material3 = "1.2.1"
-mongodb = "4.11.0"
+
 serialization = "1.6.0"
 agp = "8.4.0"
 kotlin-version = "1.9.0"
@@ -20,9 +20,17 @@ junit-version = "1.1.5"
 espresso-core-version = "3.5.1"
 appcompat = "1.6.1"
 material = "1.12.0"
-compose = "1.6.7"
+compose-bom = "2023.08.00"
+compose = "2.7.7"
+compose-ui = "1.6.7"
+navigation = "2.7.7"
 androidx-activityCompose = "1.9.0"
 uiTextGoogleFonts = "1.6.7"
+
+mongodb = "4.11.0"
+mongoSync = "1.7.1"
+
+coil = "2.3.0"
 
 [libraries]
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
@@ -43,12 +51,18 @@ ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit-
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core-version" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines"}
+
+#Mongo
+mongodb-sync = { module = "io.realm.kotlin:library-sync", version.ref = "mongoSync"}
 
 #Compose
-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose-ui" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose-ui" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation"}
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref="coil"}
 
 [plugins]
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
@@ -60,3 +74,4 @@ serialization-plugin = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-version" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+mongodb-realm = { id = "io.realm.kotlin", version.ref = "mongoSync"}
