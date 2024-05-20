@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.navigation.compose.rememberNavController
+import com.yogaveda.navigation.SetupNavGraph
 import com.yogaveda.ui.theme.AppTheme
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 class MainActivity : ComponentActivity() {
@@ -12,7 +15,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                App()
+                val navController = rememberNavController()
+                SetupNavGraph(navController)
             }
         }
     }
@@ -21,5 +25,15 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App()
+    //App()
+    YogaVedaApp()
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+@Preview
+fun YogaVedaApp() {
+    AppTheme {
+        
+    }
 }
