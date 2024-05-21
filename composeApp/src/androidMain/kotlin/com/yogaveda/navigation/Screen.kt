@@ -2,7 +2,7 @@ package com.yogaveda.navigation
 
 import CATEGORY_ARGUMENT
 import POST_ID_ARGUMENT
-import com.yogaveda.models.Category as PostCategory
+import com.yogaveda.model.Category as PostCategory
 
 sealed class Screen(val route: String) {
     data object Home : Screen(route = "home_screen")

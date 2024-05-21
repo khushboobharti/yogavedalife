@@ -1,6 +1,3 @@
-import com.varabyte.kobweb.gradle.core.ksp.applyKspPlugin
-import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
-
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.application)
@@ -44,6 +41,7 @@ kotlin {
             // Dependencies added in toml
             implementation(libs.androidx.navigation.compose)
             implementation(libs.kotlinx.coroutines)
+            implementation(libs.mongodb.base)
             implementation(libs.mongodb.sync)
             implementation(libs.coil.compose)
             implementation(libs.kotlinx.serialization)
@@ -84,9 +82,9 @@ android {
     }
     packaging {
         resources {
-            excludes += "DebugProbesKt.bin"
-            excludes += "/META-INF/**"
-            excludes += "**/kotlin/**"
+            //excludes += "DebugProbesKt.bin"
+            //excludes += "/META-INF/**"
+            //excludes += "**/kotlin/**"
         }
     }
 
@@ -106,7 +104,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":site"))
+    //implementation(project(":shared"))
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

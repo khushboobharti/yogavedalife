@@ -1,5 +1,5 @@
+
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
-import com.varabyte.kobweb.gradle.core.kmp.jvmTarget
 import kotlinx.html.link
 import kotlinx.html.script
 
@@ -49,6 +49,7 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
                 implementation(libs.kotlinx.serialization)
+                implementation(project(":shared"))
             }
         }
 
@@ -66,7 +67,7 @@ kotlin {
             dependencies {
                 implementation(libs.kobweb.api)
                 implementation(libs.mongodb.kotlin)
-                implementation(libs.kotlinx.serialization)
+                 implementation(libs.kotlinx.serialization)
             }
         }
     }

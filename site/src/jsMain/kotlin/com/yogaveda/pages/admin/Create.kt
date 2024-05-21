@@ -2,9 +2,9 @@ package com.yogaveda.pages.admin
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.varabyte.kobweb.compose.css.Cursor
@@ -549,7 +549,7 @@ fun ThumbnailUploader(
                 .onClick {
                     document.loadDataUrlFromDisk(
                         accept = "image/png, image/jpeg",
-                        onLoaded = {
+                        onLoad = {
                             onThumbnailSelect(filename, it)
                         }
                     )

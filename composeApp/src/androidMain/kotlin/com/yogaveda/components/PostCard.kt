@@ -26,11 +26,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.yogaveda.model.Category
+import com.yogaveda.model.Post
 import com.yogaveda.model.RequestState
-import com.yogaveda.models.Category
-import com.yogaveda.models.Post
 import com.yogaveda.util.convertLongToDate
 import com.yogaveda.util.decodeThumbnailImage
+
 
 @Composable
 fun PostCard(
@@ -91,7 +92,7 @@ fun PostCard(
                 )
                 SuggestionChip(
                     onClick = { },
-                    label = { Text(text = Category.valueOf(post.category.name).name) }
+                    label = { Text(text = Category.valueOf(post.category).name) }
                 )
             }
         }

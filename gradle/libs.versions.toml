@@ -28,7 +28,7 @@ androidx-activityCompose = "1.9.0"
 uiTextGoogleFonts = "1.6.7"
 
 mongodb = "4.11.0"
-mongoSync = "1.7.1"
+mongoSync = "1.15.0"
 
 coil = "2.3.0"
 
@@ -54,6 +54,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines"}
 
 #Mongo
+mongodb-base = { module = "io.realm.kotlin:library-base", version.ref = "mongoSync"}
 mongodb-sync = { module = "io.realm.kotlin:library-sync", version.ref = "mongoSync"}
 
 #Compose

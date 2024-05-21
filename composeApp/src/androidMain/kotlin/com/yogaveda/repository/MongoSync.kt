@@ -1,7 +1,7 @@
 package com.yogaveda.repository
 
 import MONGODB_APP_ID
-import com.yogaveda.model.PostSync
+import com.yogaveda.model.Post
 import com.yogaveda.model.RequestState
 import io.realm.kotlin.Realm
 import io.realm.kotlin.log.LogLevel
@@ -22,10 +22,10 @@ object MongoSync: MongoSyncRepository {
     }
     override fun configureTheRealm() {
         if(user != null) {
-            val config = SyncConfiguration.Builder(user, setOf(PostSync::class))
+            val config = SyncConfiguration.Builder(user, setOf(Post::class))
                 .initialSubscriptions {
                     add(
-                        query = it.query(PostSync::class),
+                        query = it.query(Post::class),
                         name = "Blog Posts"
                     )
                 }
@@ -35,10 +35,10 @@ object MongoSync: MongoSyncRepository {
         }
     }
 
-    override fun readAllPosts(): Flow<RequestState<List<PostSync>>> {
+    override fun readAllPosts(): Flow<RequestState<List<Post>>> {
         return if(user != null) {
             try {
-                realm.query(PostSync::class)
+                realm.query(Post::class)
                     .asFlow()
                     .map {
                         RequestState.Success(data = it.list)

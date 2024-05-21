@@ -3,7 +3,6 @@ package com.yogaveda.models
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty1
 
 @Serializable
 data class Post(

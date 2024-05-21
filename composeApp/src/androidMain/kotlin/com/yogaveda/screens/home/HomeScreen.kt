@@ -1,9 +1,12 @@
 package com.yogaveda.screens.home
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -13,33 +16,22 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.yogaveda.components.PostCardsView
+import com.yogaveda.components.PostCard
+import com.yogaveda.model.Post
 import com.yogaveda.model.RequestState
-import com.yogaveda.models.Category
-import com.yogaveda.models.Post
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    posts: RequestState<List<Post>>,
-    searchedPosts: RequestState<List<Post>>,
-    query: String,
-    searchBarOpened: Boolean,
-    active: Boolean,
-    onActiveChange: (Boolean) -> Unit,
-    onQueryChange: (String) -> Unit,
-    onCategorySelect: (Category) -> Unit,
-    onSearchBarChange: (Boolean) -> Unit,
-    onSearch: (String) -> Unit,
-    onPostClick: (String) -> Unit
+    posts : RequestState<List<Post>>
 ) {
     val scope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -66,8 +58,8 @@ fun HomeScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            onSearchBarChange(true)
-                            onActiveChange(true)
+                            /*onSearchBarChange(true)
+                            onActiveChange(true)*/
                         }
                     ) {
                         Icon(
@@ -78,7 +70,7 @@ fun HomeScreen(
                     }
                 }
             )
-            if (searchBarOpened) {
+            /*if (searchBarOpened) {
                 SearchBar(
                     query = query,
                     onQueryChange = onQueryChange,
@@ -111,15 +103,31 @@ fun HomeScreen(
                         onPostClick = onPostClick
                     )
                 }
-            }
+            }*/
         }
     ) {
-        Text(text = "Hi")
-        PostCardsView(
+        if(posts is RequestState.Success) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = it.calculateTopPadding())
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(
+                    items = posts.data,
+                    key = { post -> post._id }
+                ) { post ->
+                    PostCard(post = post, onPostClick = {  })
+                }
+            }
+        }
+        //Text(text = "Hi")
+        /*PostCardsView(
             posts = posts,
             topMargin = it.calculateTopPadding(),
             hideMessage = true,
             onPostClick = onPostClick
-        )
+        )*/
     }
 }
