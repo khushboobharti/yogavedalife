@@ -36,10 +36,6 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun initializeRealm() {
-
-    }
-
     private suspend fun fetchAllPosts() {
         withContext(Dispatchers.Main) {
             _allPosts.value = RequestState.Loading

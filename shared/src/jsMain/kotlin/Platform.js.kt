@@ -1,3 +1,5 @@
-actual fun getPlatform(): Platform {
-    TODO("Not yet implemented")
+class JsPlatform: Platform {
+    override val name: String = "Javascript : Web platform"
 }
+
+actual fun getPlatform(): Platform = JsPlatform()
