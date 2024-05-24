@@ -1,9 +1,11 @@
 package com.yogaveda.repository
 
 import MONGODB_APP_ID
+import com.yogaveda.model.Category
 import com.yogaveda.model.Post
 import com.yogaveda.model.RequestState
 import io.realm.kotlin.Realm
+import io.realm.kotlin.ext.query
 import io.realm.kotlin.log.LogLevel
 import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
@@ -44,10 +46,42 @@ object MongoSync: MongoSyncRepository {
                         RequestState.Success(data = it.list)
                     }
             } catch (e: Exception) {
-                flow { RequestState.Error(Exception(e)) }
+                flow { emit(RequestState.Error(Exception(e))) }
             }
         } else {
-            flow { RequestState.Error(Exception("User not found")) }
+            flow { emit(RequestState.Error(Exception("User not found"))) }
+        }
+    }
+
+    override fun searchPostsByTitle(query: String): Flow<RequestState<List<Post>>> {
+        return if(user != null) {
+            try {
+                realm.query<Post>(query = "title CONTAINS[c] $0", query)
+                    .asFlow()
+                    .map {
+                        RequestState.Success(data = it.list)
+                    }
+            } catch (e: Exception) {
+                flow { emit(RequestState.Error(Exception(e))) }
+            }
+        } else {
+            flow { emit(RequestState.Error(Exception("User not found"))) }
+        }
+    }
+
+    override fun searchPostsByCategory(category: Category): Flow<RequestState<List<Post>>> {
+        return if(user != null) {
+            try {
+                realm.query<Post>(query = "category == $0", category.name)
+                    .asFlow()
+                    .map {
+                        RequestState.Success(data = it.list)
+                    }
+            } catch (e: Exception) {
+                flow { emit(RequestState.Error(Exception(e))) }
+            }
+        } else {
+            flow { emit(RequestState.Error(Exception("User not found"))) }
         }
     }
 }

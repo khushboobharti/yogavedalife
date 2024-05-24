@@ -124,20 +124,20 @@ fun PostCardsView(
                     }
                 }
             } else {
-                //EmptyUI()
+                EmptyUI()
             }
         }
 
         is RequestState.Error -> {
-            //EmptyUI(message = posts.error.message.toString())
+            EmptyUI(message = posts.exception.message.toString())
         }
 
         is RequestState.Idle -> {
-            //EmptyUI(hideMessage = hideMessage)
+            EmptyUI(hideMessage = hideMessage)
         }
 
         is RequestState.Loading -> {
-            //EmptyUI(loading = true)
+            EmptyUI(loading = true)
         }
     }
 }

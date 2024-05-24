@@ -50,9 +50,9 @@ class HomeViewModel : ViewModel() {
             withContext(Dispatchers.Main) {
                 _searchedPosts.value = RequestState.Loading
             }
-            /*MongoSync.searchPostsByTitle(query = query).collectLatest {
+            MongoSync.searchPostsByTitle(query = query).collectLatest {
                 _searchedPosts.value = it
-            }*/
+            }
         }
     }
 
