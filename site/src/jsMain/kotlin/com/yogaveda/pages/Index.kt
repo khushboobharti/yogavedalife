@@ -1,6 +1,13 @@
 package com.yogaveda.pages
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.ui.Alignment
@@ -49,7 +56,7 @@ fun HomePage() {
             onSuccess = {
                 mainPosts = it
             },
-            onError = {}
+            onError = { print(it) }
         )
         fetchLatestPosts(
             skip = latestPostsToSkip,
@@ -60,7 +67,7 @@ fun HomePage() {
                     if (it.data.size >= POSTS_PER_PAGE) showMoreLatestPosts = true
                 }
             },
-            onError = {}
+            onError = { print(it) }
         )
         fetchSponsoredPosts(
             onSuccess = {
@@ -68,7 +75,7 @@ fun HomePage() {
                     sponsoredPosts.addAll(it.data)
                 }
             },
-            onError = {}
+            onError = { print(it) }
         )
         fetchPopularPosts(
             skip = popularPostsToSkip,
@@ -79,7 +86,7 @@ fun HomePage() {
                     if (it.data.size >= POSTS_PER_PAGE) showMorePopularPosts = true
                 }
             },
-            onError = {}
+            onError = { print(it) }
         )
     }
 

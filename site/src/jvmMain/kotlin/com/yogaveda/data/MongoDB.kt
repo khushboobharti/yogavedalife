@@ -12,12 +12,12 @@ import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.varabyte.kobweb.api.data.add
 import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
-import com.yogaveda.models.Post
-import com.yogaveda.models.PostWithoutDetails
-import com.yogaveda.models.User
 import com.yogaveda.Constants.POSTS_PER_PAGE
 import com.yogaveda.models.Category
 import com.yogaveda.models.Newsletter
+import com.yogaveda.models.Post
+import com.yogaveda.models.PostWithoutDetails
+import com.yogaveda.models.User
 import com.yogaveda.util.Constants.DATABASE_NAME
 import com.yogaveda.util.Constants.MAIN_POSTS_LIMIT
 import kotlinx.coroutines.flow.firstOrNull
@@ -30,14 +30,12 @@ fun initMongoDB(context: InitApiContext) {
 
 class MongoDB(private val context: InitApiContext) : MongoRepository {
 
-    // Replace the placeholder with your MongoDB deployment's connection string
-    private val host = System.getenv("KOBWEB_MONGO_SERVER") ?: "localhost"
-    private val uri = "mongodb://$host:27017"
+    private val uri = System.getenv("MONGODB_SERVER") ?: "mongodb://localhost:27017"
     private val mongoClient = MongoClient.create(uri)
     private val db = mongoClient.getDatabase(DATABASE_NAME)
 
-    private val userCollection = db.getCollection<User>("users")
-    private val postCollection = db.getCollection<Post>("posts")
+    private val userCollection = db.getCollection<User>("user")
+    private val postCollection = db.getCollection<Post>("post")
     private val newsletterCollection = db.getCollection<Newsletter>("newsletter")
 
     override suspend fun addPost(post: Post): Boolean {

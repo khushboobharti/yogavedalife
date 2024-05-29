@@ -1,6 +1,7 @@
 package com.yogaveda.navigation
 
 import CATEGORY_ARGUMENT
+import SHOW_SECTIONS_PARAM
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +16,7 @@ import androidx.navigation.navArgument
 import com.yogaveda.model.Category
 import com.yogaveda.screens.category.CategoryScreen
 import com.yogaveda.screens.category.CategoryViewModel
+import com.yogaveda.screens.detail.DetailsScreen
 import com.yogaveda.screens.home.HomeScreen
 import com.yogaveda.screens.home.HomeViewModel
 
@@ -51,7 +53,7 @@ fun SetupNavGraph(
                     }
                 },
                 onSearch = viewModel::searchPostsByTitle,
-                onPostClick = {}
+                onPostClick = { postId -> navHostController.navigate(Screen.Details.passPostId(postId)) }
             )
         }
         composable(
@@ -66,9 +68,20 @@ fun SetupNavGraph(
                 posts = viewModel.categoryPosts.value,
                 category = Category.valueOf(selectedCategory),
                 onBackPress = { navHostController.popBackStack() },
-                onPostClick = {}
+                onPostClick = { postId -> navHostController.navigate(Screen.Details.passPostId(postId)) }
             )
         }
-        composable(route = Screen.Details.route) { TODO() }
+        composable(
+            route = Screen.Details.route,
+            arguments = listOf(navArgument(name = "postId") {
+                type = NavType.StringType
+            })
+        ) {
+            val postId = it.arguments?.getString("postId")
+            DetailsScreen(
+                url = "http://10.0.2.2:8080/posts/post?postId=$postId&$SHOW_SECTIONS_PARAM=false",
+                onBackPress = { navHostController.popBackStack() }
+            )
+        }
     }
 }

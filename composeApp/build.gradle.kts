@@ -15,28 +15,11 @@ kotlin {
         }
     }
     
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "ComposeApp"
-            isStatic = true
-        }
-    }
-    
     sourceSets {
         
         androidMain.dependencies {
             // Added later
             implementation(libs.core.ktx)
-            //implementation(libs.compose.activity)
-            //implementation(platform(libs.compose.bom))
-            //implementation(libs.compose.ui)
-            //implementation(libs.compose.ui.graphics)
-            //implementation(libs.compose.ui.tooling.preview)
-            //implementation(libs.androidx.material3)
 
             // Dependencies added in toml
             implementation(libs.androidx.navigation.compose)
@@ -80,13 +63,6 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
-    packaging {
-        resources {
-            //excludes += "DebugProbesKt.bin"
-            //excludes += "/META-INF/**"
-            //excludes += "**/kotlin/**"
-        }
-    }
 
     buildTypes {
         getByName("release") {
@@ -101,10 +77,6 @@ android {
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
     }
-}
-
-dependencies {
-    //implementation(project(":shared"))
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {

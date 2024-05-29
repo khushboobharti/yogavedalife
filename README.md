@@ -56,3 +56,13 @@ https://bitspittle.dev/blog/2022/staticdeploy
 ## Pushing the docker image to Docker hub
 docker tag local-image:tagname new-repo:tagname
 docker push raulthakur/yogaveda-server:tagname
+
+Dump and Restore data
+
+Backup dump
+mongodump --uri=mongodb://localhost:27017 --db=<old_db> --out=mongodump/
+
+Restore from dump
+mongorestore --uri=mongodb://localhost:27017 --db=<new_db> ~/mongodump/
+
+Read more: https://www.mongodb.com/docs/manual/tutorial/backup-and-restore-tools/

@@ -2,14 +2,15 @@
 android-compileSdk = "34"
 android-minSdk = "24"
 android-targetSdk = "34"
+composeWeb = "1.1.1"
 jetbrains-compose = "1.6.2"
 kobweb = "0.17.3"
-kotlin = "1.9.20"
+kotlin = "1.9.23"
 coroutines = "1.8.1"
 material3 = "1.2.1"
 
 serialization = "1.6.0"
-agp = "8.4.0"
+agp = "8.4.1"
 kotlin-version = "1.9.0"
 junit = "4.13.2"
 runner = "1.0.2"
@@ -31,15 +32,25 @@ mongodb = "4.11.0"
 mongoSync = "1.15.0"
 
 coil = "2.3.0"
+uiGraphicsAndroid = "1.6.7"
 
 [libraries]
-androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+
+# Kobweb
 kobweb-api = { module = "com.varabyte.kobweb:kobweb-api", version.ref = "kobweb" }
 kobweb-core = { module = "com.varabyte.kobweb:kobweb-core ", version.ref = "kobweb" }
-kobweb-silk = { module = "com.varabyte.kobweb:kobweb-silk", version.ref = "kobweb" }
+kobweb-silk-core = { module = "com.varabyte.kobweb:kobweb-silk", version.ref = "kobweb" }
+
+kobweb-silk-icons-fa = { module = "com.varabyte.kobwebx:silk-icons-fa", version.ref = "kobweb" }
+kobweb-silk-icons-mdi = { module = "com.varabyte.kobwebx:silk-icons-mdi", version.ref = "kobweb" }
+
 kobwebx-markdown = { module = "com.varabyte.kobwebx:kobwebx-markdown", version.ref = "kobweb" }
-silk-icons-fa = { module = "com.varabyte.kobwebx:silk-icons-fa", version.ref = "kobweb" }
-silk-icons-mdi = { module = "com.varabyte.kobwebx:silk-icons-mdi", version.ref = "kobweb" }
+
+androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+compose-web = { module = "org.jetbrains.compose.web:compose-web", version.ref = "composeWeb" }
+
+
+
 mongodb-kotlin = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "mongodb" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -64,6 +75,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation"}
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref="coil"}
+androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "uiGraphicsAndroid" }
 
 [plugins]
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }

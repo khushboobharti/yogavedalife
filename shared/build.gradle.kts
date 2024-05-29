@@ -1,9 +1,18 @@
+import com.varabyte.kobweb.gradle.library.util.configAsKobwebLibrary
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kobweb.library)
     alias(libs.plugins.android.library)
+    alias(libs.plugins.serialization.plugin)
 }
 
 kotlin {
+
+    configAsKobwebLibrary(includeServer = true)
+
+    js(IR) { browser() }
+    jvm()
     androidTarget {
         compilations.all {
             kotlinOptions {
@@ -12,17 +21,32 @@ kotlin {
         }
     }
 
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
-
-    js(IR) { browser() }
-    jvm()
-
     sourceSets {
-        commonMain.dependencies {
-            // put your Multiplatform dependencies here
+        val commonMain by getting {
+            dependencies {
+                implementation(libs.kotlinx.serialization)
+            }
         }
+
+        val jsMain by getting {
+            dependencies {
+                implementation(libs.kobweb.core)
+                implementation(libs.kobweb.silk.core)
+                implementation(libs.kobweb.silk.icons.fa)
+            }
+        }
+
+        val jvmMain by getting {
+            dependencies {}
+        }
+
+        val androidMain by getting {
+            dependencies {}
+        }
+    }
+
+    repositories {
+        maven("https://us-central1-maven.pkg.dev/varabyte-repos/public")
     }
 }
 
@@ -32,32 +56,9 @@ android {
 
     defaultConfig {
         minSdk = 24
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-}
-
-dependencies {
-
-    implementation(libs.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }

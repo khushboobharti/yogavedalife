@@ -1,5 +1,6 @@
 package com.yogaveda.api
 
+import DEFAULT_CATEGORY
 import com.varabyte.kobweb.api.Api
 import com.varabyte.kobweb.api.ApiContext
 import com.varabyte.kobweb.api.data.getValue
@@ -8,7 +9,6 @@ import com.varabyte.kobweb.api.http.Response
 import com.varabyte.kobweb.api.http.setBodyText
 import com.yogaveda.Constants.AUTHOR_PARAM
 import com.yogaveda.Constants.CATEGORY_PARAM
-import com.yogaveda.Constants.DEFAULT_CATEGORY
 import com.yogaveda.data.MongoDB
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.ApiResponse
@@ -53,9 +53,10 @@ suspend fun readMainPosts(context: ApiContext) {
     try {
         val skip = context.req.params[SKIP_PARAM]?.toInt() ?: 0
         val posts = context.data.getValue<MongoDB>().readMainPosts(skip = skip)
+        context.logger.debug("readmainposts: ${posts.first().title}")
         context.res.setBody(ApiListResponse.Success(posts))
     } catch (e: Exception) {
-        e.message?.let { context.logger.error(it) }
+        e.message?.let { context.logger.error("readmainposts: $it") }
         context.res.setBody(ApiListResponse.Error(message = e.message.toString()))
     }
 }

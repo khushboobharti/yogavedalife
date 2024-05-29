@@ -124,6 +124,7 @@ suspend fun fetchMainPosts(
         val result = window.api.tryGet(
             apiPath = "readmainposts?$SKIP_PARAM=$skip",
         )?.decodeToString()
+        println(result)
         onSuccess(result.parseData())
     } catch (e: Exception) {
         onError(e)
@@ -139,6 +140,7 @@ suspend fun fetchLatestPosts(
         val result = window.api.tryGet(
             apiPath = "readlatestposts?$SKIP_PARAM=$skip",
         )?.decodeToString()
+        println(result)
         onSuccess(result.parseData())
     } catch (e: Exception) {
         onError(e)

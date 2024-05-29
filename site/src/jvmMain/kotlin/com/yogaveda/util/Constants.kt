@@ -1,7 +1,7 @@
 package com.yogaveda.util
 
 object Constants {
-    const val DATABASE_NAME = "yogaveda_db"
+    const val DATABASE_NAME = "YogaVeda"
 
     const val QUERY_PARAM = "query"
     const val SKIP_PARAM = "skip"

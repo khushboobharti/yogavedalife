@@ -1,5 +1,6 @@
 package com.yogaveda.pages.posts
 
+import SHOW_SECTIONS_PARAM
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -75,9 +76,12 @@ fun PostPage() {
     }
 
     LaunchedEffect(key1 = context.route) {
-        /*showSections = if (context.route.params.containsKey(SHOW_SECTIONS_PARAM)) {
+        showSections = if (context.route.params.containsKey(SHOW_SECTIONS_PARAM)) {
             context.route.params.getValue(SHOW_SECTIONS_PARAM).toBoolean()
-        } else true*/
+        } else true
+
+        println("showSections: $showSections")
+
         if (hasPostIdParam) {
             val postId = context.route.params.getValue(POST_ID_PARAM)
             apiResponse = fetchSelectedPost(id = postId)
