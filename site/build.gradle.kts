@@ -50,6 +50,7 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(libs.kotlinx.serialization)
                 implementation(project(":shared"))
+
             }
         }
 
@@ -59,14 +60,25 @@ kotlin {
                 implementation(libs.kobweb.core)
                 implementation(libs.kobweb.silk.core)
                 implementation(libs.kobweb.silk.icons.fa)
-                implementation(libs.kotlinx.serialization)
+                //implementation(libs.kotlinx.serialization)
+                implementation(libs.firebase.auth)
             }
         }
         val jvmMain by getting {
             dependencies {
                 implementation(libs.kobweb.api)
                 implementation(libs.mongodb.kotlin)
-                 implementation(libs.kotlinx.serialization)
+
+                // For Authentication
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.cio.jvm)
+                implementation(libs.ktor.client.auth)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.serialization.kotlinx.json)
+                //implementation(libs.ktor.server.core)
+                //implementation(libs.ktor.server.netty)
+                implementation(libs.slf4j.nop)
+                 //implementation(libs.kotlinx.serialization)
             }
         }
     }

@@ -85,7 +85,7 @@ fun SearchPage() {
         postsToSkip = 0
         if (hasCategoryParam) {
             searchPostsByCategory(
-                category = runCatching { com.yogaveda.models.Category.valueOf(value) }
+                category = runCatching { Category.valueOf(value) }
                     .getOrElse { com.yogaveda.models.Category.Programming },
                 skip = postsToSkip,
                 onSuccess = { response ->
@@ -133,7 +133,7 @@ fun SearchPage() {
                 content = {
                     CategoryNavigationItems(
                         selectedCategory = if (hasCategoryParam) runCatching {
-                            com.yogaveda.models.Category.valueOf(value)
+                            Category.valueOf(value)
                         }.getOrElse { com.yogaveda.models.Category.Programming } else null,
                         vertical = true
                     )
@@ -143,10 +143,11 @@ fun SearchPage() {
         HeaderSection(
             breakpoint = breakpoint,
             selectedCategory = if (hasCategoryParam) runCatching {
-                com.yogaveda.models.Category.valueOf(value)
+                Category.valueOf(value)
             }.getOrElse { com.yogaveda.models.Category.Programming } else null,
             logo = Res.Image.logo,
-            onMenuOpen = { overflowOpened = true }
+            onMenuOpen = { overflowOpened = true },
+            showLoginView =  {}
         )
         if (apiResponse is ApiListResponse.Success) {
             if (hasCategoryParam) {
@@ -169,7 +170,7 @@ fun SearchPage() {
                         scope.launch {
                             if (hasCategoryParam) {
                                 searchPostsByCategory(
-                                    category = runCatching { com.yogaveda.models.Category.valueOf(value) }
+                                    category = runCatching { Category.valueOf(value) }
                                         .getOrElse { Category.Programming },
                                     skip = postsToSkip,
                                     onSuccess = { response ->

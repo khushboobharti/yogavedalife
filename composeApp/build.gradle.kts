@@ -4,14 +4,27 @@ plugins {
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.mongodb.realm)
     alias(libs.plugins.serialization.plugin)
+    alias(libs.plugins.google.services)
 }
 
 kotlin {
+
     androidTarget {
         compilations.all {
             kotlinOptions {
                 jvmTarget = "17"
             }
+        }
+    }
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
         }
     }
     
@@ -43,6 +56,8 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(projects.shared)
             implementation(libs.androidx.ui.text.google.fonts)
+
+            implementation(libs.firebase.auth)
         }
     }
 

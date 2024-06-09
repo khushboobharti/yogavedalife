@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "455201288000",
+    "project_id": "yoga-veda-425712",
+    "storage_bucket": "yoga-veda-425712.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:455201288000:android:343c820dae4d9f2f35d4a5",
+        "android_client_info": {
+          "package_name": "com.yogaveda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5nADXER59V0zRSEL6qV6nalaoiCf6Mr0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:455201288000:android:ac54f1d88c8a10b035d4a5",
+        "android_client_info": {
+          "package_name": "com.yogaveda.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5nADXER59V0zRSEL6qV6nalaoiCf6Mr0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

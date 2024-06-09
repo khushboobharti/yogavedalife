@@ -40,6 +40,7 @@ import com.yogaveda.models.UserWithoutPassword
 import com.yogaveda.navigation.Screen
 import com.yogaveda.network.checkUserExistence
 import com.yogaveda.styles.LoginStyle
+import com.yogaveda.ui.Script
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants.FONT_FAMILY
 import com.yogaveda.util.Id
@@ -52,6 +53,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Button
+import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Input
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.set
@@ -159,6 +161,18 @@ fun LoginScreen() {
                     .textAlign(TextAlign.Center),
                 text = errorText
             )
+        }
+
+        Div {
+            //object ElementBuilder(attrs: AttrBuilderContext<>, content: ContentBuilder<>)
+            //js("https://apis.google.com/js/platform.js").scopeElement as Unit
+            Script (
+                src = "https://apis.google.com/js/platform.js",
+                attrs = Modifier
+                    .toAttrs()
+            ) {  }
+
+
         }
     }
 }

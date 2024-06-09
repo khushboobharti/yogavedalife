@@ -103,7 +103,8 @@ fun PostPage() {
             HeaderSection(
                 breakpoint = breakpoint,
                 logo = Res.Image.logo,
-                onMenuOpen = { overflowOpened = true }
+                onMenuOpen = { overflowOpened = true },
+                showLoginView = {}
             )
         }
         when (apiResponse) {

@@ -24,6 +24,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.width
 import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.icons.fa.FaBars
+import com.varabyte.kobweb.silk.components.icons.fa.FaRightToBracket
 import com.varabyte.kobweb.silk.components.icons.fa.FaXmark
 import com.varabyte.kobweb.silk.components.icons.fa.IconSize
 import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
@@ -46,7 +47,8 @@ fun HeaderSection(
     breakpoint: Breakpoint,
     selectedCategory: Category? = null,
     logo: String = Res.Image.logoHome,
-    onMenuOpen: () -> Unit
+    onMenuOpen: () -> Unit,
+    showLoginView: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -65,7 +67,8 @@ fun HeaderSection(
                 breakpoint = breakpoint,
                 logo = logo,
                 selectedCategory = selectedCategory,
-                onMenuOpen = onMenuOpen
+                onMenuOpen = onMenuOpen,
+                showLoginView = showLoginView
             )
         }
     }
@@ -76,7 +79,8 @@ fun Header(
     breakpoint: Breakpoint,
     logo: String,
     selectedCategory: Category?,
-    onMenuOpen: () -> Unit
+    onMenuOpen: () -> Unit,
+    showLoginView: () -> Unit
 ) {
     val context = rememberPageContext()
     var fullSearchBarOpened by remember { mutableStateOf(false) }
@@ -132,6 +136,14 @@ fun Header(
                 context.router.navigateTo(Screen.SearchPage.searchByTitle(query = query))
             },
             onSearchIconClick = { fullSearchBarOpened = it }
+        )
+        FaRightToBracket(
+            modifier = Modifier
+                .margin(right = 24.px)
+                .color(Colors.White)
+                .cursor(Cursor.Pointer)
+                .onClick { showLoginView() },
+            size = IconSize.XL
         )
     }
 }
