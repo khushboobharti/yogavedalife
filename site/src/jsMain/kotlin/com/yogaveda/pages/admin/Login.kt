@@ -55,6 +55,7 @@ import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Input
+import org.jetbrains.compose.web.dom.Text
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.set
 
@@ -161,16 +162,73 @@ fun LoginScreen() {
                     .textAlign(TextAlign.Center),
                 text = errorText
             )
-        }
 
-        Div {
-            //object ElementBuilder(attrs: AttrBuilderContext<>, content: ContentBuilder<>)
-            //js("https://apis.google.com/js/platform.js").scopeElement as Unit
-            Script (
-                src = "https://apis.google.com/js/platform.js",
+            Div {
+                /*Script (
+                    isAsync = false,
+                    src = "https://apis.google.com/js/platform.js",
+                    attrs = Modifier
+                        .toAttrs{
+                            attr("onload", "console.log(\"received\")")
+                        }
+                )*/
+
+                Script {
+                    Text(value = "function handleCredentialResponse(response) { console.log(response.credential); }")
+                    Text(value = "function initializeGoogle() {\n" +
+                            "        google.accounts.id.initialize({\n" +
+                            "          client_id: \"455201288000-9rummi3auo4t2efq64ekn1t64vuhdcv6.apps.googleusercontent.com\",\n" +
+                            "          callback: handleCredentialResponse\n" +
+                            "        });\n" +
+                            "        google.accounts.id.renderButton(\n" +
+                            "          document.getElementById(\"buttonDiv\"),\n" +
+                            "          { theme: \"outline\", size: \"large\" }\n" +
+                            "        );\n" +
+                            "        google.accounts.id.prompt();\n" +
+                            "      }")
+                }
+                Script (
+                    isAsync = true,
+                    src = "https://apis.google.com/gsi/client", //"https://apis.google.com/js/platform.js",
+                    attrs = Modifier
+                        .toAttrs {
+                            attr("onload", "initializeGoogle")
+                        }
+                ) {
+
+                }
+                Div(
+                    attrs = Modifier
+                        .id("buttonDiv")
+                        .toAttrs()
+                ) {}
+            }
+            /*Div (
                 attrs = Modifier
-                    .toAttrs()
-            ) {  }
+                    .toAttrs {
+                        attr("id","g_id_onload")
+                        attr("data-client_id","455201288000-9rummi3auo4t2efq64ekn1t64vuhdcv6.apps.googleusercontent.com")
+                        attr("data-context","signin")
+                        attr("data-ux_mode","popup")
+                        attr("data-callback","handleCredentialResponse")
+                        attr("data-nonce","")
+                        attr("data-itp_support","true")
+                        attr("data-use_fedcm_for_prompt", "true")
+                    }
+            )
+            Div (
+                attrs = Modifier
+                    .toAttrs {
+                        attr("class","g_id_signin")
+                        attr("data-type","standard")
+                        attr("data-shape","rectangular")
+                        attr("data-theme","outline")
+                        attr("data-text","signin_with")
+                        attr("data-size","large")
+                        attr("data-logo_alignment","left")
+                    }
+            )*/
+
 
 
         }
