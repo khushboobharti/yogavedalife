@@ -35,8 +35,8 @@ import com.varabyte.kobweb.core.rememberPageContext
 import com.varabyte.kobweb.silk.components.graphics.Image
 import com.varabyte.kobweb.silk.components.style.toModifier
 import com.varabyte.kobweb.silk.components.text.SpanText
-import com.yogaveda.models.User
-import com.yogaveda.models.UserWithoutPassword
+import com.yogaveda.models.AdminUser
+import com.yogaveda.models.AdminUserWithoutPassword
 import com.yogaveda.navigation.Screen
 import com.yogaveda.network.checkUserExistence
 import com.yogaveda.styles.LoginStyle
@@ -128,7 +128,7 @@ fun LoginScreen() {
                         scope.launch {
                             if(username.isNotEmpty() && password.isNotEmpty()) {
                                 val user = checkUserExistence(
-                                    user = User(
+                                    adminUser = AdminUser(
                                         username = username,
                                         password = password
                                     )
@@ -165,7 +165,7 @@ fun LoginScreen() {
 
 private fun rememberLoggedIn(
     remember: Boolean,
-    user: UserWithoutPassword? = null
+    user: AdminUserWithoutPassword? = null
 ) {
     localStorage["remember"] = remember.toString()
     if(user != null) {

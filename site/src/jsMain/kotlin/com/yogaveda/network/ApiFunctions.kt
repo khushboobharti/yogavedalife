@@ -7,14 +7,14 @@ import com.yogaveda.Constants.CATEGORY_PARAM
 import com.yogaveda.Constants.POST_ID_PARAM
 import com.yogaveda.Constants.QUERY_PARAM
 import com.yogaveda.Constants.SKIP_PARAM
+import com.yogaveda.models.AdminUser
+import com.yogaveda.models.AdminUserWithoutPassword
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.ApiResponse
 import com.yogaveda.models.Category
 import com.yogaveda.models.Newsletter
 import com.yogaveda.models.Post
 import com.yogaveda.models.RandomJoke
-import com.yogaveda.models.User
-import com.yogaveda.models.UserWithoutPassword
 import com.yogaveda.util.Constants
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
@@ -24,13 +24,13 @@ import org.w3c.dom.get
 import org.w3c.dom.set
 import kotlin.js.Date
 
-suspend fun checkUserExistence(user: User): UserWithoutPassword? {
+suspend fun checkUserExistence(adminUser: AdminUser): AdminUserWithoutPassword? {
     return try {
         val result = window.api.tryPost(
             apiPath = "usercheck",
-            body = Json.encodeToString(user).encodeToByteArray()
+            body = Json.encodeToString(adminUser).encodeToByteArray()
         )
-        result?.decodeToString()?.let { Json.decodeFromString<UserWithoutPassword>(it) }
+        result?.decodeToString()?.let { Json.decodeFromString<AdminUserWithoutPassword>(it) }
     } catch (e: Exception) {
         println(e.message)
         null
@@ -261,6 +261,10 @@ suspend fun subscribeToNewsletter(newsletter: Newsletter): String {
         println(e.message)
         e.message.toString()
     }
+}
+
+suspend fun signInUser() {
+
 }
 
 inline fun <reified T> String?.parseData(): T {

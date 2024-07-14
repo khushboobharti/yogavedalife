@@ -5,10 +5,9 @@ package com.yogaveda.models
 expect class User {
     val id: String
     val username: String
-    val password: String
-}
-
-expect class UserWithoutPassword {
-    val id: String
-    val username: String
+    val displayName: String
+    val email: String
+    val phoneNumber: String
+    val photoUrl: String
+    val providerId: Int
 }

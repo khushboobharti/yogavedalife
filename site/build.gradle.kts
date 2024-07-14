@@ -60,6 +60,7 @@ kotlin {
                 implementation(libs.kobweb.silk.core)
                 implementation(libs.kobweb.silk.icons.fa)
                 implementation(libs.kotlinx.serialization)
+                implementation(libs.firebase.auth)
             }
         }
         val jvmMain by getting {

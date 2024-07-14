@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.mongodb.realm)
     alias(libs.plugins.serialization.plugin)
+    alias(libs.plugins.google.services)
 }
 
 kotlin {
@@ -43,6 +44,7 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(projects.shared)
             implementation(libs.androidx.ui.text.google.fonts)
+            implementation(libs.firebase.auth)
         }
     }
 

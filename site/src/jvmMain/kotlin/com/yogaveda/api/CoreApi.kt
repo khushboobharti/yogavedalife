@@ -5,11 +5,12 @@ import com.varabyte.kobweb.api.ApiContext
 import com.varabyte.kobweb.api.data.getValue
 import com.varabyte.kobweb.api.http.setBodyText
 import com.yogaveda.data.MongoDB
-import com.yogaveda.models.User
-import com.yogaveda.models.UserWithoutPassword
+import com.yogaveda.models.AdminUser
+import com.yogaveda.models.AdminUserWithoutPassword
 import com.yogaveda.util.getHash
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.bson.codecs.ObjectIdGenerator
 
 @Api(routeOverride = "usercheck")
 suspend fun userCheck(context: ApiContext) {
@@ -17,13 +18,13 @@ suspend fun userCheck(context: ApiContext) {
         // Get user to be queried from request
         val userRequest = context.req.body?.decodeToString()?.let {
             context.logger.debug(it)
-            Json.decodeFromString<User>(it)
+            Json.decodeFromString<AdminUser>(it)
         }
         // Query user from DB
         val user = userRequest?.let {
             context.logger.debug("Password Hash: " + it.password.getHash())
             context.data.getValue<MongoDB>().checkUserExistence(
-                User(username = it.username, password = it.password.getHash())
+                AdminUser(username = it.username, password = it.password.getHash())
             )
         }
 
@@ -34,7 +35,7 @@ suspend fun userCheck(context: ApiContext) {
             context.logger.debug("User is not null")
             context.res.setBodyText(
                 Json.encodeToString(
-                    UserWithoutPassword(id = user.id, username = user.username)
+                    AdminUserWithoutPassword(id = user.id, username = user.username)
                 )
             )
         } else {
@@ -60,6 +61,25 @@ suspend fun checkUserId(context: ApiContext) {
         } else {
             context.res.setBodyText(Json.encodeToString(false))
         }
+    } catch (e: Exception) {
+        context.res.setBodyText(Json.encodeToString(false))
+    }
+}
+
+@Api(routeOverride = "userlogin")
+suspend fun updateUserLoginData(context: ApiContext) {
+    try {
+        // If user does not exists then create otherwise sign in existing user
+        val user = context.req.body?.decodeToString()?.let {
+            context.logger.debug(it)
+            Json.decodeFromString<AdminUser>(it)
+        }
+
+        val newUser = user?.copy(id = ObjectIdGenerator().generate().toString())
+        context.res.setBody(newUser?.let {
+            context.data.getValue<MongoDB>().addAdminUser()
+        })
+        // return user ID with other data
     } catch (e: Exception) {
         context.res.setBodyText(Json.encodeToString(false))
     }

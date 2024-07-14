@@ -34,6 +34,9 @@ mongoSync = "1.15.0"
 coil = "2.3.0"
 uiGraphicsAndroid = "1.6.7"
 
+googleServices = "4.4.2"
+firebaseAuth = "1.13.0"
+
 [libraries]
 
 # Kobweb
@@ -48,6 +51,9 @@ kobwebx-markdown = { module = "com.varabyte.kobwebx:kobwebx-markdown", version.r
 
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 compose-web = { module = "org.jetbrains.compose.web:compose-web", version.ref = "composeWeb" }
+
+# Firebase
+firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseAuth" }
 
 
 
@@ -88,3 +94,4 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-version" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 mongodb-realm = { id = "io.realm.kotlin", version.ref = "mongoSync"}
+google-services = { id="com.google.gms.google-services", version.ref="googleServices"  }

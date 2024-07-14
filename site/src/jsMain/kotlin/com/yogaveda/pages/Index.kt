@@ -32,6 +32,8 @@ import com.yogaveda.sections.MainSection
 import com.yogaveda.sections.NewsletterSection
 import com.yogaveda.sections.PostsSection
 import com.yogaveda.sections.SponsoredPostsSection
+import dev.gitlive.firebase.auth.externals.GoogleAuthProvider
+import dev.gitlive.firebase.auth.externals.getAuth
 import kotlinx.coroutines.launch
 
 @Page
@@ -49,6 +51,12 @@ fun HomePage() {
     var popularPostsToSkip by remember { mutableStateOf(0) }
     var showMoreLatestPosts by remember { mutableStateOf(false) }
     var showMorePopularPosts by remember { mutableStateOf(false) }
+
+    val auth = remember { getAuth() }
+    val provider = remember { GoogleAuthProvider() }
+    provider.addScope("https://www.googleapis.com/auth/userinfo.email")
+    provider.addScope("https://www.googleapis.com/auth/userinfo.profile")
+    provider.addScope("openid")
 
     LaunchedEffect(Unit) {
         fetchMainPosts(
@@ -88,6 +96,18 @@ fun HomePage() {
             },
             onError = { print(it) }
         )
+
+        /*onAuthStateChanged(auth, (user)) {
+            *//*if (user) {
+                // User is signed in, see docs for a list of available properties
+                // https://firebase.google.com/docs/reference/js/auth.user
+                const uid = user.uid;
+                // ...
+            } else {
+                // User is signed out
+                // ...
+            }*//*
+        }*/
     }
 
     Column(
@@ -104,7 +124,10 @@ fun HomePage() {
         HeaderSection(
             breakpoint = breakpoint,
             selectedCategory = null,
-            onMenuOpen = { overflowMenuOpened = true }
+            onMenuOpen = { overflowMenuOpened = true },
+            auth = auth,
+            provider = provider,
+            scope = scope
         )
         MainSection(
             breakpoint = breakpoint,

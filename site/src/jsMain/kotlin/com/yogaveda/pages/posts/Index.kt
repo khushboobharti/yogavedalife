@@ -54,6 +54,8 @@ import com.yogaveda.util.Constants.FONT_FAMILY
 import com.yogaveda.util.Id
 import com.yogaveda.util.Res
 import com.yogaveda.util.parseDateString
+import dev.gitlive.firebase.auth.externals.GoogleAuthProvider
+import dev.gitlive.firebase.auth.externals.getAuth
 import kotlinx.browser.document
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -74,6 +76,12 @@ fun PostPage() {
     val hasPostIdParam = remember(key1 = context.route) {
         context.route.params.containsKey(POST_ID_PARAM)
     }
+
+    val auth = remember { getAuth() }
+    val provider = remember { GoogleAuthProvider() }
+    provider.addScope("https://www.googleapis.com/auth/userinfo.email")
+    provider.addScope("https://www.googleapis.com/auth/userinfo.profile")
+    provider.addScope("openid")
 
     LaunchedEffect(key1 = context.route) {
         showSections = if (context.route.params.containsKey(SHOW_SECTIONS_PARAM)) {
@@ -103,7 +111,10 @@ fun PostPage() {
             HeaderSection(
                 breakpoint = breakpoint,
                 logo = Res.Image.logo,
-                onMenuOpen = { overflowOpened = true }
+                onMenuOpen = { overflowOpened = true },
+                auth = auth,
+                provider = provider,
+                scope = scope
             )
         }
         when (apiResponse) {

@@ -1,5 +1,6 @@
 package com.yogaveda.data
 
+import com.yogaveda.models.AdminUser
 import com.yogaveda.models.Category
 import com.yogaveda.models.Newsletter
 import com.yogaveda.models.Post
@@ -8,8 +9,18 @@ import com.yogaveda.models.User
 
 interface MongoRepository {
 
-    suspend fun checkUserExistence(user: User): User?
+    suspend fun checkUserExistence(adminUser: AdminUser): AdminUser?
     suspend fun checkUserId(id: String): Boolean
+
+    suspend fun addUser(user: User): Boolean
+
+    suspend fun addAdminUser(): Boolean
+
+    suspend fun listAdminUsers(): Boolean
+
+    suspend fun updateAdminUser(): Boolean
+
+    suspend fun deactivateAdminUser(): Boolean
 
     suspend fun addPost(post: Post): Boolean
     suspend fun updatePost(post: Post): Boolean

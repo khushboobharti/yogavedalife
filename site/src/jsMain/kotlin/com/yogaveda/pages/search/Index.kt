@@ -44,6 +44,8 @@ import com.yogaveda.sections.PostsSection
 import com.yogaveda.util.Constants.FONT_FAMILY
 import com.yogaveda.util.Id
 import com.yogaveda.util.Res
+import dev.gitlive.firebase.auth.externals.GoogleAuthProvider
+import dev.gitlive.firebase.auth.externals.getAuth
 import kotlinx.browser.document
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.px
@@ -78,6 +80,12 @@ fun SearchPage() {
             ""
         }
     }
+
+    val auth = remember { getAuth() }
+    val provider = remember { GoogleAuthProvider() }
+    provider.addScope("https://www.googleapis.com/auth/userinfo.email")
+    provider.addScope("https://www.googleapis.com/auth/userinfo.profile")
+    provider.addScope("openid")
 
     LaunchedEffect(key1 = context.route) {
         (document.getElementById(Id.adminSearchBar) as HTMLInputElement).value = ""
@@ -146,7 +154,10 @@ fun SearchPage() {
                 com.yogaveda.models.Category.valueOf(value)
             }.getOrElse { com.yogaveda.models.Category.Programming } else null,
             logo = Res.Image.logo,
-            onMenuOpen = { overflowOpened = true }
+            onMenuOpen = { overflowOpened = true },
+            auth = auth,
+            provider = provider,
+            scope = scope
         )
         if (apiResponse is ApiListResponse.Success) {
             if (hasCategoryParam) {

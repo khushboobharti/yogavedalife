@@ -13,6 +13,7 @@ import com.varabyte.kobweb.api.data.add
 import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
 import com.yogaveda.Constants.POSTS_PER_PAGE
+import com.yogaveda.models.AdminUser
 import com.yogaveda.models.Category
 import com.yogaveda.models.Newsletter
 import com.yogaveda.models.Post
@@ -37,6 +38,8 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
     private val userCollection = db.getCollection<User>("user")
     private val postCollection = db.getCollection<Post>("post")
     private val newsletterCollection = db.getCollection<Newsletter>("newsletter")
+    private val adminUserCollection = db.getCollection<AdminUser>("admin_user")
+    private val roleCollection = db.getCollection<Newsletter>("role")
 
     override suspend fun addPost(post: Post): Boolean {
         return postCollection.insertOne(post).wasAcknowledged()
@@ -148,12 +151,12 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
             .toList()
     }
 
-    override suspend fun checkUserExistence(user: User): User? {
+    override suspend fun checkUserExistence(adminUser: AdminUser): AdminUser? {
         return try {
-            userCollection.find(
+            adminUserCollection.find(
                 and(
-                    eq(User::username.name, user.username),
-                    eq(User::password.name, user.password)
+                    eq(AdminUser::username.name, adminUser.username),
+                    eq(AdminUser::password.name, adminUser.password)
                 )
             ).firstOrNull()
         } catch (e: Exception) {
@@ -164,12 +167,45 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
 
     override suspend fun checkUserId(id: String): Boolean {
         return try {
-            val documentCount = userCollection.countDocuments(eq("_id", id), CountOptions().limit(1))
+            val documentCount = adminUserCollection.countDocuments(eq("_id", id), CountOptions().limit(1))
             documentCount > 0
         } catch (e: Exception) {
             context.logger.error("Database Exception: " + e.message.toString())
             false
         }
+    }
+
+    override suspend fun addUser(user: User): Boolean {
+        // check if user already exists
+        /*return try {
+            adminUserCollection.find(
+                and(
+                    eq(AdminUser::username.name, adminUser.username),
+                    eq(AdminUser::password.name, adminUser.password)
+                )
+            ).firstOrNull()
+        } catch (e: Exception) {
+            context.logger.error("Database Exception: " + e.message.toString())
+            return null
+        }*/
+        // add a new user if user does not exists
+        return userCollection.insertOne(user).wasAcknowledged()
+    }
+
+    override suspend fun addAdminUser(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun listAdminUsers(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateAdminUser(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deactivateAdminUser(): Boolean {
+        TODO("Not yet implemented")
     }
 
     override suspend fun readSelectedPost(id: String): Post {

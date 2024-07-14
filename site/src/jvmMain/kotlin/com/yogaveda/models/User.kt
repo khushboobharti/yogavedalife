@@ -14,13 +14,13 @@ actual data class User(
     @SerialName("_id")
     actual val id: String = ObjectIdGenerator().generate().toString(),
     actual val username: String = "",
-    actual val password: String = ""
-)
-
-@Serializable
-actual data class UserWithoutPassword(
-    @BsonId
-    @SerialName("_id")
-    actual val id: String = ObjectIdGenerator().generate().toString(),
-    actual val username: String = ""
+    @SerialName("display_name")
+    actual val displayName: String = "",
+    actual val email: String = "",
+    @SerialName("phone_number")
+    actual val phoneNumber: String = "",
+    @SerialName("photo_url")
+    actual val photoUrl: String = "",
+    @SerialName("provider_id")
+    actual val providerId: Int = 0,
 )

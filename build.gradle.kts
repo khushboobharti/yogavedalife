@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kobweb.library) apply false
     alias(libs.plugins.serialization.plugin) apply false
     alias(libs.plugins.mongodb.realm) apply false
+    alias(libs.plugins.google.services) apply false
 }
 
 allprojects {
