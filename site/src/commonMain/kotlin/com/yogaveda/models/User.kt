@@ -4,10 +4,11 @@ package com.yogaveda.models
 
 expect class User {
     val id: String
-    val username: String
     val displayName: String
     val email: String
     val phoneNumber: String
-    val photoUrl: String
-    val providerId: Int
+    val photoURL: String
+    val providerId: String
+    val accessToken: String
+    val refreshToken: String
 }

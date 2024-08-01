@@ -46,6 +46,7 @@ import com.yogaveda.components.LoadingIndicator
 import com.yogaveda.components.OverflowSidePanel
 import com.yogaveda.models.ApiResponse
 import com.yogaveda.models.Post
+import com.yogaveda.models.User
 import com.yogaveda.network.fetchSelectedPost
 import com.yogaveda.sections.FooterSection
 import com.yogaveda.sections.HeaderSection
@@ -54,6 +55,7 @@ import com.yogaveda.util.Constants.FONT_FAMILY
 import com.yogaveda.util.Id
 import com.yogaveda.util.Res
 import com.yogaveda.util.parseDateString
+import com.yogaveda.util.saveLocalUser
 import dev.gitlive.firebase.auth.externals.GoogleAuthProvider
 import dev.gitlive.firebase.auth.externals.getAuth
 import kotlinx.browser.document
@@ -72,6 +74,7 @@ fun PostPage() {
     var overflowOpened by remember { mutableStateOf(false) }
     var showSections by remember { mutableStateOf(true) }
     var apiResponse by remember { mutableStateOf<ApiResponse>(ApiResponse.Idle) }
+    var localUser by remember { mutableStateOf<User?>(null) }
 
     val hasPostIdParam = remember(key1 = context.route) {
         context.route.params.containsKey(POST_ID_PARAM)
@@ -114,7 +117,12 @@ fun PostPage() {
                 onMenuOpen = { overflowOpened = true },
                 auth = auth,
                 provider = provider,
-                scope = scope
+                scope = scope,
+                setGlobalUser = { authenticatedUser ->
+                    if(saveLocalUser(authenticatedUser))
+                        localUser = authenticatedUser
+                },
+                localUser = localUser
             )
         }
         when (apiResponse) {

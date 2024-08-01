@@ -1,5 +1,7 @@
 package com.yogaveda.util
 
+import com.yogaveda.models.User
+import kotlinx.serialization.encodeToByteArray
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 

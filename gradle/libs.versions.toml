@@ -10,6 +10,7 @@ coroutines = "1.8.1"
 material3 = "1.2.1"
 
 serialization = "1.6.0"
+protobuf = "1.7.0"
 agp = "8.4.1"
 kotlin-version = "1.9.0"
 junit = "4.13.2"
@@ -36,6 +37,7 @@ uiGraphicsAndroid = "1.6.7"
 
 googleServices = "4.4.2"
 firebaseAuth = "1.13.0"
+junitKtx = "1.2.1"
 
 [libraries]
 
@@ -59,6 +61,7 @@ firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseA
 
 mongodb-kotlin = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "mongodb" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
+kotlinx-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "protobuf"}
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 runner = { group = "com.android.support.test", name = "runner", version.ref = "runner" }
 espresso-core = { group = "com.android.support.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
@@ -82,6 +85,7 @@ androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation"}
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref="coil"}
 androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "uiGraphicsAndroid" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 
 [plugins]
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }

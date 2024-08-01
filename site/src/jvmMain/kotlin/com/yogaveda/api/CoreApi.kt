@@ -7,6 +7,7 @@ import com.varabyte.kobweb.api.http.setBodyText
 import com.yogaveda.data.MongoDB
 import com.yogaveda.models.AdminUser
 import com.yogaveda.models.AdminUserWithoutPassword
+import com.yogaveda.models.User
 import com.yogaveda.util.getHash
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -23,7 +24,7 @@ suspend fun userCheck(context: ApiContext) {
         // Query user from DB
         val user = userRequest?.let {
             context.logger.debug("Password Hash: " + it.password.getHash())
-            context.data.getValue<MongoDB>().checkUserExistence(
+            context.data.getValue<MongoDB>().checkAdminUserExistence(
                 AdminUser(username = it.username, password = it.password.getHash())
             )
         }
@@ -72,15 +73,35 @@ suspend fun updateUserLoginData(context: ApiContext) {
         // If user does not exists then create otherwise sign in existing user
         val user = context.req.body?.decodeToString()?.let {
             context.logger.debug(it)
-            Json.decodeFromString<AdminUser>(it)
+            Json.decodeFromString<User>(it)
+        }
+        context.logger
+
+        val oldUser = user?.let {
+            context.data.getValue<MongoDB>().checkUserExistence(it.email)
         }
 
-        val newUser = user?.copy(id = ObjectIdGenerator().generate().toString())
-        context.res.setBody(newUser?.let {
-            context.data.getValue<MongoDB>().addAdminUser()
-        })
-        // return user ID with other data
+        if(oldUser == null) {
+            val newUser = user?.copy(id = ObjectIdGenerator().generate().toString())
+            val result = newUser?.let {
+                context.data.getValue<MongoDB>().addUser(newUser)
+            }
+            if(result != null && result) {
+                context.res.setBodyText(Json.encodeToString(newUser))
+            } else {
+                context.res.setBodyText(Json.encodeToString("failed to insert user"))
+            }
+        } else {
+            val result = oldUser?.let {
+                context.data.getValue<MongoDB>().updateUserLoginData(it)
+            }
+            if(result != null && result) {
+                context.res.setBodyText(Json.encodeToString("user updated successfully"))
+            } else {
+                context.res.setBodyText(Json.encodeToString("failed to update user"))
+            }
+        }
     } catch (e: Exception) {
-        context.res.setBodyText(Json.encodeToString(false))
+        context.res.setBodyText(Json.encodeToString(e.message))
     }
 }

@@ -21,6 +21,7 @@ import com.yogaveda.components.CategoryNavigationItems
 import com.yogaveda.components.OverflowSidePanel
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.PostWithoutDetails
+import com.yogaveda.models.User
 import com.yogaveda.navigation.Screen
 import com.yogaveda.network.fetchLatestPosts
 import com.yogaveda.network.fetchMainPosts
@@ -32,9 +33,12 @@ import com.yogaveda.sections.MainSection
 import com.yogaveda.sections.NewsletterSection
 import com.yogaveda.sections.PostsSection
 import com.yogaveda.sections.SponsoredPostsSection
+import com.yogaveda.util.getLocalUser
+import com.yogaveda.util.saveLocalUser
 import dev.gitlive.firebase.auth.externals.GoogleAuthProvider
 import dev.gitlive.firebase.auth.externals.getAuth
 import kotlinx.coroutines.launch
+
 
 @Page
 @Composable
@@ -51,6 +55,7 @@ fun HomePage() {
     var popularPostsToSkip by remember { mutableStateOf(0) }
     var showMoreLatestPosts by remember { mutableStateOf(false) }
     var showMorePopularPosts by remember { mutableStateOf(false) }
+    var localUser by remember { mutableStateOf<User?>(getLocalUser()) }
 
     val auth = remember { getAuth() }
     val provider = remember { GoogleAuthProvider() }
@@ -58,7 +63,10 @@ fun HomePage() {
     provider.addScope("https://www.googleapis.com/auth/userinfo.profile")
     provider.addScope("openid")
 
-    LaunchedEffect(Unit) {
+
+    LaunchedEffect(key1 = localUser) {
+        println("local user: ${localUser?.email}")
+
         fetchMainPosts(
             skip = 0,
             onSuccess = {
@@ -96,18 +104,6 @@ fun HomePage() {
             },
             onError = { print(it) }
         )
-
-        /*onAuthStateChanged(auth, (user)) {
-            *//*if (user) {
-                // User is signed in, see docs for a list of available properties
-                // https://firebase.google.com/docs/reference/js/auth.user
-                const uid = user.uid;
-                // ...
-            } else {
-                // User is signed out
-                // ...
-            }*//*
-        }*/
     }
 
     Column(
@@ -127,7 +123,14 @@ fun HomePage() {
             onMenuOpen = { overflowMenuOpened = true },
             auth = auth,
             provider = provider,
-            scope = scope
+            scope = scope,
+            setGlobalUser = { authenticatedUser ->
+
+                saveLocalUser(authenticatedUser)
+                localUser = authenticatedUser
+                println("User set ${authenticatedUser?.email}")
+            },
+            localUser = localUser
         )
         MainSection(
             breakpoint = breakpoint,

@@ -7,20 +7,24 @@ import kotlinx.serialization.Serializable
 import org.bson.codecs.ObjectIdGenerator
 import org.bson.codecs.pojo.annotations.BsonId
 
+
 @Serializable
 actual data class User(
 
     @BsonId
     @SerialName("_id")
-    actual val id: String = ObjectIdGenerator().generate().toString(),
-    actual val username: String = "",
+    actual val id: String = "",
     @SerialName("display_name")
     actual val displayName: String = "",
     actual val email: String = "",
     @SerialName("phone_number")
     actual val phoneNumber: String = "",
     @SerialName("photo_url")
-    actual val photoUrl: String = "",
+    actual val photoURL: String = "",
     @SerialName("provider_id")
-    actual val providerId: Int = 0,
+    actual val providerId: String = "",
+    @SerialName("access_token")
+    actual val accessToken: String = "",
+    @SerialName("refresh_token")
+    actual val refreshToken: String = ""
 )

@@ -1,7 +1,7 @@
 package com.yogaveda.network
 
 import com.varabyte.kobweb.browser.api
-import com.varabyte.kobweb.compose.http.http
+import com.varabyte.kobweb.browser.http.http
 import com.yogaveda.Constants.AUTHOR_PARAM
 import com.yogaveda.Constants.CATEGORY_PARAM
 import com.yogaveda.Constants.POST_ID_PARAM
@@ -15,6 +15,7 @@ import com.yogaveda.models.Category
 import com.yogaveda.models.Newsletter
 import com.yogaveda.models.Post
 import com.yogaveda.models.RandomJoke
+import com.yogaveda.models.User
 import com.yogaveda.util.Constants
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
@@ -26,6 +27,7 @@ import kotlin.js.Date
 
 suspend fun checkUserExistence(adminUser: AdminUser): AdminUserWithoutPassword? {
     return try {
+        //println("AdminUser Binary: " + Json.encodeToString(adminUser))
         val result = window.api.tryPost(
             apiPath = "usercheck",
             body = Json.encodeToString(adminUser).encodeToByteArray()
@@ -39,6 +41,7 @@ suspend fun checkUserExistence(adminUser: AdminUser): AdminUserWithoutPassword? 
 
 suspend fun checkUserId(id: String): Boolean {
     return try {
+        println("Check UserID: " + Json.encodeToString(id))
         window.api.tryPost(
             apiPath = "checkuserid",
             body = Json.encodeToString(id).encodeToByteArray()
@@ -46,6 +49,19 @@ suspend fun checkUserId(id: String): Boolean {
     } catch (e: Exception) {
         println(e.message.toString())
         false
+    }
+}
+
+suspend fun userLogin(user: User): User? {
+    return try {
+        val result = window.api.tryPost(
+            apiPath = "userlogin",
+            body = Json.encodeToString(user).encodeToByteArray()
+        )
+        result?.decodeToString()?.let { Json.decodeFromString<User>(it) }
+    } catch (e: Exception) {
+        println(e.message)
+        null
     }
 }
 
@@ -124,7 +140,7 @@ suspend fun fetchMainPosts(
         val result = window.api.tryGet(
             apiPath = "readmainposts?$SKIP_PARAM=$skip",
         )?.decodeToString()
-        println(result)
+        //println(result)
         onSuccess(result.parseData())
     } catch (e: Exception) {
         onError(e)
@@ -140,7 +156,7 @@ suspend fun fetchLatestPosts(
         val result = window.api.tryGet(
             apiPath = "readlatestposts?$SKIP_PARAM=$skip",
         )?.decodeToString()
-        println(result)
+        //println(result)
         onSuccess(result.parseData())
     } catch (e: Exception) {
         onError(e)

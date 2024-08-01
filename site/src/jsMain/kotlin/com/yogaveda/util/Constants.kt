@@ -7,6 +7,7 @@ object Constants {
     const val HEADER_HEIGHT = 100
     const val COLLAPSED_PANEL_HEIGHT = 100
     const val HUMOR_API_URL = "https://api.humorapi.com/jokes/random?api-key=c339acea11cc4848b821b776aa34aaa0&max-length=180"
+    const val LOCAL_STORAGE_USER_KEY = "user"
 }
 
 object Res {
