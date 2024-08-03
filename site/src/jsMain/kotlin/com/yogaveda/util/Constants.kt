@@ -2,6 +2,8 @@ package com.yogaveda.util
 
 object Constants {
     const val FONT_FAMILY = "Gill Sans"
+    const val FONT_ARCHIVO = "Archivo" //"archive.otf"
+    const val FONT_GOTU = "Gotu"
     const val SIDE_PANEL_WIDTH = 250
     const val PAGE_WIDTH = 1920
     const val HEADER_HEIGHT = 100

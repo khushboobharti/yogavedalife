@@ -65,3 +65,41 @@ enum class Theme(
         rgb = rgb(r = 51, g = 0, b = 255)
     )
 }
+
+enum class YogaVedaTheme(
+    val hex: String,
+    val rgb: CSSColorValue
+) {
+    Orange(
+        hex = "#D45700",
+        rgb = rgb(r = 212, g = 87, b = 0)
+    ),
+    BlackGrey(
+        hex = "#344033",
+        rgb = rgb(r = 52, g = 64, b = 51)
+    ),
+    OrangeFaded(
+        hex = "#FFDFCD",
+        rgb = rgb(r = 255, g = 223, b = 205)
+    ),
+    BrownDull(
+        hex = "#F2E9E3",
+        rgb = rgb(242, 233, 227)
+    ),
+    White(
+        hex = "#FFFFFF",
+        rgb = rgb(255, 255, 255)
+    ),
+    Black(
+        hex = "#000000",
+        rgb = rgb(r = 0, g = 0, b = 0)
+    ),
+    Brown(
+        hex = "#C1BAB5",
+        rgb = rgb(193, 186, 181)
+    ),
+    BackgroundWhitish(
+        hex = "#FAF9F7",
+        rgb = rgb(250, 249, 247)
+    )
+}

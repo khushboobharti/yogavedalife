@@ -59,6 +59,7 @@ import com.yogaveda.util.Constants.SIDE_PANEL_WIDTH
 import com.yogaveda.util.Id
 import com.yogaveda.util.Res
 import com.yogaveda.util.logout
+import kotlinx.browser.window
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.Position
@@ -254,7 +255,6 @@ fun OverflowSidePanel(
     val context = rememberPageContext()
     val scope = rememberCoroutineScope()
     val breakpoint = rememberBreakpoint()
-
     var translateX by remember{ mutableStateOf((-100).percent) }
     var opacity by remember{ mutableStateOf(0.percent) }
 
