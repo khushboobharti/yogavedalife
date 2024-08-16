@@ -39,7 +39,7 @@ import com.yogaveda.models.User
 import com.yogaveda.navigation.Screen
 import com.yogaveda.network.searchPostsByCategory
 import com.yogaveda.network.searchPostsByTitle
-import com.yogaveda.sections.FooterSection
+import com.yogaveda.sections.AdminFooterSection
 import com.yogaveda.sections.HeaderSection
 import com.yogaveda.sections.PostsSection
 import com.yogaveda.util.Constants.FONT_FAMILY
@@ -247,6 +247,6 @@ fun SearchPage() {
         } else {
             LoadingIndicator()
         }
-        FooterSection()
+        AdminFooterSection()
     }
 }

@@ -44,7 +44,7 @@ kobweb {
                 }
                 link {
                     rel = "stylesheet"
-                    href = "https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Gotu&display=swap"
+                    href = "https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Gotu&family=League+Script&display=swap"
                 }
             }
         }
