@@ -67,7 +67,21 @@ kotlin {
             dependencies {
                 implementation(libs.kobweb.api)
                 implementation(libs.mongodb.kotlin)
-                 implementation(libs.kotlinx.serialization)
+                implementation(libs.kotlinx.serialization)
+            }
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+            }
+        }
+
+        val jvmTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+                implementation(libs.junit)
             }
         }
     }

@@ -46,8 +46,21 @@ kotlin {
             implementation(libs.androidx.ui.text.google.fonts)
             implementation(libs.firebase.auth)
         }
-    }
 
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+            }
+        }
+
+        val androidUnitTest by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+                implementation(libs.junit)
+            }
+        }
+    }
 }
 
 android {
