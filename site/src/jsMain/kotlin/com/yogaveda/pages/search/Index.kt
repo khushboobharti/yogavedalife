@@ -35,6 +35,7 @@ import com.yogaveda.components.OverflowSidePanel
 import com.yogaveda.models.ApiListResponse
 import com.yogaveda.models.Category
 import com.yogaveda.models.PostWithoutDetails
+import com.yogaveda.models.User
 import com.yogaveda.navigation.Screen
 import com.yogaveda.network.searchPostsByCategory
 import com.yogaveda.network.searchPostsByTitle
@@ -44,6 +45,7 @@ import com.yogaveda.sections.PostsSection
 import com.yogaveda.util.Constants.FONT_FAMILY
 import com.yogaveda.util.Id
 import com.yogaveda.util.Res
+import com.yogaveda.util.saveLocalUser
 import dev.gitlive.firebase.auth.externals.GoogleAuthProvider
 import dev.gitlive.firebase.auth.externals.getAuth
 import kotlinx.browser.document
@@ -64,6 +66,7 @@ fun SearchPage() {
     val searchedPosts = remember { mutableStateListOf<PostWithoutDetails>() }
     var postsToSkip by remember { mutableStateOf(0) }
     var showMorePosts by remember { mutableStateOf(false) }
+    var localUser by remember { mutableStateOf<User?>(null) }
 
     val hasCategoryParam = remember(key1 = context.route) {
         context.route.params.containsKey(CATEGORY_PARAM)
@@ -157,7 +160,12 @@ fun SearchPage() {
             onMenuOpen = { overflowOpened = true },
             auth = auth,
             provider = provider,
-            scope = scope
+            scope = scope,
+            setGlobalUser = { authenticatedUser ->
+                if(saveLocalUser(authenticatedUser))
+                    localUser = authenticatedUser
+            },
+            localUser = localUser
         )
         if (apiResponse is ApiListResponse.Success) {
             if (hasCategoryParam) {

@@ -13,6 +13,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.outline
 import com.varabyte.kobweb.core.rememberPageContext
 import com.yogaveda.models.ControlStyle
 import com.yogaveda.models.EditorControl
+import com.yogaveda.models.User
 import com.yogaveda.navigation.Screen
 import com.yogaveda.network.checkUserId
 import kotlinx.browser.document
@@ -134,4 +135,59 @@ fun parseSwitchText(posts: List<String>): String {
 fun validateEmail(email: String): Boolean {
     val regex = "^[A-Za-z](.*)(@)(.+)(\\.)(.+)"
     return regex.toRegex().matches(email)
+}
+
+fun saveLocalUser(user: User?): Boolean {
+    if(user == null)  {
+        localStorage["user_id"] = ""
+        localStorage["display_name"] = ""
+        localStorage["email"] = ""
+        localStorage["phone_number"] = ""
+        localStorage["photo_url"] = ""
+        localStorage["provider_id"] = ""
+        localStorage["access_token"] = ""
+        localStorage["refresh_token"] = ""
+    } else {
+        localStorage["user_id"] = user.id
+        localStorage["display_name"] = user.displayName
+        localStorage["email"] = user.email
+        localStorage["phone_number"] = user.phoneNumber
+        localStorage["photo_url"] = user.photoURL
+        localStorage["provider_id"] = user.providerId
+        localStorage["access_token"] = user.accessToken
+        localStorage["refresh_token"] = user.refreshToken
+    }
+
+    return true
+
+    /*val userBytes = ProtoBuf.encodeToByteArray(user)
+    localStorage[LOCAL_STORAGE_USER_KEY] = userBytes.toHexString()*/
+
+    /*localStorage["role"] = user.role
+    localStorage["username"] = user.username
+    localStorage["remember"] = "true"
+    localStorage["lastLogin"] = Date.now().toString()*/
+
+    /*val userBytes = ProtoBuf.encodeToByteArray(user)
+    localStorage[LOCAL_STORAGE_USER_KEY] = userBytes.toHexString()*/
+}
+
+fun getLocalUser(): User? {
+
+    //val user: User? = localStorage.getItem(LOCAL_STORAGE_USER_KEY)?.let { ProtoBuf.decodeFromByteArray(it.encodeToByteArray()) }
+    val user = User(
+        id = localStorage["user_id"]?: "",
+        displayName = localStorage["display_name"]?: "",
+        email = localStorage["email"]?: "",
+        phoneNumber = localStorage["phone_number"]?: "",
+        photoURL = localStorage["photo_url"]?: "",
+        providerId = localStorage["provider_id"]?: "",
+        accessToken = localStorage["access_token"]?: "",
+        refreshToken = localStorage["refresh_token"]?: ""
+    )
+
+    if(user.email.isNullOrEmpty())
+        return null
+
+    return user
 }

@@ -9,14 +9,17 @@ import kotlinx.serialization.Serializable
 actual data class User(
     @SerialName("_id")
     actual val id: String = "",
-    actual val username: String = "",
     @SerialName("display_name")
     actual val displayName: String = "",
     actual val email: String = "",
     @SerialName("phone_number")
     actual val phoneNumber: String = "",
     @SerialName("photo_url")
-    actual val photoUrl: String = "",
+    actual val photoURL: String = "",
     @SerialName("provider_id")
-    actual val providerId: Int = 0,
+    actual val providerId: String = "",
+    @SerialName("access_token")
+    actual val accessToken: String = "",
+    @SerialName("refresh_token")
+    actual val refreshToken: String = ""
 )

@@ -3,6 +3,7 @@
 package com.yogaveda.sections
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,17 +38,21 @@ import com.varabyte.kobweb.silk.components.icons.fa.FaXmark
 import com.varabyte.kobweb.silk.components.icons.fa.IconSize
 import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
 import com.varabyte.kobweb.silk.components.text.SpanText
+import com.varabyte.kobweb.silk.theme.shapes.Circle
+import com.varabyte.kobweb.silk.theme.shapes.clip
 import com.yogaveda.components.CategoryNavigationItems
 import com.yogaveda.components.SearchBar
 import com.yogaveda.models.Category
 import com.yogaveda.models.User
 import com.yogaveda.navigation.Screen
+import com.yogaveda.network.userLogin
 import com.yogaveda.ui.Theme
 import com.yogaveda.util.Constants
 import com.yogaveda.util.Constants.HEADER_HEIGHT
 import com.yogaveda.util.Constants.PAGE_WIDTH
 import com.yogaveda.util.Id
 import com.yogaveda.util.Res
+import com.yogaveda.util.getLocalUser
 import dev.gitlive.firebase.auth.externals.Auth
 import dev.gitlive.firebase.auth.externals.AuthError
 import dev.gitlive.firebase.auth.externals.GoogleAuthProvider
@@ -68,7 +73,9 @@ fun HeaderSection(
     onMenuOpen: () -> Unit,
     auth: Auth,
     provider: GoogleAuthProvider,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    setGlobalUser: (User?) -> Unit,
+    localUser: User?
 ) {
     Box(
         modifier = Modifier
@@ -90,7 +97,9 @@ fun HeaderSection(
                 onMenuOpen = onMenuOpen,
                 auth = auth,
                 provider = provider,
-                scope = scope
+                scope = scope,
+                setGlobalUser = setGlobalUser,
+                localUser = localUser
             )
         }
     }
@@ -104,10 +113,28 @@ fun Header(
     onMenuOpen: () -> Unit,
     auth: Auth,
     provider: GoogleAuthProvider,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    setGlobalUser: (User?) -> Unit,
+    localUser: User?
 ) {
     val context = rememberPageContext()
     var fullSearchBarOpened by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = Unit) {
+        /*
+        val storedUser = localStorage.getItem(Constants.LOCAL_STORAGE_USER_KEY)
+        if (storedUser != null) {
+            user = storedUser
+        } else {
+            val result = userLogin(auth)
+            if (result is User) {
+                localStorage.setItem(Constants.LOCAL_STORAGE_USER_KEY, result.toString())
+                user = result
+            }
+        }
+        */
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth(if (breakpoint > Breakpoint.MD) 80.percent else 90.percent)
@@ -161,58 +188,26 @@ fun Header(
             },
             onSearchIconClick = { fullSearchBarOpened = it }
         )
-        SignInComponent(
-            user = null,
+        signInComponent(
             auth = auth,
             provider = provider,
-            scope = scope
+            scope = scope,
+            setGlobalUser = setGlobalUser,
+            localUser = localUser
         )
-        /*Image(
-            modifier = Modifier.margin(bottom = 24.px)
-                .onClick {
-                    signInWithPopup(auth = auth, provider)
-                        .then { result ->
-                            console.log("Auth Successful")
-                            if(result.user.emailVerified) {
-                                val credentials = GoogleAuthProvider.credentialFromResult(result)
-                                val accessToken = credentials?.accessToken
-                                val refreshTokenResult = credentials?.secret
-                                val displayName = result.user.displayName
-                                val email = result.user.email
-                                //val isEmailVerified = result.user.emailVerified
-                                val phoneNumber = result.user.phoneNumber
-                                val photoURL = result.user.photoURL
-                                val providerId = result.user.providerId
-
-                                scope.launch {
-
-                                }
-
-                            } else {
-                                console.log("Email not verified")
-                            }
-                        }
-                        .catch { exception ->
-                            console.log("Auth failed")
-                            val error = exception as AuthError
-                            console.log(error)
-                            val credential = GoogleAuthProvider.credentialFromError(error)
-                            console.log(credential?.signInMethod)
-                        }
-                },
-            src = Res.Icon.google,
-            alt = "Google Login Icon"
-        )*/
     }
 }
 
 @Composable
-fun SignInComponent(
-    user: User?,
+fun signInComponent(
     auth: Auth,
     provider: GoogleAuthProvider,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    setGlobalUser: (User?) -> Unit,
+    localUser: User?
 ) {
+    var user by remember { mutableStateOf<User?>(localUser) }
+    println("Sign In component: ${localUser?.email}")
     Box(
         modifier = Modifier
             .borderRadius(r = 8.px)
@@ -222,65 +217,124 @@ fun SignInComponent(
                 color = Theme.White.rgb //if(darkTheme) Theme.entries.find { it.hex == category.color }?.rgb else Theme.HalfBlack.rgb
             )
             .onClick {
-                signInWithPopup(auth = auth, provider)
-                    .then { result ->
-                        console.log("Auth Successful")
-                        if(result.user.emailVerified) {
-                            val credentials = GoogleAuthProvider.credentialFromResult(result)
-                            val accessToken = credentials?.accessToken
-                            val refreshTokenResult = credentials?.secret
-                            val displayName = result.user.displayName
-                            val email = result.user.email
-                            //val isEmailVerified = result.user.emailVerified
-                            val phoneNumber = result.user.phoneNumber
-                            val photoURL = result.user.photoURL
-                            val providerId = result.user.providerId
+                if(localUser == null) {
+                    console.log("Sign in")
+                    signInWithPopup(auth = auth, provider)
+                        .then { result ->
+                            console.log("Auth Successful")
+                            console.log(result.user)
+                            if(result.user.emailVerified) {
+                                console.log("Reached")
+                                //val credentials = GoogleAuthProvider.credentialFromResult(result)
+                                val accessToken = ""
+                                val refreshTokenResult = ""
+                                val displayName = result.user.displayName
+                                val email = result.user.email
+                                //val isEmailVerified = result.user.emailVerified
+                                val phoneNumber = result.user.phoneNumber
+                                val photoURL = result.user.photoURL
+                                val providerId = result.user.providerId
 
-                            scope.launch {
-                                // cal APi function to send user data
-                                // on response set user and cookies
+                                scope.launch {
+                                    // cal APi function to send user data
+                                    val authenticatedUser = userLogin(User(
+                                        displayName = displayName?: "",
+                                        email = email?: "",
+                                        phoneNumber = phoneNumber?: "",
+                                        photoURL = photoURL?: "",
+                                        accessToken = accessToken,
+                                        refreshToken = refreshTokenResult,
+                                        providerId = providerId
+                                    ))
+
+                                    if(authenticatedUser != null) {
+                                        //localUser = authenticatedUser
+                                        setGlobalUser(authenticatedUser)
+                                    } else {
+                                        console.log("User not found")
+                                    }
+                                }
+                            } else {
+                                console.log("Email not verified, please verify your google email")
+                                setGlobalUser(null)
                             }
-
-                        } else {
-                            console.log("Email not verified")
                         }
-                    }
-                    .catch { exception ->
-                        console.log("Auth failed")
-                        val error = exception as AuthError
-                        console.log(error)
-                        val credential = GoogleAuthProvider.credentialFromError(error)
-                        console.log(credential?.signInMethod)
-                    }
+                        .catch { exception ->
+                            // If dialog window is closed then this will be called
+                            setGlobalUser(null)
+                            console.log("Auth failed")
+                            val error = exception as AuthError
+                            console.log(error)
+                            val credential = GoogleAuthProvider.credentialFromError(error)
+                            console.log(credential?.signInMethod)
+                        }
+                } else {
+                    console.log("Sign out, User state not synced")
+                    // set local user to null
+                    setGlobalUser(null)
+                }
             },
         contentAlignment = Alignment.Center,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
-                .height(48.px),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                modifier = Modifier.margin(leftRight = 4.px)
-                    .onClick {
+        if(localUser != null) {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .height(48.px),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    modifier = Modifier.margin(leftRight = 4.px)
+                        .clip(Circle())                       // clip to the circle shape
+                        //.border(2.px, Color.Gray, CircleShape)
+                        .onClick {},
+                    src =  localUser?.photoURL?: "",
+                    alt = "Profile Image",
+                    width = 32,
+                    height = 32
+                )
+                SpanText(
+                    modifier = Modifier
+                        .margin(bottom = 24.px)
+                        .fontFamily(Constants.FONT_FAMILY)
+                        .fontSize(18.px)
+                        .margin(leftRight = 8.px)
+                        .color(Theme.White.rgb)
+                        .fontWeight(FontWeight.Medium)
+                        .onClick {
+                            setGlobalUser(null)
+                        },
+                    text = "Sign Out"
+                )
+            }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .height(48.px),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    modifier = Modifier.margin(leftRight = 4.px)
+                        .onClick {
 
-                    },
-                src = if(user != null) Res.Icon.google else Res.Icon.google,
-                alt = "Google Login Icon",
-                width = 32,
-                height = 32
-            )
-            SpanText(
-                modifier = Modifier
-                    .margin(bottom = 24.px)
-                    .fontFamily(Constants.FONT_FAMILY)
-                    .fontSize(18.px)
-                    .margin(leftRight = 8.px)
-                    .color(Theme.White.rgb)
-                    .fontWeight(FontWeight.Medium),
-                text = if(user != null) "Profile" else "Sign In"
-            )
+                        },
+                    src = Res.Icon.google,
+                    alt = "Google Login Icon",
+                    width = 32,
+                    height = 32
+                )
+                SpanText(
+                    modifier = Modifier
+                        .margin(bottom = 24.px)
+                        .fontFamily(Constants.FONT_FAMILY)
+                        .fontSize(18.px)
+                        .margin(leftRight = 8.px)
+                        .color(Theme.White.rgb)
+                        .fontWeight(FontWeight.Medium),
+                    text = "Sign In"
+                )
+            }
         }
     }
 }

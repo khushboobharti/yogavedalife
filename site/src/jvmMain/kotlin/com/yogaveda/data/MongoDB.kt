@@ -151,7 +151,25 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
             .toList()
     }
 
-    override suspend fun checkUserExistence(adminUser: AdminUser): AdminUser? {
+    // User APIs
+    override suspend fun checkUserExistence(email: String): User? {
+        return try {
+            userCollection.find(
+                and(
+                    eq(User::email.name, email)
+                )
+            ).firstOrNull()
+        } catch (e: Exception) {
+            context.logger.error("Database Exception: " + e.message.toString())
+            return null
+        }
+    }
+
+    override suspend fun updateUserLoginData(user: User): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun checkAdminUserExistence(adminUser: AdminUser): AdminUser? {
         return try {
             adminUserCollection.find(
                 and(
@@ -175,37 +193,78 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
         }
     }
 
-    override suspend fun addUser(user: User): Boolean {
+    override suspend fun addUser(user: User): Boolean? {
         // check if user already exists
-        /*return try {
-            adminUserCollection.find(
+        return try {
+            val newUser = userCollection.find(
+                and(
+                    eq(User::email.name, user.email)
+                )
+            ).firstOrNull()
+            if(newUser == null) {
+                userCollection.insertOne(user).wasAcknowledged()
+            } else false
+        } catch (e: Exception) {
+            context.logger.error("Database Exception: " + e.message.toString())
+            false
+        }
+    }
+
+
+    override suspend fun addAdminUser(adminUser: AdminUser): Boolean? {
+        return try {
+            val newAdminUser = adminUserCollection.find(
                 and(
                     eq(AdminUser::username.name, adminUser.username),
                     eq(AdminUser::password.name, adminUser.password)
                 )
             ).firstOrNull()
+            if(newAdminUser == null) {
+                adminUserCollection.insertOne(adminUser).wasAcknowledged()
+            } else false
         } catch (e: Exception) {
             context.logger.error("Database Exception: " + e.message.toString())
             return null
-        }*/
-        // add a new user if user does not exists
-        return userCollection.insertOne(user).wasAcknowledged()
+        }
     }
 
-    override suspend fun addAdminUser(): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun listAdminUsers(): List<AdminUser>? {
+        return try {
+            adminUserCollection.find().toList()
+        } catch (e: Exception) {
+            context.logger.error("Database Exception: " + e.message.toString())
+            return null
+        }
     }
 
-    override suspend fun listAdminUsers(): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun updateAdminUser(adminUser: AdminUser): Boolean? {
+        return try {
+            adminUserCollection
+                .updateOne(
+                    eq(AdminUser::id.name, adminUser.id),
+                    mutableListOf(
+                        Updates.set(AdminUser::password.name, adminUser.password)
+                    )
+                ).wasAcknowledged()
+        } catch (e: Exception) {
+            context.logger.error("Database Exception: " + e.message.toString())
+            return null
+        }
     }
 
-    override suspend fun updateAdminUser(): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun deactivateAdminUser(): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun deactivateAdminUser(adminUserId: Int): Boolean? {
+        return try {
+            adminUserCollection
+                .updateOne(
+                    eq(AdminUser::id.name, adminUserId),
+                    mutableListOf(
+                        Updates.set(AdminUser::password.name, "deactivated")
+                    )
+                ).wasAcknowledged()
+        } catch (e: Exception) {
+            context.logger.error("Database Exception: " + e.message.toString())
+            return null
+        }
     }
 
     override suspend fun readSelectedPost(id: String): Post {

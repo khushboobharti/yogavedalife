@@ -9,18 +9,21 @@ import com.yogaveda.models.User
 
 interface MongoRepository {
 
-    suspend fun checkUserExistence(adminUser: AdminUser): AdminUser?
+    suspend fun checkUserExistence(email: String): User?
+    suspend fun updateUserLoginData(user: User): Boolean
+
+    suspend fun checkAdminUserExistence(adminUser: AdminUser): AdminUser?
     suspend fun checkUserId(id: String): Boolean
 
-    suspend fun addUser(user: User): Boolean
+    suspend fun addUser(user: User): Boolean?
 
-    suspend fun addAdminUser(): Boolean
+    suspend fun addAdminUser(adminUser: AdminUser): Boolean?
 
-    suspend fun listAdminUsers(): Boolean
+    suspend fun listAdminUsers(): List<AdminUser>?
 
-    suspend fun updateAdminUser(): Boolean
+    suspend fun updateAdminUser(adminUser: AdminUser): Boolean?
 
-    suspend fun deactivateAdminUser(): Boolean
+    suspend fun deactivateAdminUser(adminUserId: Int): Boolean?
 
     suspend fun addPost(post: Post): Boolean
     suspend fun updatePost(post: Post): Boolean

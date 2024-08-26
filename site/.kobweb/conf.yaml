@@ -12,3 +12,8 @@ server:
       siteRoot: ".kobweb/site"
 
   port: 8080
+
+  cors:
+    hosts:
+      - name: "bream-rare-utterly.ngrok-free.app"
+      - name: "accounts.google.com"
