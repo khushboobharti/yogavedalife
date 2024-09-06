@@ -28,6 +28,7 @@ fun initSilk(ctx: InitSilkContext) {
         authDomain = "yoga-veda-425712.firebaseapp.com"
     )
     Firebase.initialize(ctx, firebaseOptions)
+
 }
 
 @App
@@ -39,3 +40,5 @@ fun MyApp(content: @Composable () -> Unit) {
         }
     }
 }
+
+

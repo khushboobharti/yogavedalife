@@ -14,7 +14,7 @@ import com.varabyte.kobweb.compose.ui.modifiers.fontSize
 import com.varabyte.kobweb.compose.ui.modifiers.padding
 import com.varabyte.kobweb.silk.components.layout.HorizontalDivider
 import com.varabyte.kobweb.silk.components.text.SpanText
-import com.yogaveda.components.yoga.getTextModifier
+import com.yogaveda.styles.modifiers.getTextModifier
 import com.yogaveda.ui.Theme
 import com.yogaveda.ui.YogaVedaTheme
 import com.yogaveda.util.Constants.FONT_FAMILY
@@ -39,7 +39,7 @@ fun MainFooterSection() {
                 modifier = getTextModifier()
                     .fontFamily(FONT_FAMILY)
                     .fontSize(14.px)
-                    .color(YogaVedaTheme.Orange.rgb),
+                    .color(YogaVedaTheme.Colors.Orange.rgb),
                 text = "YogaVeda Life"
             )
         }

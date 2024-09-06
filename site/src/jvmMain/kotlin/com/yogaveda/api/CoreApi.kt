@@ -92,7 +92,7 @@ suspend fun updateUserLoginData(context: ApiContext) {
                 context.res.setBodyText(Json.encodeToString("failed to insert user"))
             }
         } else {
-            val result = oldUser?.let {
+            val result = oldUser.let {
                 context.data.getValue<MongoDB>().updateUserLoginData(it)
             }
             if(result != null && result) {

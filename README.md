@@ -66,3 +66,9 @@ Restore from dump
 mongorestore --uri=mongodb://localhost:27017 --db=<new_db> ~/mongodump/
 
 Read more: https://www.mongodb.com/docs/manual/tutorial/backup-and-restore-tools/
+
+## List all Environment Variables
+printenv
+
+## Check current terminal
+echo $SHELL

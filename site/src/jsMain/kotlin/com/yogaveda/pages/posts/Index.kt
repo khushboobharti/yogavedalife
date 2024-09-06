@@ -1,84 +1,61 @@
 package com.yogaveda.pages.posts
 
-import SHOW_SECTIONS_PARAM
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import com.varabyte.kobweb.compose.css.FontWeight
-import com.varabyte.kobweb.compose.css.ObjectFit
-import com.varabyte.kobweb.compose.css.Overflow
-import com.varabyte.kobweb.compose.css.TextOverflow
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
 import com.varabyte.kobweb.compose.foundation.layout.Column
 import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
-import com.varabyte.kobweb.compose.ui.graphics.Colors
-import com.varabyte.kobweb.compose.ui.modifiers.color
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
-import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
-import com.varabyte.kobweb.compose.ui.modifiers.fontFamily
-import com.varabyte.kobweb.compose.ui.modifiers.fontSize
-import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
-import com.varabyte.kobweb.compose.ui.modifiers.height
-import com.varabyte.kobweb.compose.ui.modifiers.id
-import com.varabyte.kobweb.compose.ui.modifiers.margin
-import com.varabyte.kobweb.compose.ui.modifiers.maxWidth
-import com.varabyte.kobweb.compose.ui.modifiers.objectFit
-import com.varabyte.kobweb.compose.ui.modifiers.overflow
-import com.varabyte.kobweb.compose.ui.modifiers.padding
-import com.varabyte.kobweb.compose.ui.modifiers.textOverflow
-import com.varabyte.kobweb.compose.ui.styleModifier
-import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
 import com.varabyte.kobweb.core.rememberPageContext
-import com.varabyte.kobweb.silk.components.graphics.Image
-import com.varabyte.kobweb.silk.components.style.breakpoint.Breakpoint
-import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
-import com.yogaveda.Constants.POST_ID_PARAM
+import com.yogaveda.Constants.POSTS_PER_PAGE
 import com.yogaveda.components.CategoryNavigationItems
-import com.yogaveda.components.ErrorView
-import com.yogaveda.components.LoadingIndicator
 import com.yogaveda.components.OverflowSidePanel
-import com.yogaveda.models.ApiResponse
-import com.yogaveda.models.Post
+import com.yogaveda.models.ApiListResponse
+import com.yogaveda.models.PostWithoutDetails
 import com.yogaveda.models.User
-import com.yogaveda.network.fetchSelectedPost
+import com.yogaveda.navigation.Screen
+import com.yogaveda.network.fetchLatestPosts
+import com.yogaveda.network.fetchMainPosts
+import com.yogaveda.network.fetchPopularPosts
+import com.yogaveda.network.fetchSponsoredPosts
 import com.yogaveda.sections.AdminFooterSection
 import com.yogaveda.sections.HeaderSection
-import com.yogaveda.ui.Theme
-import com.yogaveda.util.Constants.FONT_FAMILY
-import com.yogaveda.util.Id
-import com.yogaveda.util.Res
-import com.yogaveda.util.parseDateString
+import com.yogaveda.sections.MainSection
+import com.yogaveda.sections.NewsletterSection
+import com.yogaveda.sections.PostsSection
+import com.yogaveda.sections.SponsoredPostsSection
+import com.yogaveda.util.getLocalUser
 import com.yogaveda.util.saveLocalUser
 import dev.gitlive.firebase.auth.externals.GoogleAuthProvider
 import dev.gitlive.firebase.auth.externals.getAuth
-import kotlinx.browser.document
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.web.css.px
-import org.jetbrains.compose.web.dom.Div
-import org.w3c.dom.HTMLDivElement
 
-@Page(routeOverride = "post")
+
+@Page
 @Composable
-fun PostPage() {
-    val scope = rememberCoroutineScope()
+fun HomePage() {
     val context = rememberPageContext()
+    val scope = rememberCoroutineScope()
     val breakpoint = rememberBreakpoint()
-    var overflowOpened by remember { mutableStateOf(false) }
-    var showSections by remember { mutableStateOf(true) }
-    var apiResponse by remember { mutableStateOf<ApiResponse>(ApiResponse.Idle) }
-    var localUser by remember { mutableStateOf<User?>(null) }
-
-    val hasPostIdParam = remember(key1 = context.route) {
-        context.route.params.containsKey(POST_ID_PARAM)
-    }
+    var overflowMenuOpened by remember { mutableStateOf(false) }
+    var mainPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
+    val latestPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+    val sponsoredPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+    val popularPosts = remember { mutableStateListOf<PostWithoutDetails>() }
+    var latestPostsToSkip by remember { mutableStateOf(0) }
+    var popularPostsToSkip by remember { mutableStateOf(0) }
+    var showMoreLatestPosts by remember { mutableStateOf(false) }
+    var showMorePopularPosts by remember { mutableStateOf(false) }
+    var localUser by remember { mutableStateOf<User?>(getLocalUser()) }
 
     val auth = remember { getAuth() }
     val provider = remember { GoogleAuthProvider() }
@@ -86,17 +63,47 @@ fun PostPage() {
     provider.addScope("https://www.googleapis.com/auth/userinfo.profile")
     provider.addScope("openid")
 
-    LaunchedEffect(key1 = context.route) {
-        showSections = if (context.route.params.containsKey(SHOW_SECTIONS_PARAM)) {
-            context.route.params.getValue(SHOW_SECTIONS_PARAM).toBoolean()
-        } else true
 
-        println("showSections: $showSections")
+    LaunchedEffect(key1 = localUser) {
+        println("local user: ${localUser?.email}")
 
-        if (hasPostIdParam) {
-            val postId = context.route.params.getValue(POST_ID_PARAM)
-            apiResponse = fetchSelectedPost(id = postId)
-        }
+        fetchMainPosts(
+            skip = 0,
+            onSuccess = {
+                mainPosts = it
+            },
+            onError = { print(it) }
+        )
+        fetchLatestPosts(
+            skip = latestPostsToSkip,
+            onSuccess = {
+                if (it is ApiListResponse.Success) {
+                    latestPosts.addAll(it.data)
+                    latestPostsToSkip += POSTS_PER_PAGE
+                    if (it.data.size >= POSTS_PER_PAGE) showMoreLatestPosts = true
+                }
+            },
+            onError = { print(it) }
+        )
+        fetchSponsoredPosts(
+            onSuccess = {
+                if (it is ApiListResponse.Success) {
+                    sponsoredPosts.addAll(it.data)
+                }
+            },
+            onError = { print(it) }
+        )
+        fetchPopularPosts(
+            skip = popularPostsToSkip,
+            onSuccess = {
+                if (it is ApiListResponse.Success) {
+                    popularPosts.addAll(it.data)
+                    popularPostsToSkip += POSTS_PER_PAGE
+                    if (it.data.size >= POSTS_PER_PAGE) showMorePopularPosts = true
+                }
+            },
+            onError = { print(it) }
+        )
     }
 
     Column(
@@ -104,117 +111,93 @@ fun PostPage() {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (overflowOpened) {
+        if (overflowMenuOpened) {
             OverflowSidePanel(
-                onMenuClose = { overflowOpened = false },
+                onMenuClose = { overflowMenuOpened = false },
                 content = { CategoryNavigationItems(vertical = true) }
             )
         }
-        if(showSections) {
-            HeaderSection(
-                breakpoint = breakpoint,
-                logo = Res.Image.logo,
-                onMenuOpen = { overflowOpened = true },
-                auth = auth,
-                provider = provider,
-                scope = scope,
-                setGlobalUser = { authenticatedUser ->
-                    if(saveLocalUser(authenticatedUser))
-                        localUser = authenticatedUser
-                },
-                localUser = localUser
-            )
-        }
-        when (apiResponse) {
-            is ApiResponse.Success -> {
-                PostContent(
-                    post = (apiResponse as ApiResponse.Success).data,
-                    breakpoint = breakpoint
-                )
+        HeaderSection(
+            breakpoint = breakpoint,
+            selectedCategory = null,
+            onMenuOpen = { overflowMenuOpened = true },
+            auth = auth,
+            provider = provider,
+            scope = scope,
+            setGlobalUser = { authenticatedUser ->
+
+                saveLocalUser(authenticatedUser)
+                localUser = authenticatedUser
+                println("User set ${authenticatedUser?.email}")
+            },
+            localUser = localUser
+        )
+        MainSection(
+            breakpoint = breakpoint,
+            posts = mainPosts,
+            onClick = { context.router.navigateTo(Screen.PostPage.getPost(id = it)) }
+        )
+        PostsSection(
+            breakpoint = breakpoint,
+            posts = latestPosts,
+            title = "Latest Posts",
+            showMoreVisibility = true,
+            onShowMore = {
                 scope.launch {
-                    delay(50)
-                    try {
-                        val js = js("hljs.highlightAll()")
-                    } catch (e: Exception) {
-                       println(e.toString())
-                    }
+                    fetchLatestPosts(
+                        skip = latestPostsToSkip,
+                        onSuccess = { response ->
+                            if (response is ApiListResponse.Success) {
+                                if (response.data.isNotEmpty()) {
+                                    if (response.data.size < POSTS_PER_PAGE) showMoreLatestPosts =
+                                        false
+
+                                    latestPosts.addAll(response.data)
+                                    latestPostsToSkip += POSTS_PER_PAGE
+                                } else {
+                                    showMoreLatestPosts = false
+                                }
+                            }
+                        },
+                        onError = {}
+                    )
                 }
-            }
+            },
+            onClick = { context.router.navigateTo(Screen.PostPage.getPost(id = it)) }
+        )
+        SponsoredPostsSection(
+            breakpoint = breakpoint,
+            posts = sponsoredPosts,
+            onClick = { context.router.navigateTo(Screen.PostPage.getPost(id = it))}
+        )
+        PostsSection(
+            breakpoint = breakpoint,
+            posts = popularPosts,
+            title = "Popular Posts",
+            showMoreVisibility = true,
+            onShowMore = {
+                scope.launch {
+                    fetchPopularPosts(
+                        skip = popularPostsToSkip,
+                        onSuccess = { response ->
+                            if (response is ApiListResponse.Success) {
+                                if (response.data.isNotEmpty()) {
+                                    if (response.data.size < POSTS_PER_PAGE) showMorePopularPosts = false
 
-            is ApiResponse.Idle -> {
-                LoadingIndicator()
-            }
-
-            is ApiResponse.Error -> {
-                ErrorView(message = (apiResponse as ApiResponse.Error).message)
-            }
-        }
-        if(showSections) {
-            AdminFooterSection()
-        }
-    }
-}
-
-@Composable
-fun PostContent(
-    post: Post,
-    breakpoint: Breakpoint
-) {
-    LaunchedEffect(post) {
-        (document.getElementById(Id.postContent) as HTMLDivElement).innerHTML = post.content
-    }
-    Column(
-        modifier = Modifier
-            .margin(top = 50.px, bottom = 200.px)
-            .padding(leftRight = 24.px)
-            .fillMaxWidth()
-            .maxWidth(800.px),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        SpanText(
-            modifier = Modifier
-                .fillMaxWidth()
-                .color(Theme.HalfBlack.rgb)
-                .fontFamily(FONT_FAMILY)
-                .fontSize(14.px),
-            text = post.date.toLong().parseDateString()
+                                    popularPosts.addAll(response.data)
+                                    popularPostsToSkip += POSTS_PER_PAGE
+                                } else {
+                                    showMorePopularPosts = false
+                                }
+                            }
+                        },
+                        onError = {}
+                    )
+                }
+            },
+            onClick = { context.router.navigateTo(Screen.PostPage.getPost(id = it))}
         )
-        SpanText(
-            modifier = Modifier
-                .fillMaxWidth()
-                .margin(bottom = 20.px)
-                .color(Colors.Black)
-                .fontFamily(FONT_FAMILY)
-                .fontSize(40.px)
-                .fontWeight(FontWeight.Bold)
-                .overflow(Overflow.Hidden)
-                .textOverflow(TextOverflow.Ellipsis)
-                .styleModifier {
-                    property("display", "-webkit-box")
-                    property("-webkit-line-clamp", "2")
-                    property("line-clamp", "2")
-                    property("-webkit-box-orient", "vertical")
-                },
-            text = post.title
-        )
-        Image(
-            modifier = Modifier
-                .margin(bottom = 40.px)
-                .fillMaxWidth()
-                .objectFit(ObjectFit.Cover)
-                .height(
-                    if (breakpoint <= Breakpoint.SM) 250.px
-                    else if (breakpoint <= Breakpoint.MD) 400.px
-                    else 600.px
-                ),
-            src = post.thumbnail,
-        )
-        Div(
-            attrs = Modifier
-                .id(Id.postContent)
-                .fontFamily(FONT_FAMILY)
-                .fillMaxWidth()
-                .toAttrs()
-        )
+        NewsletterSection(breakpoint = breakpoint)
+        AdminFooterSection()
     }
 }

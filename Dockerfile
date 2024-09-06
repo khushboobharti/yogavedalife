@@ -4,9 +4,9 @@
 # specified once).
 ARG KOBWEB_APP_ROOT="site"
 
-FROM eclipse-temurin:17 as java
+FROM eclipse-temurin:17 AS java
 
-FROM java as export
+FROM java AS export
 
 #-----------------------------------------------------------------------------
 # Create an intermediate stage which builds and exports our site. In the
@@ -56,10 +56,14 @@ RUN kobweb export --notty
 #-----------------------------------------------------------------------------
 # Create the final stage, which contains just enough bits to run the Kobweb
 # server.
-FROM java as run
+FROM java AS run
 
 ARG KOBWEB_APP_ROOT
 
+EXPOSE 8080
+
+ENV MONGODB_SERVER="mongodb+srv://khushboo_bharti:Sairam%401311@atlascluster.8dl7gmx.mongodb.net/"
+
 COPY --from=export /project/${KOBWEB_APP_ROOT}/.kobweb .kobweb
 
-ENTRYPOINT .kobweb/server/start.sh
+ENTRYPOINT [".kobweb/server/start.sh"]

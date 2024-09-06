@@ -9,7 +9,10 @@ import com.mongodb.client.model.Sorts.ascending
 import com.mongodb.client.model.Sorts.descending
 import com.mongodb.client.model.Updates
 import com.mongodb.kotlin.client.coroutine.MongoClient
+import com.varabyte.kobweb.api.ApiContext
 import com.varabyte.kobweb.api.data.add
+import com.varabyte.kobweb.api.env.isDev
+import com.varabyte.kobweb.api.env.isProd
 import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
 import com.yogaveda.Constants.POSTS_PER_PAGE
@@ -31,7 +34,7 @@ fun initMongoDB(context: InitApiContext) {
 
 class MongoDB(private val context: InitApiContext) : MongoRepository {
 
-    private val uri = System.getenv("MONGODB_SERVER") ?: "mongodb://localhost:27017"
+    private val uri = context.getDBConnectionString()
     private val mongoClient = MongoClient.create(uri)
     private val db = mongoClient.getDatabase(DATABASE_NAME)
 
@@ -40,6 +43,10 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
     private val newsletterCollection = db.getCollection<Newsletter>("newsletter")
     private val adminUserCollection = db.getCollection<AdminUser>("admin_user")
     private val roleCollection = db.getCollection<Newsletter>("role")
+
+    init {
+        context.logger.info("Connecting to MongoDB at ${System.getenv("MONGODB_SERVER")}")
+    }
 
     override suspend fun addPost(post: Post): Boolean {
         return postCollection.insertOne(post).wasAcknowledged()
@@ -284,5 +291,12 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
             if(newEmail) "Successfully Subscribed!"
             else "Something went wrong!"
         }
+    }
+}
+
+fun InitApiContext.getDBConnectionString(): String {
+    return when {
+        this.env.isProd -> System.getenv("MONGODB_SERVER")
+        else -> "mongodb://localhost:27017"
     }
 }

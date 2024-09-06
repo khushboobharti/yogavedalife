@@ -1,4 +1,5 @@
 
+import com.varabyte.kobweb.gradle.application.extensions.AppBlock
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import kotlinx.html.link
 import kotlinx.html.script
@@ -15,8 +16,14 @@ version = "1.0-SNAPSHOT"
 
 kobweb {
     app {
+
+        val globalEntries = HashMap<String, String>().apply {
+            put("encryptionkey", "yogavedaencryptionkey")
+        }
+        globals.putAll(globalEntries)
+
         index {
-            description.set("Powered by Kobweb")
+            description.set("Powered by Yogaveda with ❤\uFE0F")
 
             head.add {
                 script {

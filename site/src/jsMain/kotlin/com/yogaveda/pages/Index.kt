@@ -2,202 +2,479 @@ package com.yogaveda.pages
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import com.varabyte.kobweb.compose.css.BackgroundPosition
+import com.varabyte.kobweb.compose.css.BackgroundSize
+import com.varabyte.kobweb.compose.css.CSSPosition
+import com.varabyte.kobweb.compose.css.FontWeight
+import com.varabyte.kobweb.compose.css.TextAlign
+import com.varabyte.kobweb.compose.css.TextTransform
+import com.varabyte.kobweb.compose.css.WhiteSpace
+import com.varabyte.kobweb.compose.css.functions.url
 import com.varabyte.kobweb.compose.foundation.layout.Arrangement
+import com.varabyte.kobweb.compose.foundation.layout.Box
 import com.varabyte.kobweb.compose.foundation.layout.Column
+import com.varabyte.kobweb.compose.foundation.layout.Row
 import com.varabyte.kobweb.compose.ui.Alignment
 import com.varabyte.kobweb.compose.ui.Modifier
+import com.varabyte.kobweb.compose.ui.modifiers.background
+import com.varabyte.kobweb.compose.ui.modifiers.backgroundColor
+import com.varabyte.kobweb.compose.ui.modifiers.backgroundImage
+import com.varabyte.kobweb.compose.ui.modifiers.backgroundPosition
+import com.varabyte.kobweb.compose.ui.modifiers.backgroundSize
+import com.varabyte.kobweb.compose.ui.modifiers.borderRadius
+import com.varabyte.kobweb.compose.ui.modifiers.color
+import com.varabyte.kobweb.compose.ui.modifiers.fillMaxHeight
 import com.varabyte.kobweb.compose.ui.modifiers.fillMaxSize
+import com.varabyte.kobweb.compose.ui.modifiers.fillMaxWidth
+import com.varabyte.kobweb.compose.ui.modifiers.fontFamily
+import com.varabyte.kobweb.compose.ui.modifiers.fontSize
+import com.varabyte.kobweb.compose.ui.modifiers.fontWeight
+import com.varabyte.kobweb.compose.ui.modifiers.height
+import com.varabyte.kobweb.compose.ui.modifiers.margin
+import com.varabyte.kobweb.compose.ui.modifiers.onClick
+import com.varabyte.kobweb.compose.ui.modifiers.padding
+import com.varabyte.kobweb.compose.ui.modifiers.scale
+import com.varabyte.kobweb.compose.ui.modifiers.size
+import com.varabyte.kobweb.compose.ui.modifiers.textAlign
+import com.varabyte.kobweb.compose.ui.modifiers.textTransform
+import com.varabyte.kobweb.compose.ui.modifiers.whiteSpace
+import com.varabyte.kobweb.compose.ui.modifiers.width
+import com.varabyte.kobweb.compose.ui.toAttrs
 import com.varabyte.kobweb.core.Page
+import com.varabyte.kobweb.core.PageContext
 import com.varabyte.kobweb.core.rememberPageContext
+import com.varabyte.kobweb.navigation.OpenLinkStrategy
+import com.varabyte.kobweb.silk.components.graphics.Image
+import com.varabyte.kobweb.silk.components.icons.fa.FaPhone
+import com.varabyte.kobweb.silk.components.layout.SimpleGrid
+import com.varabyte.kobweb.silk.components.layout.numColumns
+import com.varabyte.kobweb.silk.components.style.toModifier
+import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
-import com.yogaveda.Constants.POSTS_PER_PAGE
-import com.yogaveda.components.CategoryNavigationItems
-import com.yogaveda.components.OverflowSidePanel
-import com.yogaveda.models.ApiListResponse
-import com.yogaveda.models.PostWithoutDetails
-import com.yogaveda.models.User
-import com.yogaveda.navigation.Screen
-import com.yogaveda.network.fetchLatestPosts
-import com.yogaveda.network.fetchMainPosts
-import com.yogaveda.network.fetchPopularPosts
-import com.yogaveda.network.fetchSponsoredPosts
-import com.yogaveda.sections.AdminFooterSection
-import com.yogaveda.sections.HeaderSection
-import com.yogaveda.sections.MainSection
-import com.yogaveda.sections.NewsletterSection
-import com.yogaveda.sections.PostsSection
-import com.yogaveda.sections.SponsoredPostsSection
-import com.yogaveda.util.getLocalUser
-import com.yogaveda.util.saveLocalUser
-import dev.gitlive.firebase.auth.externals.GoogleAuthProvider
-import dev.gitlive.firebase.auth.externals.getAuth
-import kotlinx.coroutines.launch
-
+import com.yogaveda.components.yoga.YogaFooter
+import com.yogaveda.pages.yoga.AboutKhushbooBharti
+import com.yogaveda.sections.MainFooterSection
+import com.yogaveda.styles.modifiers.YVButtonStyle
+import com.yogaveda.styles.modifiers.getBodyTextModifier
+import com.yogaveda.styles.modifiers.getButtonModifier
+import com.yogaveda.styles.modifiers.getCursiveTextModifier
+import com.yogaveda.styles.modifiers.getHeadingTextModifier
+import com.yogaveda.styles.modifiers.getTextModifier
+import com.yogaveda.ui.YogaVedaTheme
+import com.yogaveda.util.Res
+import com.yogaveda.util.noBorder
+import kotlinx.browser.window
+import org.jetbrains.compose.web.css.percent
+import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.dom.Button
 
 @Page
 @Composable
-fun HomePage() {
+fun YogaPage() {
+
     val context = rememberPageContext()
     val scope = rememberCoroutineScope()
     val breakpoint = rememberBreakpoint()
-    var overflowMenuOpened by remember { mutableStateOf(false) }
-    var mainPosts by remember { mutableStateOf<ApiListResponse>(ApiListResponse.Idle) }
-    val latestPosts = remember { mutableStateListOf<PostWithoutDetails>() }
-    val sponsoredPosts = remember { mutableStateListOf<PostWithoutDetails>() }
-    val popularPosts = remember { mutableStateListOf<PostWithoutDetails>() }
-    var latestPostsToSkip by remember { mutableStateOf(0) }
-    var popularPostsToSkip by remember { mutableStateOf(0) }
-    var showMoreLatestPosts by remember { mutableStateOf(false) }
-    var showMorePopularPosts by remember { mutableStateOf(false) }
-    var localUser by remember { mutableStateOf<User?>(getLocalUser()) }
-
-    val auth = remember { getAuth() }
-    val provider = remember { GoogleAuthProvider() }
-    provider.addScope("https://www.googleapis.com/auth/userinfo.email")
-    provider.addScope("https://www.googleapis.com/auth/userinfo.profile")
-    provider.addScope("openid")
 
 
-    LaunchedEffect(key1 = localUser) {
-        println("local user: ${localUser?.email}")
+    val windowHeight = remember { mutableStateOf(window.innerHeight) }  //remember
 
-        fetchMainPosts(
-            skip = 0,
-            onSuccess = {
-                mainPosts = it
-            },
-            onError = { print(it) }
-        )
-        fetchLatestPosts(
-            skip = latestPostsToSkip,
-            onSuccess = {
-                if (it is ApiListResponse.Success) {
-                    latestPosts.addAll(it.data)
-                    latestPostsToSkip += POSTS_PER_PAGE
-                    if (it.data.size >= POSTS_PER_PAGE) showMoreLatestPosts = true
-                }
-            },
-            onError = { print(it) }
-        )
-        fetchSponsoredPosts(
-            onSuccess = {
-                if (it is ApiListResponse.Success) {
-                    sponsoredPosts.addAll(it.data)
-                }
-            },
-            onError = { print(it) }
-        )
-        fetchPopularPosts(
-            skip = popularPostsToSkip,
-            onSuccess = {
-                if (it is ApiListResponse.Success) {
-                    popularPosts.addAll(it.data)
-                    popularPostsToSkip += POSTS_PER_PAGE
-                    if (it.data.size >= POSTS_PER_PAGE) showMorePopularPosts = true
-                }
-            },
-            onError = { print(it) }
-        )
+    var textScale = remember { mutableStateOf(1f) }
+
+    /*// TODO: Replace the following with your own content
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("THIS IS A YOGA PAGE")
+    }*/
+
+    LaunchedEffect(Unit) {
+
+        window.addEventListener("resize", {
+            windowHeight.value = window.innerHeight
+        })
+
+        window.addEventListener("scroll", { scrollEvent ->
+            //windowHeight.value = windowHeight.value
+            var scaleValue = when {
+                (1f - (window.scrollY.toFloat() / windowHeight.value)) < 0.7f -> 0.7f
+                else -> (1f - (window.scrollY.toFloat() / windowHeight.value))
+            }
+            textScale.value = scaleValue
+        })
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize()
+            .backgroundColor(YogaVedaTheme.Colors.BackgroundWhitish.rgb),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (overflowMenuOpened) {
-            OverflowSidePanel(
-                onMenuClose = { overflowMenuOpened = false },
-                content = { CategoryNavigationItems(vertical = true) }
+        HeroSection(context, textScale, windowHeight)
+        Box(
+            modifier = Modifier
+                .margin(bottom = 90.px),
+            contentAlignment = Alignment.Center
+        ) {
+            SpanText(
+                modifier = getCursiveTextModifier(),
+                text = "A Journey Withing"
             )
         }
-        HeaderSection(
-            breakpoint = breakpoint,
-            selectedCategory = null,
-            onMenuOpen = { overflowMenuOpened = true },
-            auth = auth,
-            provider = provider,
-            scope = scope,
-            setGlobalUser = { authenticatedUser ->
-
-                saveLocalUser(authenticatedUser)
-                localUser = authenticatedUser
-                println("User set ${authenticatedUser?.email}")
-            },
-            localUser = localUser
+        SpanText(
+            modifier = getHeadingTextModifier()
+                .margin(bottom = 90.px),
+            text = "A holistic approach to Yoga, Well Being and Child Birth"
         )
-        MainSection(
-            breakpoint = breakpoint,
-            posts = mainPosts,
-            onClick = { context.router.navigateTo(Screen.PostPage.getPost(id = it)) }
+        YogaBenefits()
+        //AboutKhushbooBharti()
+        SpanText(
+            modifier = getTextModifier()
+                .fontSize(50.px)
+                .margin(bottom = 90.px)
+                .color(YogaVedaTheme.Colors.BlackGrey.rgb)
+                .fontWeight(FontWeight.Light),
+            text = "Find the right class for you"
         )
-        PostsSection(
-            breakpoint = breakpoint,
-            posts = latestPosts,
-            title = "Latest Posts",
-            showMoreVisibility = true,
-            onShowMore = {
-                scope.launch {
-                    fetchLatestPosts(
-                        skip = latestPostsToSkip,
-                        onSuccess = { response ->
-                            if (response is ApiListResponse.Success) {
-                                if (response.data.isNotEmpty()) {
-                                    if (response.data.size < POSTS_PER_PAGE) showMoreLatestPosts =
-                                        false
-
-                                    latestPosts.addAll(response.data)
-                                    latestPostsToSkip += POSTS_PER_PAGE
-                                } else {
-                                    showMoreLatestPosts = false
-                                }
-                            }
-                        },
-                        onError = {}
-                    )
-                }
-            },
-            onClick = { context.router.navigateTo(Screen.PostPage.getPost(id = it)) }
-        )
-        SponsoredPostsSection(
-            breakpoint = breakpoint,
-            posts = sponsoredPosts,
-            onClick = { context.router.navigateTo(Screen.PostPage.getPost(id = it))}
-        )
-        PostsSection(
-            breakpoint = breakpoint,
-            posts = popularPosts,
-            title = "Popular Posts",
-            showMoreVisibility = true,
-            onShowMore = {
-                scope.launch {
-                    fetchPopularPosts(
-                        skip = popularPostsToSkip,
-                        onSuccess = { response ->
-                            if (response is ApiListResponse.Success) {
-                                if (response.data.isNotEmpty()) {
-                                    if (response.data.size < POSTS_PER_PAGE) showMorePopularPosts = false
-
-                                    popularPosts.addAll(response.data)
-                                    popularPostsToSkip += POSTS_PER_PAGE
-                                } else {
-                                    showMorePopularPosts = false
-                                }
-                            }
-                        },
-                        onError = {}
-                    )
-                }
-            },
-            onClick = { context.router.navigateTo(Screen.PostPage.getPost(id = it))}
-        )
-        NewsletterSection(breakpoint = breakpoint)
-        AdminFooterSection()
+        YogaOptions()
+        AboutKhushbooBharti()
+        BottomContactSection()
+        YogaFooter()
+        //MainFooterSection()
     }
 }
+
+
+@Composable
+fun HeroSection(
+    context: PageContext,
+    textScale: MutableState<Float>,
+    windowHeight: MutableState<Int>
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(windowHeight.value.px)
+            .backgroundImage(url("https://studioyogaveda.in/wp-content/uploads/2024/01/khush_profile_3.jpg"))
+            .backgroundSize(BackgroundSize.Cover)
+            .backgroundPosition(BackgroundPosition.of(CSSPosition.Center)),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            modifier = Modifier
+                .height(windowHeight.value.px)
+                .fillMaxWidth(80.percent),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            SpanText(
+                text = "Sat",
+                modifier = getTextModifier()
+                    .scale(textScale.value)
+                    .textTransform(TextTransform.Lowercase)
+            )
+            SpanText(
+                text = "Chitt",
+                modifier = getTextModifier()
+                    .color(YogaVedaTheme.Colors.OrangeFaded.rgb)
+                    .scale(textScale.value)
+                    .textTransform(TextTransform.Lowercase)
+            )
+            SpanText(
+                text = "Anand",
+                modifier = getTextModifier()
+                    .scale(textScale.value)
+                    .textTransform(TextTransform.Lowercase)
+            )
+        }
+        Button(
+            attrs = YVButtonStyle.toModifier()
+                .then(getButtonModifier())
+                .onClick {
+                    //context.router.navigateTo("/contact", OpenLinkStrategy.SAME_WINDOW)
+                }
+                .toAttrs()
+        ) {
+            SpanText(
+                modifier = Modifier
+                    .fontFamily("Archivo", "Arial")
+                    .fontSize(14.px)
+                    .fontWeight(FontWeight.SemiBold),
+                text = "Join Our Classes"
+            )
+        }
+    }
+}
+
+@Composable
+fun YogaBenefits() {
+    SimpleGrid(
+        modifier = Modifier.fillMaxWidth()
+            .fillMaxWidth(80.percent),
+        numColumns = numColumns(base = 1, sm = 1, md = 3, lg = 3)
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(leftRight = 12.px)
+        ) {
+            Column(
+                modifier = Modifier
+                    .margin(bottom = 50.px)
+                    .padding(48.px),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(150.px)
+                        .margin(bottom = 50.px),
+                    src = Res.Icon.body,
+                    alt = "Laugh Image"
+                )
+                SpanText(
+                    modifier = getTextModifier()
+                        .fontSize(24.px)
+                        .textAlign(TextAlign.Left)
+                        .whiteSpace(WhiteSpace.NoWrap)
+                        .margin(topBottom = 15.px),
+                    text = "Pregnancy and beyond..."
+                )
+                SpanText(
+                    modifier = getBodyTextModifier(),
+                    text = "An all-round approach to Pregnancy the includes Prenatal Yoga, Garbhasanskar, Nutrition support, Child Birth education, Lactation, Infant Care, Postnatal Yoga and more."
+                )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .padding(leftRight = 12.px)
+        ) {
+            Column(
+                modifier = Modifier
+                    .margin(bottom = 50.px)
+                    .padding(48.px),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(150.px)
+                        .margin(bottom = 50.px),
+                    src = Res.Icon.health,
+                    alt = "Laugh Image"
+                )
+                SpanText(
+                    modifier = getTextModifier()
+                        .fontSize(24.px)
+                        .textAlign(TextAlign.Left)
+                        .whiteSpace(WhiteSpace.NoWrap)
+                        .margin(topBottom = 15.px),
+                    text = "General Fitness"
+                )
+                SpanText(
+                    modifier = getBodyTextModifier(),
+                    text = "The body is of utmost importance for our holistic health as it is here that the mental and spiritual realms reside. Yogaveda classes are designed to nurture your physical and spiritual wellbeing."
+                )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .padding(leftRight = 12.px)
+        ) {
+            Column(
+                modifier = Modifier
+                    .margin(bottom = 50.px)
+                    .padding(48.px),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(150.px)
+                        .margin(bottom = 50.px),
+                    src = Res.Icon.stress,
+                    alt = "Laugh Image"
+                )
+                SpanText(
+                    modifier = getTextModifier()
+                        .fontSize(24.px)
+                        .textAlign(TextAlign.Left)
+                        .whiteSpace(WhiteSpace.NoWrap)
+                        .margin(topBottom = 15.px),
+                    text = "Women Wellness"
+                )
+                SpanText(
+                    modifier = getBodyTextModifier(),
+                    text = "The body is of utmost importance for our holistic health as it is here that the mental and spiritual realms reside."
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun YogaOptions() {
+    SimpleGrid(
+        modifier = Modifier.fillMaxWidth(80.percent)
+            .margin(bottom = 120.px),
+        numColumns = numColumns(base = 1, sm = 2, md = 4, lg = 4)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(10.px)
+                .margin(leftRight = 20.px)
+                .background(YogaVedaTheme.Colors.White.rgb)
+                .borderRadius(r = 110.px)
+                .noBorder(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(100.px),
+                    src = Res.Icon.icon2,
+                    alt = "Laugh Image"
+                )
+                SpanText(
+                    modifier = getTextModifier()
+                        .fontSize(24.px)
+                        .margin(topBottom = 15.px),
+                    text = "General Fitness"
+                )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(10.px)
+                .margin(leftRight = 20.px)
+                .background(YogaVedaTheme.Colors.White.rgb)
+                .borderRadius(r = 110.px)
+                .noBorder(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    modifier = Modifier
+                        .size(100.px),
+                    src = Res.Icon.icon3,
+                    alt = "Laugh Image"
+                )
+                SpanText(
+                    modifier = getTextModifier()
+                        .fontSize(24.px)
+                        .margin(topBottom = 15.px),
+                    text = "Prenatal Yoga"
+                )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(10.px)
+                .margin(leftRight = 20.px)
+                .background(YogaVedaTheme.Colors.White.rgb)
+                .borderRadius(r = 110.px)
+                .noBorder(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    modifier = Modifier
+                        .size(100.px),
+                    src = Res.Icon.icon1,
+                    alt = "Laugh Image"
+                )
+                SpanText(
+                    modifier = getTextModifier()
+                        .fontSize(24.px)
+                        .margin(topBottom = 15.px),
+                    text = "Postnatal Yoga"
+                )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(10.px)
+                .margin(leftRight = 20.px)
+                .background(YogaVedaTheme.Colors.White.rgb)
+                .borderRadius(r = 110.px)
+                .noBorder(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    modifier = Modifier
+                        .size(100.px),
+                    src = Res.Icon.icon4,
+                    alt = "Laugh Image"
+                )
+                SpanText(
+                    modifier = getTextModifier()
+                        .fontSize(24.px)
+                        .margin(topBottom = 15.px),
+                    text = "Childbirth"
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun BottomContactSection() {
+    Column(
+        modifier = Modifier
+            .margin(bottom = 50.px)
+            .width(400.px),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        SpanText(
+            modifier = getTextModifier()
+                .fontSize(24.px)
+                .margin(topBottom = 15.px)
+                .padding(bottom = 60.px)
+                .color(YogaVedaTheme.Colors.BlackGrey.rgb)
+                .fontWeight(FontWeight.Light),
+            text = "Invest in your health.\n" +
+                    "Studio Yogaveda, Gurgaon"
+        )
+        Button(
+            attrs = YVButtonStyle.toModifier()
+                .then(getButtonModifier())
+                //.border(1.px, LineStyle.Solid, YogaVedaTheme.Orange.rgb)
+                .onClick {
+                    window.open(
+                        "tel:+919718920120",
+                        OpenLinkStrategy.IN_NEW_TAB.toString()
+                    )
+                }
+                .background(YogaVedaTheme.Colors.White.rgb)
+                .toAttrs(),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                FaPhone(
+                    modifier = Modifier
+                        .color(YogaVedaTheme.Colors.Orange.rgb)
+                        .margin(right = 15.px)
+                )
+                SpanText(
+                    modifier = Modifier
+                        .fontFamily("Archivo", "Arial")
+                        .fontSize(14.px)
+                        .fontWeight(FontWeight.SemiBold)
+                        .color(YogaVedaTheme.Colors.Orange.rgb),
+                    text = "+(91) 9718-920-120"
+                )
+            }
+        }
+    }
+}
+
