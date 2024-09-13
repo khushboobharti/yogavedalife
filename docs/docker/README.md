@@ -21,6 +21,9 @@ docker run -d -p 8080:8080 docker.io/library/yogaveda-server:latest
 ### Check logs os a running container
 docker logs 9579b256bbeb780caeb7331e540a58cc7bedd7e4d7977f53f26291077a5bf029
 
+## Login to docker hub
+docker login
+
 ### Push to DockerHub
 docker push raulthakur/yogaveda-server:yogaveda-server:latest
 or

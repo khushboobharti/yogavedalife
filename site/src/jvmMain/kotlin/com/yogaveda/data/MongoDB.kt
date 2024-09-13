@@ -296,7 +296,7 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
 
 fun InitApiContext.getDBConnectionString(): String {
     return when {
-        this.env.isProd -> System.getenv("MONGODB_SERVER")
+        this.env.isProd -> "mongodb+srv://${System.getenv("MONGODB_SERVER")}:${System.getenv("MONGODB_SERVER")}.8dl7gmx.mongodb.net/" // System.getenv("MONGODB_SERVER")
         else -> "mongodb://localhost:27017"
     }
 }

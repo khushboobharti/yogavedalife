@@ -6,6 +6,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import com.varabyte.kobweb.compose.css.BackgroundImage
 import com.varabyte.kobweb.compose.css.BackgroundPosition
 import com.varabyte.kobweb.compose.css.BackgroundSize
 import com.varabyte.kobweb.compose.css.CSSPosition
@@ -157,7 +158,8 @@ fun HeroSection(
         modifier = Modifier
             .fillMaxWidth()
             .height(windowHeight.value.px)
-            .backgroundImage(url("https://studioyogaveda.in/wp-content/uploads/2024/01/khush_profile_3.jpg"))
+            //.backgroundImage(url("https://studioyogaveda.in/wp-content/uploads/2024/01/khush_profile_3.jpg"))
+            .backgroundImage(backgroundImage = BackgroundImage.of(url(Res.Image.hero_background)))
             .backgroundSize(BackgroundSize.Cover)
             .backgroundPosition(BackgroundPosition.of(CSSPosition.Center)),
         verticalArrangement = Arrangement.Top,
@@ -173,6 +175,7 @@ fun HeroSection(
             SpanText(
                 text = "Sat",
                 modifier = getTextModifier()
+                    .color(YogaVedaTheme.Colors.OrangeFaded.rgb)
                     .scale(textScale.value)
                     .textTransform(TextTransform.Lowercase)
             )
@@ -186,6 +189,7 @@ fun HeroSection(
             SpanText(
                 text = "Anand",
                 modifier = getTextModifier()
+                    .color(YogaVedaTheme.Colors.OrangeFaded.rgb)
                     .scale(textScale.value)
                     .textTransform(TextTransform.Lowercase)
             )

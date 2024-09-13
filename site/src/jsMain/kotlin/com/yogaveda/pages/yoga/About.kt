@@ -2,6 +2,7 @@ package com.yogaveda.pages.yoga
 
 import androidx.compose.runtime.Composable
 import com.varabyte.kobweb.compose.css.AlignContent
+import com.varabyte.kobweb.compose.css.BackgroundImage
 import com.varabyte.kobweb.compose.css.BackgroundPosition
 import com.varabyte.kobweb.compose.css.BackgroundSize
 import com.varabyte.kobweb.compose.css.CSSPosition
@@ -36,6 +37,7 @@ import com.varabyte.kobweb.silk.components.text.SpanText
 import com.yogaveda.styles.modifiers.getBodyTextModifier
 import com.yogaveda.styles.modifiers.getHeadingTextModifier
 import com.yogaveda.ui.YogaVedaTheme
+import com.yogaveda.util.Res
 import org.jetbrains.compose.web.css.FlexWrap
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
@@ -64,7 +66,8 @@ fun AboutKhushbooBharti() {
                 .fillMaxHeight()
                 .weight(0.5)
                 .margin(right = 24.px)
-                .backgroundImage(url("https://studioyogaveda.in/wp-content/uploads/elementor/thumbs/khush_profile_1-e1705595822395-qii0geykw4a1dh2g93ljrfawa75825iyt7asmshehw.jpg"))
+                //.backgroundImage(url("https://studioyogaveda.in/wp-content/uploads/elementor/thumbs/khush_profile_1-e1705595822395-qii0geykw4a1dh2g93ljrfawa75825iyt7asmshehw.jpg"))
+                .backgroundImage(backgroundImage = BackgroundImage.of(url(Res.Image.khush_profile_1)))
                 .backgroundSize(BackgroundSize.Cover)
                 .backgroundPosition(BackgroundPosition.of(CSSPosition.Top))
         ) {
