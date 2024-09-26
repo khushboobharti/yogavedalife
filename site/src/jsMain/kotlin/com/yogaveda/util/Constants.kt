@@ -17,8 +17,8 @@ object Res {
         const val logo = "/logo.png"
         const val logoHome = "logo.png"
         const val laugh = "/laugh.png"
-        const val hero_background = "hero_background.png"
-        const val khush_profile_1 = "khush_profile_1.png"
+        const val hero_background = "hero_background.webp"
+        const val khush_profile_1 = "khush_profile_1.webp"
     }
     object Icon {
         const val bold = "/bold.svg"
