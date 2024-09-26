@@ -10,13 +10,13 @@ Tagging for local daemon - yogaveda-server:latest
 Always use dockerhub based tagging - check tagging formats for custom hosted docker container registry
 
 ### Build File 
-docker build . -f Dockerfile -t yogaveda-server:latest
+docker build . -f Dockerfile -t raulthakur/yogaveda-server:latest
 
 ## Tag build
 docker tag <image-id> raulthakur/yogaveda-server:latest
 
 ### Run image exposing and mapping the internal port (system level) to external port (container level)
-docker run -d -p 8080:8080 docker.io/library/yogaveda-server:latest
+docker run -d -p 80:8080 --env-file prod.env docker.io/library/yogaveda-server:latest
 
 ### Check logs os a running container
 docker logs 9579b256bbeb780caeb7331e540a58cc7bedd7e4d7977f53f26291077a5bf029

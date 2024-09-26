@@ -33,6 +33,7 @@ When you are ready to ship, you should shutdown the development server and then 
 
 ```bash
 kobweb export
+kobweb export --env prod --notty
 ```
 
 When finished, you can run a Kobweb server in production mode:

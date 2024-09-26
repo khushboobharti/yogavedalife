@@ -9,9 +9,7 @@ import com.mongodb.client.model.Sorts.ascending
 import com.mongodb.client.model.Sorts.descending
 import com.mongodb.client.model.Updates
 import com.mongodb.kotlin.client.coroutine.MongoClient
-import com.varabyte.kobweb.api.ApiContext
 import com.varabyte.kobweb.api.data.add
-import com.varabyte.kobweb.api.env.isDev
 import com.varabyte.kobweb.api.env.isProd
 import com.varabyte.kobweb.api.init.InitApi
 import com.varabyte.kobweb.api.init.InitApiContext
@@ -296,7 +294,7 @@ class MongoDB(private val context: InitApiContext) : MongoRepository {
 
 fun InitApiContext.getDBConnectionString(): String {
     return when {
-        this.env.isProd -> "mongodb+srv://${System.getenv("MONGODB_SERVER")}:${System.getenv("MONGODB_SERVER")}.8dl7gmx.mongodb.net/" // System.getenv("MONGODB_SERVER")
+        this.env.isProd -> "mongodb+srv://${System.getenv("DB_USER")}:${System.getenv("DB_PASSWORD")}@${System.getenv("DB_URL")}/" // System.getenv("MONGODB_SERVER")  // "mongodb+srv://${System.getenv("DB_USER")}:${System.getenv("DB_PASSWORD")}.${System.getenv("DB_PASSWORD")}/"
         else -> "mongodb://localhost:27017"
     }
 }
