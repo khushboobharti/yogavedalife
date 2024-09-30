@@ -1,0 +1,18 @@
+# AWS related files
+*.pem
+
+# Credentials or keys for variaous services
+*.tfvars
+
+# Environment variables to be used by the execution script in ec2 instance
+*.env
+
+# Output file generated during terraform plan --out=tfplan.out
+*.out
+
+# Terraform state file and backup file for state must be ignored
+*.tfstate
+*.backup
+
+# This is the hashicorp file maintained by terraform when we run "terraform init" command in a directory
+*.hcl

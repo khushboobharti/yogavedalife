@@ -22,5 +22,5 @@ vi ~/.aws/config
 ## AWS Login
 ssh -i "<key-pair-file>" <ec2-user>@<host-name>
 
-## Copy file to server
-scp
+## Copy file to server (when running from tf folder)
+scp -i ../tf/yv-key-pair-prod.pem <file-name-with-path> ec2-user@ec2-98-82-135-65.compute-1.amazonaws.com:/tmp/<file-name>

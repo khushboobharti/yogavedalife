@@ -46,3 +46,5 @@ docker ps -a
 
 ## Remove a Docker container
 docker rm -f <container-id>
+
+## List available images
