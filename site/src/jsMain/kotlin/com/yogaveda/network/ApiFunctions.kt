@@ -16,6 +16,8 @@ import com.yogaveda.models.Newsletter
 import com.yogaveda.models.Post
 import com.yogaveda.models.RandomJoke
 import com.yogaveda.models.User
+import com.yogaveda.models.test.RegistrationRequest
+import com.yogaveda.models.test.RegistrationResponse
 import com.yogaveda.util.Constants
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
@@ -24,6 +26,21 @@ import kotlinx.serialization.json.Json
 import org.w3c.dom.get
 import org.w3c.dom.set
 import kotlin.js.Date
+
+
+suspend fun registerUser(registrationRequest: RegistrationRequest): RegistrationResponse? {
+    return try {
+        val result = window.http.tryPost(
+            resource = "http://localhost:8080/user/registration",
+            headers = hashMapOf("Content-Type" to "application/json"),
+            body = Json.encodeToString(registrationRequest).encodeToByteArray()
+        )
+        result?.decodeToString()?.let { Json.decodeFromString<RegistrationResponse>(it) }
+    } catch (e: Exception) {
+        println(e.message)
+        null
+    }
+}
 
 suspend fun checkUserExistence(adminUser: AdminUser): AdminUserWithoutPassword? {
     return try {

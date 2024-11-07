@@ -34,6 +34,6 @@ sealed class Screen(val route: String) {
     }
 
     object YogaPage: Screen(route = "/yoga") {
-        fun aboutUs() = "$route?about=true"
+        fun section(section: String) = if (section.lowercase() == "home")  "/" else "$route/${section.lowercase()}"
     }
 }

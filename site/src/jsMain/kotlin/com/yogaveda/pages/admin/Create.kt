@@ -101,7 +101,7 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLTextAreaElement
 import kotlin.js.Date
 
-data class CreatePageUiState(
+data class CreatePageUiState (
     var id: String = "",
     var title: String = "",
     var subtitle: String = "",

@@ -1,5 +1,4 @@
 
-import com.varabyte.kobweb.gradle.application.extensions.AppBlock
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import kotlinx.html.link
 import kotlinx.html.script
@@ -28,6 +27,10 @@ kobweb {
             head.add {
                 script {
                     src = "/highlight.min.js"
+                }
+                script {
+                    src = "https://assets.calendly.com/assets/external/widget.js"
+                    async = true
                 }
                 link {
                     rel = "stylesheet"
@@ -80,6 +83,7 @@ kotlin {
                 implementation(libs.kobweb.silk.core)
                 implementation(libs.kobweb.silk.icons.fa)
                 implementation(libs.kotlinx.serialization)
+                implementation(libs.kotlinx.datetime)
                 implementation(libs.firebase.auth)
             }
         }

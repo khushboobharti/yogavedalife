@@ -56,31 +56,39 @@ import com.varabyte.kobweb.silk.components.layout.numColumns
 import com.varabyte.kobweb.silk.components.style.toModifier
 import com.varabyte.kobweb.silk.components.text.SpanText
 import com.varabyte.kobweb.silk.theme.breakpoint.rememberBreakpoint
-import com.yogaveda.components.yoga.YogaFooter
+import com.yogaveda.models.test.RegistrationRequest
+import com.yogaveda.network.registerUser
 import com.yogaveda.pages.yoga.AboutKhushbooBharti
-import com.yogaveda.sections.MainFooterSection
 import com.yogaveda.styles.modifiers.YVButtonStyle
 import com.yogaveda.styles.modifiers.getBodyTextModifier
 import com.yogaveda.styles.modifiers.getButtonModifier
 import com.yogaveda.styles.modifiers.getCursiveTextModifier
 import com.yogaveda.styles.modifiers.getHeadingTextModifier
 import com.yogaveda.styles.modifiers.getTextModifier
+import com.yogaveda.styles.templates.YogaMainTemplate
 import com.yogaveda.ui.YogaVedaTheme
+import com.yogaveda.util.Constants.HEADER_HEIGHT
 import com.yogaveda.util.Res
 import com.yogaveda.util.noBorder
 import kotlinx.browser.window
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.Button
 
 @Page
 @Composable
+fun MainPage() {
+    YogaMainTemplate { YogaPage() }
+}
+
+@Composable
 fun YogaPage() {
 
     val context = rememberPageContext()
     val scope = rememberCoroutineScope()
     val breakpoint = rememberBreakpoint()
-
 
     val windowHeight = remember { mutableStateOf(window.innerHeight) }  //remember
 
@@ -113,7 +121,7 @@ fun YogaPage() {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        HeroSection(context, textScale, windowHeight)
+        HeroSection(context, textScale, windowHeight, scope)
         Box(
             modifier = Modifier
                 .margin(bottom = 90.px),
@@ -142,7 +150,7 @@ fun YogaPage() {
         YogaOptions()
         AboutKhushbooBharti()
         BottomContactSection()
-        YogaFooter()
+        // YogaFooter()
         //MainFooterSection()
     }
 }
@@ -152,7 +160,8 @@ fun YogaPage() {
 fun HeroSection(
     context: PageContext,
     textScale: MutableState<Float>,
-    windowHeight: MutableState<Int>
+    windowHeight: MutableState<Int>,
+    scope: CoroutineScope
 ) {
     Column(
         modifier = Modifier
@@ -168,7 +177,8 @@ fun HeroSection(
         Row(
             modifier = Modifier
                 .height(windowHeight.value.px)
-                .fillMaxWidth(80.percent),
+                .fillMaxWidth(80.percent)
+                .margin(HEADER_HEIGHT.px),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -194,21 +204,54 @@ fun HeroSection(
                     .textTransform(TextTransform.Lowercase)
             )
         }
-        Button(
-            attrs = YVButtonStyle.toModifier()
-                .then(getButtonModifier())
-                .onClick {
-                    //context.router.navigateTo("/contact", OpenLinkStrategy.SAME_WINDOW)
-                }
-                .toAttrs()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(80.percent),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            SpanText(
-                modifier = Modifier
-                    .fontFamily("Archivo", "Arial")
-                    .fontSize(14.px)
-                    .fontWeight(FontWeight.SemiBold),
-                text = "Join Our Classes"
-            )
+            Button(
+                attrs = YVButtonStyle.toModifier()
+                    .then(getButtonModifier())
+                    .margin(bottom = 130.px, right = 24.px)
+                    .onClick {
+                        //context.router.navigateTo("/contact", OpenLinkStrategy.SAME_WINDOW)
+                        scope.launch {
+                            val result = registerUser(RegistrationRequest("rahul@doctor24x7.in", "mariachi#22", "admin"))
+                            if(result != null) {
+                                println("User registered successfully - ID: ${result.data.id}")
+                            } else {
+                                println("Some error occurred")
+                            }
+                        }
+                    }
+                    .toAttrs()
+            ) {
+                SpanText(
+                    modifier = Modifier
+                        .fontFamily("Archivo", "Arial")
+                        .fontSize(14.px)
+                        .fontWeight(FontWeight.SemiBold),
+                    text = "Book a Consult"
+                )
+            }
+            Button(
+                attrs = YVButtonStyle.toModifier()
+                    .then(getButtonModifier())
+                    .margin(bottom = 130.px)
+                    .onClick {
+                        //context.router.navigateTo("/contact", OpenLinkStrategy.SAME_WINDOW)
+                    }
+                    .toAttrs()
+            ) {
+                SpanText(
+                    modifier = Modifier
+                        .fontFamily("Archivo", "Arial")
+                        .fontSize(14.px)
+                        .fontWeight(FontWeight.SemiBold),
+                    text = "Join Our Classes"
+                )
+            }
         }
     }
 }

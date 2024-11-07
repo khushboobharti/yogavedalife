@@ -66,4 +66,30 @@ object Id {
     const val adminSearchBar = "adminSearchBar"
     const val emailInput = "emailInput"
     const val postContent = "postContent"
+
+    object ConsultForm {
+        const val firstNameInput = "firstNameInput"
+        const val lastNameInput = "lastNameInput"
+        const val dobInput = "dobInput"
+        const val genderInput = "genderInput"
+        const val phoneInput = "phoneInput"
+        const val emailInput = "emailInput"
+        const val addressLine1Input = "addressLine1Input"
+        const val addressLine2Input = "addressLine2Input"
+        const val zipInput = "zipInput"
+        const val cityInput = "cityInput"
+        const val stateInput = "stateInput"
+        const val countryInput = "countryInput"
+        const val occupationInput = "occupationInput"
+        const val pastMedicalHistoryInput = "pastMedicalHistoryInput"
+        const val medicationsInput = "medicationsInput"
+        const val presentComplaintsInput = "presentComplaintsInput"
+        const val mensturalCycleInput = "mensturalCycleInput"
+        const val bloodPressureInput = "bloodPressureInput"
+        const val bloodSugarInput = "bloodSugarInput"
+        const val pulseRateInput = "pulseRateInput"
+        const val radioLogyInput = "radioLogyInput"
+        const val preferredDaysYogaClassesInput = "preferredDaysYogaClassesInput"
+    }
+
 }

@@ -79,7 +79,7 @@ fun AboutKhushbooBharti() {
                     .margin(right = 24.px)
                     .visibility(Visibility.Hidden)
                     .fillMaxWidth(40.percent),
-                src = "https://studioyogaveda.in/wp-content/uploads/elementor/thumbs/khush_profile_1-e1705595822395-qii0geykw4a1dh2g93ljrfawa75825iyt7asmshehw.jpg",
+                src = Res.Image.khush_profile_1,
                 alt = "Laugh Image"
             )
             Div { }
