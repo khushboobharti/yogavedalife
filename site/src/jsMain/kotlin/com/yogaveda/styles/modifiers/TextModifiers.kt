@@ -1,9 +1,11 @@
 package com.yogaveda.styles.modifiers
 
+import com.varabyte.kobweb.compose.css.CSSTransition
 import com.varabyte.kobweb.compose.css.FontWeight
 import com.varabyte.kobweb.compose.css.TextAlign
 import com.varabyte.kobweb.compose.css.TextTransform
 import com.varabyte.kobweb.compose.ui.Modifier
+import com.varabyte.kobweb.compose.ui.graphics.Colors
 import com.varabyte.kobweb.compose.ui.modifiers.color
 import com.varabyte.kobweb.compose.ui.modifiers.flexWrap
 import com.varabyte.kobweb.compose.ui.modifiers.fontFamily
@@ -15,9 +17,15 @@ import com.varabyte.kobweb.compose.ui.modifiers.margin
 import com.varabyte.kobweb.compose.ui.modifiers.onClick
 import com.varabyte.kobweb.compose.ui.modifiers.textAlign
 import com.varabyte.kobweb.compose.ui.modifiers.textTransform
+import com.varabyte.kobweb.compose.ui.modifiers.transition
+import com.varabyte.kobweb.silk.components.style.ComponentStyle
+import com.varabyte.kobweb.silk.components.style.anyLink
+import com.varabyte.kobweb.silk.components.style.hover
+import com.yogaveda.ui.Theme
 import com.yogaveda.ui.YogaVedaTheme
 import org.jetbrains.compose.web.css.FlexWrap
 import org.jetbrains.compose.web.css.em
+import org.jetbrains.compose.web.css.ms
 import org.jetbrains.compose.web.css.px
 
 
@@ -77,3 +85,18 @@ fun getBodyTextModifier() = getTextModifier()
 fun getLinkModifier() = Modifier
     .color(YogaVedaTheme.Colors.Orange.rgb)
     .fontWeight(FontWeight.Bold)
+
+
+val MenuItemStyle by ComponentStyle {
+    base {
+        Modifier
+            .color(YogaVedaTheme.Colors.BlackGrey.rgb)
+            .transition(CSSTransition(property = "color", duration = 200.ms))
+    }
+    anyLink {
+        Modifier.color(YogaVedaTheme.Colors.BlackGrey.rgb)
+    }
+    hover {
+        Modifier.color(YogaVedaTheme.Colors.Orange.rgb)
+    }
+}

@@ -18,7 +18,6 @@ import org.jetbrains.compose.web.css.px
 
 fun getButtonModifier() = Modifier
     .padding(leftRight = 30.px, topBottom = 15.px)
-    .margin(bottom = 130.px)
     .borderRadius(30.px)
     .noBorder()
     .cursor(Cursor.Pointer)

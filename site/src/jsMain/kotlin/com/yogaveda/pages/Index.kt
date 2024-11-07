@@ -65,7 +65,9 @@ import com.yogaveda.styles.modifiers.getButtonModifier
 import com.yogaveda.styles.modifiers.getCursiveTextModifier
 import com.yogaveda.styles.modifiers.getHeadingTextModifier
 import com.yogaveda.styles.modifiers.getTextModifier
+import com.yogaveda.styles.templates.YogaMainTemplate
 import com.yogaveda.ui.YogaVedaTheme
+import com.yogaveda.util.Constants.HEADER_HEIGHT
 import com.yogaveda.util.Res
 import com.yogaveda.util.noBorder
 import kotlinx.browser.window
@@ -75,12 +77,16 @@ import org.jetbrains.compose.web.dom.Button
 
 @Page
 @Composable
+fun MainPage() {
+    YogaMainTemplate { YogaPage() }
+}
+
+@Composable
 fun YogaPage() {
 
     val context = rememberPageContext()
     val scope = rememberCoroutineScope()
     val breakpoint = rememberBreakpoint()
-
 
     val windowHeight = remember { mutableStateOf(window.innerHeight) }  //remember
 
@@ -142,7 +148,7 @@ fun YogaPage() {
         YogaOptions()
         AboutKhushbooBharti()
         BottomContactSection()
-        YogaFooter()
+        // YogaFooter()
         //MainFooterSection()
     }
 }
@@ -168,7 +174,8 @@ fun HeroSection(
         Row(
             modifier = Modifier
                 .height(windowHeight.value.px)
-                .fillMaxWidth(80.percent),
+                .fillMaxWidth(80.percent)
+                .margin(HEADER_HEIGHT.px),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -194,21 +201,46 @@ fun HeroSection(
                     .textTransform(TextTransform.Lowercase)
             )
         }
-        Button(
-            attrs = YVButtonStyle.toModifier()
-                .then(getButtonModifier())
-                .onClick {
-                    //context.router.navigateTo("/contact", OpenLinkStrategy.SAME_WINDOW)
-                }
-                .toAttrs()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(80.percent),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            SpanText(
-                modifier = Modifier
-                    .fontFamily("Archivo", "Arial")
-                    .fontSize(14.px)
-                    .fontWeight(FontWeight.SemiBold),
-                text = "Join Our Classes"
-            )
+            Button(
+                attrs = YVButtonStyle.toModifier()
+                    .then(getButtonModifier())
+                    .margin(bottom = 130.px, right = 24.px)
+                    .onClick {
+                        //context.router.navigateTo("/contact", OpenLinkStrategy.SAME_WINDOW)
+                    }
+                    .toAttrs()
+            ) {
+                SpanText(
+                    modifier = Modifier
+                        .fontFamily("Archivo", "Arial")
+                        .fontSize(14.px)
+                        .fontWeight(FontWeight.SemiBold),
+                    text = "Book a Consult"
+                )
+            }
+            Button(
+                attrs = YVButtonStyle.toModifier()
+                    .then(getButtonModifier())
+                    .margin(bottom = 130.px)
+                    .onClick {
+                        //context.router.navigateTo("/contact", OpenLinkStrategy.SAME_WINDOW)
+                    }
+                    .toAttrs()
+            ) {
+                SpanText(
+                    modifier = Modifier
+                        .fontFamily("Archivo", "Arial")
+                        .fontSize(14.px)
+                        .fontWeight(FontWeight.SemiBold),
+                    text = "Join Our Classes"
+                )
+            }
         }
     }
 }
