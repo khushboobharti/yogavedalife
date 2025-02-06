@@ -7,8 +7,10 @@ jetbrains-compose = "1.6.2"
 kobweb = "0.17.3"
 kotlin = "1.9.23"
 coroutines = "1.8.1"
+ktorClientCore = "3.0.3"
 material3 = "1.2.1"
 
+razorpayJava = "1.4.8"
 serialization = "1.6.0"
 protobuf = "1.7.0"
 agp = "8.4.1"
@@ -59,10 +61,13 @@ firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebaseA
 
 
 
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorClientCore" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
 mongodb-kotlin = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "mongodb" }
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 kotlinx-protobuf = { module = "org.jetbrains.kotlinx:kotlinx-serialization-protobuf", version.ref = "protobuf"}
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+razorpay-java = { module = "com.razorpay:razorpay-java", version.ref = "razorpayJava" }
 runner = { group = "com.android.support.test", name = "runner", version.ref = "runner" }
 espresso-core = { group = "com.android.support.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 appcompat-v7 = { group = "com.android.support", name = "appcompat-v7", version.ref = "appcompat-v7" }

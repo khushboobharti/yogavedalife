@@ -1,5 +1,4 @@
 
-import com.varabyte.kobweb.gradle.application.extensions.AppBlock
 import com.varabyte.kobweb.gradle.application.util.configAsKobwebApplication
 import kotlinx.html.link
 import kotlinx.html.script
@@ -53,6 +52,10 @@ kobweb {
                     rel = "stylesheet"
                     href = "https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Gotu&family=League+Script&display=swap"
                 }
+                // Razorpay
+                script {
+                    src = "https://checkout.razorpay.com/v1/checkout.js"
+                }
             }
         }
     }
@@ -87,7 +90,12 @@ kotlin {
             dependencies {
                 implementation(libs.kobweb.api)
                 implementation(libs.mongodb.kotlin)
-                 implementation(libs.kotlinx.serialization)
+                implementation(libs.kotlinx.serialization)
+
+                implementation(libs.razorpay.java)
+
+                //implementation(libs.ktor.client.core)
+                //implementation(libs.ktor.client.cio)
             }
         }
     }
