@@ -95,7 +95,7 @@ suspend fun updateUserLoginData(context: ApiContext) {
             val result = oldUser.let {
                 context.data.getValue<MongoDB>().updateUserLoginData(it)
             }
-            if(result != null && result) {
+            if(result) {
                 context.res.setBodyText(Json.encodeToString("user updated successfully"))
             } else {
                 context.res.setBodyText(Json.encodeToString("failed to update user"))
